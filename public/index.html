@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduAI - Generator RPP Kurikulum Merdeka</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+     <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="container">
+        <div class="logo">
+          <i class="fas fa-graduation-cap"></i> EduAI Indonesia
+        </div>
+
+        <ul class="nav-links">
+          <li>
+            <a href="index.html" class="active">Generator RPP</a>
+          </li>
+          <li>
+            <a href="plagiasi.html" >Koreksi Plagiasi</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+
+    <main class="container">
+      <section id="generator-section" class="app-section active">
+        <div class="card">
+          <h2>
+            <i class="fas fa-file-invoice"></i> Generator Modul Ajar / RPP
+          </h2>
+          <p class="subtitle">
+            Sesuaikan input untuk menghasilkan RPP Kurikulum Merdeka otomatis.
+          </p>
+          <form id="rpp-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="schoolName">Nama Sekolah</label>
+                <input
+                  type="text"
+                  id="schoolName"
+                  placeholder="Contoh: SMK NASIONAL "
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="taskOption">Jenis Tugas</label>
+                <select id="taskOption">
+                  <option value="Praktik">Praktik</option>
+                  <option value="Soal-Uraian">Soal Uraian</option>
+                  <option value="Pilihan-Ganda">Pilihan Ganda</option>
+                  <option value="lebih-dari-1">Lebih dari 1</option>
+                </select>
+              </div>
+                <div class="form-group">
+                <label for="subject">jurusan</label>
+                <input
+                  type="text"
+                  id="jurusan"
+                  placeholder="Contoh: Rekayasa perangkat lunak"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="subject">Bidang Studi</label>
+                <input
+                  type="text"
+                  id="subject"
+                  placeholder="Contoh: Pemrograman Website"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="gradeLevel">Fase / Kelas</label>
+                <input
+                  type="text"
+                  id="gradeLevel"
+                  placeholder="Contoh: Fase F / Kelas 11"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="topic">Topik / Materi Pokok</label>
+              <textarea
+                id="topic"
+                rows="2"
+                placeholder="Contoh: Pengenalan HTML"
+              ></textarea>
+            </div>
+
+            <div
+              class="advanced-toggle"
+              onclick="utils.toggleElement('prompt-config')"
+            >
+              <i class="fas fa-cog"></i> Kustomisasi Prompt API (Lanjutan)
+            </div>
+
+            <div id="prompt-config" class="hidden">
+              <div class="form-group">
+                <label for="systemPrompt">System Prompt</label>
+                <textarea id="systemPrompt" rows="4"></textarea>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary" id="btnGenerate">
+              <i class="fas fa-book"></i> Generate RPP Sekarang
+            </button>
+
+            <button
+              class="btn-secondary"
+              type="button"
+              onclick="exportToWord()"
+            >
+              <i class="fas fa-download"></i>Download Word
+            </button>
+          </form>
+        </div>
+
+        <div id="result-container" class="card result-card hidden">
+          <div class="result-header">
+            <h3>Hasil Generasi</h3>
+            <button
+              class="btn-secondary"
+              onclick="utils.copyToClipboard('rpp-output')"
+            >
+              <i class="fas fa-copy"></i> Salin
+            </button>
+          </div>
+          <div id="rpp-output" class="markdown-body"></div>
+        </div>
+      </section>
+
+
+    <!-- <div id="loader" class="loader-overlay hidden">
+      <div class="spinner"></div>
+      <p>Sedang memproses permintaan Anda...</p>
+    </div> -->
+
+    <script defer src="js/utils.js"></script>
+    <script defer src="js/components.js"></script>
+    <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <script defer src="js/script.js"></script>
+  </body>
+</html>

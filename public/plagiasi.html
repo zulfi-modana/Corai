@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduAI - Koreksi Plagiasi</title>
+
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="container">
+        <div class="logo">
+          <i class="fas fa-graduation-cap"></i> EduAI Indonesia
+        </div>
+
+        <ul class="nav-links">
+          <li>
+            <a href="index.html">Generator RPP</a>
+          </li>
+          <li>
+            <a href="plagiasi.html" class="active">Koreksi Plagiasi</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="container">
+      <section class="app-section active">
+        <div class="card">
+          <h2><i class="fas fa-check-double"></i> Koreksi Plagiasi</h2>
+          <p class="subtitle">
+            Input tugas siswa untuk dianalisis plagiasi
+          </p>
+
+          <div class="corrector-inputs">
+            <!-- INPUT TEXT -->
+            <div class="form-group">
+              <label for="correctionInput">Input dalam bentuk teks</label>
+              <textarea
+                id="correctionInput"
+                rows="6"
+                placeholder="Tempelkan jawaban siswa di sini..."
+              ></textarea>
+            </div>
+
+            <!-- UPLOAD FILE -->
+            <div class="upload-area" id="dropZone">
+              <i class="fas fa-file fa-2x"></i>
+              <p>Klik atau Seret File Siswa</p>
+              <input type="file" id="imageInput" accept="image/*" hidden />
+            </div>
+          </div>
+
+          <!-- BUTTON -->
+          <button class="btn-primary" id="btnCorrect">
+            <i class="fas fa-search"></i> Analisis Jawaban
+          </button>
+        </div>
+
+        <!-- RESULT -->
+        <div id="correction-result" class="card result-card hidden">
+          <div class="result-header">
+            <h3>Hasil Analisis</h3>
+          </div>
+
+          <div id="correction-output" class="markdown-body"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- SCRIPT -->
+    <script defer src="js/utils.js"></script>
+    <script defer src="js/components.js"></script>
+    <script defer src="js/script.js"></script>
+  </body>
+</html>

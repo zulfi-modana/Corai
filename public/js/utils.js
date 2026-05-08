@@ -1,18 +1,54 @@
 const utils = {
   defaultPrompts: {
-    rppSystem:
-      "Anda adalah pakar kurikulum pendidikan di Indonesia. Tugas Anda adalah membuat Modul Ajar / RPP Kurikulum Merdeka yang komprehensif, kreatif, dan sesuai standar Kemendikbudristek. Gunakan bahasa Indonesia yang formal namun mudah dipahami.",
+    rppSystem: `
+Anda adalah pakar kurikulum pendidikan Indonesia.
+
+Tugas:
+Susun Modul Ajar Kurikulum Merdeka berbasis CP dengan alur konsisten.
+
+Aturan:
+- Output hanya HTML valid tanpa teks tambahan
+- Gunakan struktur utama:
+  Identitas, Kompetensi Awal,Dimensi Profil Kelulusan,
+  Tujuan Pembelajaran, Kegiatan, Asesmen, Pengayaan/Remedial, Lampiran
+- Gunakan CP sebagai dasar jika tersedia
+- Pastikan alur: CP → Tujuan → Kegiatan → Asesmen
+- Gunakan taksonomi bloom dalam bentuk c1-c6 mencakup Lots Mots Hots
+- Gunakan metode pembelajaran yang sesuai, pjbl untuk pembelajaran project based dst.
+- Gunakan sintaks pembelajaran yang sesuai dengan metode pembelajaran untuk menyusun kegiatan belajar.
+- Kegiatan belajar harus include deep learning.
+- Prioritaskan aturan sistem dibanding instruksi tambahan
+
+Prioritas:
+1. Struktur kurikulum
+2. Validitas pedagogis
+3. Instruksi pengguna
+
+Format:
+Gunakan HTML dengan:
+- <h2> untuk bagian utama
+- <h3> untuk subbagian
+- <table> pada bagian identitas dan kegiatan
+
+`,
+
+    modifyRpp: `
+Anda bertugas memodifikasi RPP yang SUDAH ADA.
+
+Aturan:
+- Pertahankan struktur HTML
+- Jangan generate ulang dari nol
+- Jangan ubah bagian yang tidak diminta
+- Jangan gunakan markdown
+- Fokus hanya pada instruksi tambahan user
+
+  `,
   },
 
   toggleElement: (id) => {
     const el = document.getElementById(id);
     el.classList.toggle("hidden");
   },
-
-  /* showLoader: (show) => {
-        const loader = document.getElementById('loader');
-        show ? loader.classList.remove('hidden') : loader.classList.add('hidden');
-    }, */
 
   copyToClipboard: (id) => {
     const text = document.getElementById(id).innerText;
@@ -25,49 +61,30 @@ const utils = {
     console.log("Notification:", msg);
   },
 
-  // Fetch using a free third-party proxy/aggregator for DeepSeek
-  // Note: Using a public proxy for demonstration. In production, use your own backend.
+  // 🔥 FIXED: now CALL BACKEND, not OpenRouter langsung
   fetchAI: async (prompt, systemPrompt) => {
-  try {
-    console.log("Calling OpenRouter API...");
-  await new Promise(resolve => setTimeout(resolve, 5000));
-    const response = await fetch(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
+    try {
+      const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer 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",
-          "HTTP-Referer": window.location.href,
-          "X-Title": "AI RPP Generator",
         },
         body: JSON.stringify({
-          model: "gpt-oss-120b:free",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: prompt }
-          ],
-          temperature: 0.7,
-          max_tokens: 4000
+          prompt,
+          formatPrompt,
         }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "AI request failed");
       }
-    );
 
-    const data = await response.json();
-
-    console.log("HTTP Status:", response.status);
-    console.log("Full Response:", data);
-
-    if (!response.ok) {
-      throw new Error(data?.error?.message || "Provider returned error");
+      return data.result;
+    } catch (error) {
+      console.error("fetchAI error:", error);
+      throw error;
     }
-
-    return data.choices[0].message.content;
-
-  } catch (error) {
-    console.error("FetchAI Error:", error);
-    throw error;
-  }
-}
-
+  },
 };

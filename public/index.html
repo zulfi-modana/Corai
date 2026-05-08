@@ -16,7 +16,7 @@
     <nav class="navbar">
       <div class="container">
         <div class="logo">
-          <i class="fas fa-graduation-cap"></i> EduAI Indonesia
+          <i class="fas fa-graduation-cap"></i> CorAI
         </div>
 
         <ul class="nav-links">
@@ -57,11 +57,11 @@
                   <option value="Praktik">Praktik</option>
                   <option value="Soal-Uraian">Soal Uraian</option>
                   <option value="Pilihan-Ganda">Pilihan Ganda</option>
-                  <option value="lebih-dari-1">Lebih dari 1</option>
+                  
                 </select>
               </div>
                 <div class="form-group">
-                <label for="subject">jurusan</label>
+                <label for="subject">Jurusan</label>
                 <input
                   type="text"
                   id="jurusan"
@@ -99,16 +99,24 @@
             </div>
 
             <div
-              class="advanced-toggle"
-              onclick="utils.toggleElement('prompt-config')"
+              class="advanced-toggle locked"
+              id="advancedToggle"
+            
             >
               <i class="fas fa-cog"></i> Kustomisasi Prompt API (Lanjutan)
             </div>
 
             <div id="prompt-config" class="hidden">
               <div class="form-group">
-                <label for="systemPrompt">System Prompt</label>
-                <textarea id="systemPrompt" rows="4"></textarea>
+               <!--  <label for="systemPrompt">System Prompt</label>
+                <textarea id="systemPrompt" rows="4"></textarea> -->
+                <label for="userInstruction">Kustomisasi Output (Opsional)</label>
+<textarea
+  id="userInstruction"
+  rows="3"
+  placeholder="Contoh: gunakan bahasa lebih baku / buat soal HOTS / tambahkan indikator C6"
+></textarea>
+
               </div>
             </div>
 
@@ -116,24 +124,21 @@
               <i class="fas fa-book"></i> Generate RPP Sekarang
             </button>
 
-            <button
-              class="btn-secondary"
-              type="button"
-              onclick="exportToWord()"
-            >
-              <i class="fas fa-download"></i>Download Word
-            </button>
+            
           </form>
         </div>
 
         <div id="result-container" class="card result-card hidden">
           <div class="result-header">
             <h3>Hasil Generasi</h3>
+            
             <button
               class="btn-secondary"
-              onclick="utils.copyToClipboard('rpp-output')"
+              type="button"
+              onclick="exportToWord()"
+              id="downloadBtn"
             >
-              <i class="fas fa-copy"></i> Salin
+              <i class="fas fa-download"></i> <p>Download Word</p>
             </button>
           </div>
           <div id="rpp-output" class="markdown-body"></div>
@@ -152,5 +157,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <script defer src="js/script.js"></script>
+    
+  <!--   <script>
+      if (!cpAvailable) {
+  alert("⚠️ Capaian Pembelajaran tidak ditemukan, sistem menggunakan AI tanpa CP");
+}
+
+    </script> -->
   </body>
+
+  <div id="toast" class="toast"></div>
+
 </html>

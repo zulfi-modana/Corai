@@ -20,7 +20,7 @@
     <nav class="navbar">
       <div class="container">
         <div class="logo">
-          <i class="fas fa-graduation-cap"></i> EduAI Indonesia
+          <i class="fas fa-graduation-cap"></i> CorAI
         </div>
 
         <ul class="nav-links">
@@ -37,14 +37,65 @@
     <!-- MAIN -->
     <main class="container">
       <section class="app-section active">
+
         <div class="card">
+  <h2><i class="fas fa-check-double"></i> Koreksi Plagiasi</h2>
+  <p class="subtitle">Input tugas siswa untuk dianalisis plagiasi</p>
+
+  <form id="plagiasiForm">
+
+    <!-- MODE -->
+    <div class="form-group">
+      <label>Pilih Mode Input</label>
+      <select id="inputMode">
+        <option value="pdf" selected>Upload PDF (Direkomendasikan)</option>
+        <option value="text">Input Teks</option>
+      </select>
+    </div>
+
+    <!-- TEXT MODE -->
+    <div id="textContainer" style="display:none;">
+      <label>Jawaban Siswa</label>
+
+      <div id="textInputs">
+        <textarea class="text-input" rows="4" placeholder="Jawaban siswa 1"></textarea>
+        <textarea class="text-input" rows="4" placeholder="Jawaban siswa 2"></textarea>
+      </div>
+
+      <button type="button" id="addText" class="btn-secondary">
+        + Tambah Jawaban
+      </button>
+    </div>
+
+    <!-- PDF MODE -->
+    <div id="pdfContainer">
+      <div class="upload-area" id="dropZone">
+        <i class="fas fa-file fa-2x"></i>
+        <p>Klik atau Seret File PDF</p>
+        <input type="file" id="pdfInput" accept="application/pdf" multiple hidden />
+      </div>
+    </div>
+
+    <div id="fileList" class="file-list"></div>
+
+    <!-- BUTTON -->
+    <button type="submit" class="btn-primary">
+      <i class="fas fa-search"></i> Analisis Jawaban
+    </button>
+
+  </form>
+</div>
+
+
+        
+  <!--       <div class="card">
           <h2><i class="fas fa-check-double"></i> Koreksi Plagiasi</h2>
           <p class="subtitle">
             Input tugas siswa untuk dianalisis plagiasi
           </p>
 
           <div class="corrector-inputs">
-            <!-- INPUT TEXT -->
+            
             <div class="form-group">
               <label for="correctionInput">Input dalam bentuk teks</label>
               <textarea
@@ -54,19 +105,22 @@
               ></textarea>
             </div>
 
-            <!-- UPLOAD FILE -->
+           
+             <form class="form-group" enctype="multipart/form-data" method="post">
             <div class="upload-area" id="dropZone">
               <i class="fas fa-file fa-2x"></i>
               <p>Klik atau Seret File Siswa</p>
-              <input type="file" id="imageInput" accept="image/*" hidden />
+              <input type="file" id="pdfInput" accept="application/pdf" name="pdfInput" hidden />
             </div>
-          </div>
-
-          <!-- BUTTON -->
+             
           <button class="btn-primary" id="btnCorrect">
             <i class="fas fa-search"></i> Analisis Jawaban
           </button>
-        </div>
+          </div>
+        </form>
+
+        
+        </div> -->
 
         <!-- RESULT -->
         <div id="correction-result" class="card result-card hidden">
@@ -74,7 +128,12 @@
             <h3>Hasil Analisis</h3>
           </div>
 
+          
+
           <div id="correction-output" class="markdown-body"></div>
+          <div>
+          <button class="btn btn-primary btn-analisis">Analisis AI</button>
+          </div>
         </div>
       </section>
     </main>
@@ -82,6 +141,9 @@
     <!-- SCRIPT -->
     <script defer src="js/utils.js"></script>
     <script defer src="js/components.js"></script>
-    <script defer src="js/script.js"></script>
+    <!-- <script defer src="js/script.js"></script> -->
+    <script defer src="js/plagiasi.js"></script>
+ 
+
   </body>
 </html>

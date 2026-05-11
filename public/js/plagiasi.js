@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   pdfInput.addEventListener("change", () => {
     renderFileList(pdfInput.files);
-    console.log("File selected:", pdfInput.files);
+ 
   });
 
   const modeSelect = document.getElementById("inputMode");
@@ -147,10 +147,16 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
 
         const analyzeBtn = card.querySelector(".btn-analisis");
-
+         if (item.level.className === "safe"){
+           analyzeBtn.disabled = true;
+           analyzeBtn.innerHTML = `Analisis Tidak Diperlukan`
+      
+         }
+else{
         analyzeBtn.addEventListener("click", async () => {
           analyzeBtn.disabled = true;
-          analyzeBtn.innerText = "Menganalisis...";
+          analyzeBtn.innerText = "Menganalisis, Mohon Bersabar...";
+          
 
           try {
             const resAI = await fetch("/api/plagiasi/analyze", {
@@ -186,30 +192,30 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
 
-        output.appendChild(card);
-      });
-    });
+        
+    }
+  
+     output.appendChild(card);});
+    }
+ 
+  );
+
+
+
+ 
 
   function renderFileList(files) {
-    const fileList = document.getElementById("fileList");
+  const fileList = document.getElementById("fileList");
 
-    if (!files || files.length === 0) {
-      fileList.innerHTML = "<p>Belum ada file</p>";
-      return;
-    }
-
+  if (!files || files.length === 0) {
     fileList.innerHTML = "";
 
-    Array.from(files).forEach((file, index) => {
-      const item = document.createElement("div");
-      item.className = "file-item";
-
-      item.innerHTML = `
-      <i class="fas fa-file-pdf"></i>
-      ${file.name} (${(file.size / 1024).toFixed(1)} KB)
-    `;
-
-      fileList.appendChild(item);
-    });
+    document.getElementById("pdfDragFile").textContent =
+      "Drag & Drop file PDF di sini";
+    return;
   }
+
+  document.getElementById("pdfDragFile").textContent =
+    `${files.length} file dipilih`;
+}
 });

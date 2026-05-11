@@ -19,6 +19,9 @@ ${textB}
 Similarity:
 ${similarity}%
 
+Aturan :
+-jelaskan dengan format (kemungkinan penyebab kemiripan, indikasi copy paste, dan saran tindakan sebagai guru(kasih grade bagus / cap plagiasi))
+-output dalam bentuk paragraf (maks 50 kata)
 Jelaskan:
 - kemungkinan penyebab kemiripan
 - apakah karena definisi umum

@@ -35,7 +35,7 @@ function getFase(grade) {
 }
 
 function updateGenerateButton(text, icon = "fa-spinner") {
-  btnGenerate.classList.add("generating");
+  btnGenerate.classList.add("Generate");
 
   btnGenerate.innerHTML = `
     <i class="fas ${icon}"></i>
@@ -222,8 +222,6 @@ Buat modul ajar lengkap dengan 3 pertemuan.
 
 Tambahan struktur:
 - Lampiran berisi: materi, referensi, LKPD, dan rubrik penilaian
-
-
 - Gunakan tujuan pembelajaran sebagai dasar penyusunan materi
 
 ${!cpAvailable ? "- Gunakan pendekatan umum tanpa CP" : ""}

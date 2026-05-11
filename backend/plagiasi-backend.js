@@ -43,7 +43,7 @@ function getLabel(score) {
 
   return {
     text: "Tidak Ditemukan Indikasi Plagiasi",
-    icon : "✅",
+    icon: "✅",
     className: "safe",
   };
 }
@@ -173,6 +173,8 @@ router.post("/", upload.array("files"), async (req, res) => {
           similarity: Number((sim * 100).toFixed(2)),
           level: getLabel(sim),
           rawScore: sim,
+          textA: texts[i].slice(0, 3000),
+          textB: texts[j].slice(0, 3000),
         });
         results.sort((a, b) => b.rawScore - a.rawScore);
       }

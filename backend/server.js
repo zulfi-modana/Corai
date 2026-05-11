@@ -12,6 +12,10 @@ app.use(express.static("public"));
 const plagiasiRoutes = require("./plagiasi-backend.js");
 app.use("/api/plagiasi", plagiasiRoutes);
 
+
+const plagiasiAnalisisRoutes = require("./plagiasi-analyze.js");
+app.use("/api/plagiasi/analyze", plagiasiAnalisisRoutes);
+
 // ===== CACHE =====
 const baseCache = new Map();      // hasil utama
 const modifiedCache = new Map();  // hasil modifikasi

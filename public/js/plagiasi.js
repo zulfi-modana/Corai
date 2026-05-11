@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* plagiasi input */
   const dropZone = document.getElementById("dropZone");
   const pdfInput = document.getElementById("pdfInput");
-  
+
   // klik area → buka file picker
   dropZone.addEventListener("click", () => {
     pdfInput.click();
@@ -17,21 +17,19 @@ document.addEventListener("DOMContentLoaded", () => {
     dropZone.classList.remove("dragover");
   });
 
-dropZone.addEventListener("drop", (e) => {
-  e.preventDefault();
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
 
-  const files = e.dataTransfer.files;
+    const files = e.dataTransfer.files;
 
-  pdfInput.files = files;
-  renderFileList(files);
+    pdfInput.files = files;
+    renderFileList(files);
 
-  dropZone.classList.remove("dragover");
+    dropZone.classList.remove("dragover");
 
-  console.log("File dropped:", files);
-});
+    console.log("File dropped:", files);
+  });
 
-
-   
   pdfInput.addEventListener("change", () => {
     renderFileList(pdfInput.files);
     console.log("File selected:", pdfInput.files);
@@ -111,16 +109,16 @@ dropZone.addEventListener("drop", (e) => {
       console.log(data);
 
       document.getElementById("correction-result").classList.remove("hidden");
-     const output = document.getElementById("correction-output");
+      const output = document.getElementById("correction-output");
 
-output.innerHTML = "";
+      output.innerHTML = "";
 
-data.comparisons.forEach((item) => {
-  const card = document.createElement("div");
+      data.comparisons.forEach((item) => {
+        const card = document.createElement("div");
 
-  card.className = `plagiarism-card ${item.level.className}`;
+        card.className = `plagiarism-card ${item.level.className}`;
 
-  card.innerHTML = `
+        card.innerHTML = `
     <div class="pair-header">
       <div class="pdf-box">
         <i class="fas fa-file-pdf"></i>
@@ -142,10 +140,54 @@ data.comparisons.forEach((item) => {
     <div class="danger-level">
       ${item.level.icon} ${item.level.text}
     </div>
+
+     <div class="btnAnalisis">
+          <button class="btn btn-primary btn-analisis">Analisis AI</button>
+          </div>
   `;
 
-  output.appendChild(card);
-});
+        const analyzeBtn = card.querySelector(".btn-analisis");
+
+        analyzeBtn.addEventListener("click", async () => {
+          analyzeBtn.disabled = true;
+          analyzeBtn.innerText = "Menganalisis...";
+
+          try {
+            const resAI = await fetch("/api/plagiasi/analyze", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                textA: item.textA,
+                textB: item.textB,
+                similarity: item.similarity,
+              }),
+            });
+
+            const dataAI = await resAI.json();
+
+            const analysisDiv = document.createElement("div");
+
+            analysisDiv.className = "ai-analysis";
+
+            analysisDiv.innerHTML = `
+      <h2>Analisis AI</h2>
+      <div>${dataAI.analysis}</div>
+    `;
+
+            card.appendChild(analysisDiv);
+          } catch (err) {
+            console.error("AI Analyze Error:", err);
+            alert("Gagal analisis AI");
+          } finally {
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerText = "Analisis AI";
+          }
+        });
+
+        output.appendChild(card);
+      });
     });
 
   function renderFileList(files) {

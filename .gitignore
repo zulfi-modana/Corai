@@ -1,2 +1,4 @@
 #environment files
 .env
+
+node_modules/

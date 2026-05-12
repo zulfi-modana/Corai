@@ -5,13 +5,41 @@ const { getCapaian } = require("./scraper");
 
 const app = express();
 
+// ===== CUSTOM QUEUE =====
+const aiQueue = {
+  running: 0,
+  queue: [],
+  concurrency: 3,
+  add(fn) {
+    if (this.queue.length >= 20) {
+      return Promise.reject(new Error("Server sedang sibuk, coba lagi nanti"));
+    }
+    return new Promise((resolve, reject) => {
+      this.queue.push({ fn, resolve, reject });
+      this.run();
+    });
+  },
+  run() {
+    while (this.running < this.concurrency && this.queue.length > 0) {
+      const { fn, resolve, reject } = this.queue.shift();
+      this.running++;
+      fn()
+        .then(resolve)
+        .catch(reject)
+        .finally(() => {
+          this.running--;
+          this.run();
+        });
+    }
+  },
+};
+
 // middleware
 app.use(express.json());
 app.use(express.static("public"));
 
 const plagiasiRoutes = require("./plagiasi-backend.js");
 app.use("/api/plagiasi", plagiasiRoutes);
-
 
 const plagiasiAnalisisRoutes = require("./plagiasi-analyze.js");
 app.use("/api/plagiasi/analyze", plagiasiAnalisisRoutes);
@@ -80,9 +108,9 @@ app.post("/api/ai", async (req, res) => {
    * 🔥 FULL KEY (UNTUK MODIFIKASI)
    */
   const modifiedKey = JSON.stringify({
-  baseKey,
-  userInstruction
-});
+    baseKey,
+    userInstruction
+  });
 
   // =========================
   // 🔹 1. CEK MODIFIED CACHE
@@ -113,14 +141,22 @@ app.post("/api/ai", async (req, res) => {
     // =========================
     console.log("🌐 CALL AI (BASE)");
 
-    const result = await callAI(prompt, formatPrompt);
-
-    baseResult = result;
+    try {
+      const result = await aiQueue.add(() => callAI(prompt, formatPrompt));
+      baseResult = result;
+    } catch (err) {
+      return res.status(503).json({ error: err.message });
+    }
 
     baseCache.set(baseKey, {
       data: baseResult,
       time: Date.now()
     });
+
+    if (baseCache.size > 500) {
+      const oldestKey = baseCache.keys().next().value;
+      baseCache.delete(oldestKey);
+    }
   }
 
   // =========================
@@ -128,11 +164,13 @@ app.post("/api/ai", async (req, res) => {
   // =========================
   let finalResult = baseResult;
 
- if (userInstruction && userInstruction.trim() !== "") {
+  if (userInstruction && userInstruction.trim() !== "") {
     console.log("✨ APPLY MODIFICATION");
 
-   finalResult = await callAI(
-  `
+    try {
+      finalResult = await aiQueue.add(() =>
+        callAI(
+          `
 Berikut adalah RPP yang sudah dibuat:
 
 ${baseResult}
@@ -140,12 +178,14 @@ ${baseResult}
 Lakukan modifikasi berikut TANPA mengubah struktur utama:
 
 ${userInstruction}
-
-
 `,
-modifyPrompt
+          modifyPrompt
+        )
+      );
+    } catch (err) {
+      return res.status(503).json({ error: err.message });
+    }
 
-);
     modifiedCache.set(modifiedKey, {
       data: finalResult,
       time: Date.now()
@@ -170,9 +210,6 @@ async function callAI(prompt, formatPrompt) {
     "gpt-oss-120b:free",
     "gpt-oss-20b:free",
     "gpt-oss-120b"
-  
-
-
   ];
 
   for (let model of models) {

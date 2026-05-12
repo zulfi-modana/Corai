@@ -33,7 +33,7 @@ async function callAI(prompt, formatPrompt) {
               { role: "user", content: prompt }
             ],
             temperature: 0.2,
-            max_tokens: 1200
+            max_tokens: 1000
           })
         }
       );

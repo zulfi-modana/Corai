@@ -166,10 +166,10 @@ async function callAI(prompt, formatPrompt) {
   const models = [
     "gemma-4-26b-a4b-it:free",
     "gemma-4-31b-it:free",
-    "free",
+    "openrouter/free",
     "gpt-oss-120b:free",
     "gpt-oss-20b:free",
-    "free"
+  
 
 
   ];

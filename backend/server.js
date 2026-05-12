@@ -206,9 +206,10 @@ async function callAI(prompt, formatPrompt) {
   const models = [
     "gemma-4-26b-a4b-it:free",
     "gemma-4-31b-it:free",
-    "openrouter/free",
+    
     "gpt-oss-120b:free",
     "gpt-oss-20b:free",
+    "openrouter/free",
     "gpt-oss-120b"
   ];
 
@@ -235,7 +236,7 @@ async function callAI(prompt, formatPrompt) {
               { role: "user", content: prompt }
             ],
             temperature: 0.2,
-            max_tokens: 1000
+            max_tokens: 1200
           })
         }
       );

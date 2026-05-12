@@ -31,8 +31,19 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   pdfInput.addEventListener("change", () => {
+    pdfInput.addEventListener("change", () => {
+      const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+      for (let file of pdfInput.files) {
+        if (file.size > MAX_FILE_SIZE) {
+          alert(`File ${file.name} melebihi batas 5MB`);
+
+          pdfInput.value = "";
+          return;
+        }
+      }
+    });
     renderFileList(pdfInput.files);
- 
   });
 
   const modeSelect = document.getElementById("inputMode");
@@ -81,7 +92,15 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
         for (let file of files) {
+          // cek ukuran file
+          if (file.size > MAX_FILE_SIZE) {
+            alert(`File ${file.name} melebihi batas 5MB`);
+            return;
+          }
+
           formData.append("files", file);
         }
       } else {
@@ -147,75 +166,65 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
 
         const analyzeBtn = card.querySelector(".btn-analisis");
-         if (item.level.className === "safe"){
-           analyzeBtn.disabled = true;
-           analyzeBtn.innerHTML = `Analisis Tidak Diperlukan`
-      
-         }
-else{
-        analyzeBtn.addEventListener("click", async () => {
+        if (item.level.className === "safe") {
           analyzeBtn.disabled = true;
-          analyzeBtn.innerText = "Menganalisis, Mohon Bersabar...";
-          
+          analyzeBtn.innerHTML = `Analisis Tidak Diperlukan`;
+        } else {
+          analyzeBtn.addEventListener("click", async () => {
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerText = "Menganalisis, Mohon Bersabar...";
 
-          try {
-            const resAI = await fetch("/api/plagiasi/analyze", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                textA: item.textA,
-                textB: item.textB,
-                similarity: item.similarity,
-              }),
-            });
+            try {
+              const resAI = await fetch("/api/plagiasi/analyze", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  textA: item.textA,
+                  textB: item.textB,
+                  similarity: item.similarity,
+                }),
+              });
 
-            const dataAI = await resAI.json();
+              const dataAI = await resAI.json();
 
-            const analysisDiv = document.createElement("div");
+              const analysisDiv = document.createElement("div");
 
-            analysisDiv.className = "ai-analysis";
+              analysisDiv.className = "ai-analysis";
 
-            analysisDiv.innerHTML = `
+              analysisDiv.innerHTML = `
       <h2>Analisis AI</h2>
       <div>${dataAI.analysis}</div>
     `;
 
-            card.appendChild(analysisDiv);
-          } catch (err) {
-            console.error("AI Analyze Error:", err);
-            alert("Gagal analisis AI");
-          } finally {
-            analyzeBtn.disabled = false;
-            analyzeBtn.innerText = "Analisis AI";
-          }
-        });
+              card.appendChild(analysisDiv);
+            } catch (err) {
+              console.error("AI Analyze Error:", err);
+              alert("Gagal analisis AI");
+            } finally {
+              analyzeBtn.disabled = false;
+              analyzeBtn.innerText = "Analisis AI";
+            }
+          });
+        }
 
-        
-    }
-  
-     output.appendChild(card);});
-    }
- 
-  );
-
-
-
- 
+        output.appendChild(card);
+      });
+    });
 
   function renderFileList(files) {
-  const fileList = document.getElementById("fileList");
+    const fileList = document.getElementById("fileList");
 
-  if (!files || files.length === 0) {
-    fileList.innerHTML = "";
+    if (!files || files.length === 0) {
+      fileList.innerHTML = "";
+
+      document.getElementById("pdfDragFile").textContent =
+        "Drag & Drop file PDF di sini";
+      return;
+    }
 
     document.getElementById("pdfDragFile").textContent =
-      "Drag & Drop file PDF di sini";
-    return;
+      `${files.length} file dipilih`;
   }
-
-  document.getElementById("pdfDragFile").textContent =
-    `${files.length} file dipilih`;
-}
 });

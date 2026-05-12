@@ -7,7 +7,9 @@ async function callAI(prompt, formatPrompt) {
     "openrouter/free",
     "gpt-oss-120b:free",
     "gpt-oss-20b:free",
-    "free"
+    "gpt-oss-120b"
+
+
   ];
 
   for (let model of models) {

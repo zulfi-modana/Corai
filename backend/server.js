@@ -169,6 +169,7 @@ async function callAI(prompt, formatPrompt) {
     "openrouter/free",
     "gpt-oss-120b:free",
     "gpt-oss-20b:free",
+    "gpt-oss-120b"
   
 
 

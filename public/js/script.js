@@ -141,6 +141,43 @@ document.addEventListener("DOMContentLoaded", () => {
   rppForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const validations = [
+    {
+      el: document.getElementById("schoolName"),
+      msg: "Nama Sekolah tidak boleh kosong",
+    },
+    {
+      el: document.getElementById("jurusan"),
+      msg: "Jurusan tidak boleh kosong",
+    },
+    {
+      el: document.getElementById("subject"),
+      msg: "Bidang Studi tidak boleh kosong",
+    },
+    {
+      el: document.getElementById("gradeLevel"),
+      msg: "Fase / Kelas tidak boleh kosong",
+    },
+    {
+      el: document.getElementById("tujuan"),
+      msg: "Tujuan tidak boleh kosong",
+    },
+  ];
+
+   for (const { el, msg } of validations) {
+    if (!el.value.trim()) {
+      showToast(msg, 3000);
+      el.focus();
+      return;
+    }
+  }
+
+    const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+    if (checked.length < 2) {
+      showToast("Pilih minimal 2 Dimensi Profil Kelulusan", 3000);
+      return;
+    }
+
     const userInstruction =
       document.getElementById("userInstruction")?.value.trim() || "";
 
@@ -155,6 +192,11 @@ document.addEventListener("DOMContentLoaded", () => {
       subject: document.getElementById("subject").value,
       grade: document.getElementById("gradeLevel").value,
       topic: document.getElementById("topic").value,
+      tujuan: document.getElementById("tujuan").value,
+      metode: document.getElementById("metode").value,
+      dpk: [...document.querySelectorAll('input[type="checkbox"]:checked')]
+        .map((cb) => cb.value)
+        .join(", "),
     };
 
     // 🔥 ambil CP dari backend
@@ -198,9 +240,30 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Terjadi error saat ambil cp:", error.message);
     }
 
+    const customCPInput = document.querySelector("#customCP");
+
     if (!cpAvailable) {
-      showToast("CP tidak ditemukan, menggunakan AI tanpa CP", "warning");
-      /* alert("⚠️ CP tidak ditemukan, sistem menggunakan AI tanpa CP"); */
+      const cpLabel = document.querySelector(".cpLabel");
+
+      customCPInput.removeAttribute("hidden");
+      cpLabel.removeAttribute("hidden");
+
+      // kalau user BELUM isi CP → stop
+      if (customCPInput.value.trim() === "") {
+        showToast("CP tidak ditemukan, silahkan isi CP secara manual", 3000);
+
+        btnGenerate.disabled = false;
+
+        btnGenerate.innerHTML =
+          '<i class="fas fa-magic"></i> Generate RPP Sekarang';
+
+        customCPInput.focus();
+
+        return;
+      }
+
+      // kalau SUDAH isi → pakai CP manual
+      cpText = customCPInput.value.trim();
     }
 
     updateGenerateButton("Generate Modul...", "fa-brain");
@@ -212,19 +275,21 @@ Sekolah: ${formData.school}
 Mapel: ${formData.subject}
 Kelas: ${formData.grade}
 Materi: ${formData.topic}
-Metode Belajar : (isi dengan pjbl atau pbl, dsb sesuai subjek dan materi pembelajaran)
+Tujuan: ${formData.tujuan}
+Metode Belajar : ${formData.metode || " "}
+Dimensi Profil Pancasila : Dimensi Profil Kelulusan: ${formData.dpk}
 
 CP:
-${cpText || "Tidak tersedia"}
+${cpText || "Belum tersedia"}
 
 [INSTRUKSI]
-Buat modul ajar lengkap dengan 3 pertemuan.
+Buat modul ajar lengkap.
 
 Tambahan struktur:
 - Lampiran berisi: materi, referensi, LKPD, dan rubrik penilaian
 - Gunakan tujuan pembelajaran sebagai dasar penyusunan materi
 
-${!cpAvailable ? "- Gunakan pendekatan umum tanpa CP" : ""}
+${!cpAvailable ? CP : ""}
 `;
 
       const resAI = await fetch("/api/ai", {

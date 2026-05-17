@@ -6,7 +6,12 @@
     <title>CorAI - Koreksi Plagiasi</title>
 
     <!-- <link rel="stylesheet" href="css/styles.css" /> -->
-
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
 
     <link
@@ -15,201 +20,522 @@
     />
 
     <style>
-  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap');
+      @import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap");
 
-  *{box-sizing:border-box;margin:0;padding:0}
-  
-  :root{
-    --ink:#0f1117;--ink2:#3a3d4a;--ink3:#7a7f92;
-    --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0efe9;
-    --accent:#2d5be3;--accent-soft:#e8edfc;--accent-dark:#1a3dab;
-    --green:#1a9e6a;--green-soft:#e1f5ec;
-    --border:#e2e0d8;--border-strong:#c8c5bb;
-    --radius:10px;--radius-lg:16px;--radius-xl:24px;
-    --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.04);
-  }
-  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.6}
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  
-  nav{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-  .nav-inner{max-width:840px;margin:0 auto;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between}
-  .logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);display:flex;align-items:center;gap:8px}
-  .logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;display:inline-block}
-  .nav-links{display:flex;gap:4px;list-style:none}
-  .nav-links a{font-size:13px;font-weight:500;padding:6px 14px;border-radius:100px;color:var(--ink2);text-decoration:none;transition:all .18s}
-  .nav-links a:hover{background:var(--surface2);color:var(--ink)}
-  .nav-links a.active{background:var(--accent);color:#fff}
+      :root {
+        --ink: #0f1117;
+        --ink2: #3a3d4a;
+        --ink3: #7a7f92;
+        --bg: #f5f4f0;
+        --surface: #ffffff;
+        --surface2: #f0efe9;
+        --accent: #2d5be3;
+        --accent-soft: #e8edfc;
+        --accent-dark: #1a3dab;
+        --green: #1a9e6a;
+        --green-soft: #e1f5ec;
+        --border: #e2e0d8;
+        --border-strong: #c8c5bb;
+        --radius: 10px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+      }
+      body {
+        font-family: "Sora", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        min-height: 100vh;
+        line-height: 1.6;
+      }
 
-  main{max-width:840px;margin:0 auto;padding:40px 24px 80px}
+      nav {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav-inner {
+        max-width: 840px;
+        margin: 0 auto;
+        padding: 0 24px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        font-family: "DM Serif Display", serif;
+        font-size: 22px;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .logo-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .nav-links {
+        display: flex;
+        gap: 4px;
+        list-style: none;
+      }
+      .nav-links a {
+        font-size: 13px;
+        font-weight: 500;
+        padding: 6px 14px;
+        border-radius: 100px;
+        color: var(--ink2);
+        text-decoration: none;
+        transition: all 0.18s;
+      }
+      .nav-links a:hover {
+        background: var(--surface2);
+        color: var(--ink);
+      }
+      .nav-links a.active {
+        background: var(--accent);
+        color: #fff;
+      }
 
-  .page-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border:1px solid rgba(45,91,227,.15);padding:5px 12px;border-radius:100px;margin-bottom:18px}
-  h1.page-title{font-family:'DM Serif Display',serif;font-size:34px;line-height:1.2;color:var(--ink);margin-bottom:6px}
-  .page-sub{font-size:14px;color:var(--ink3);margin-bottom:36px;max-width:480px}
+      ul{
+        padding: 0.2rem 1rem;
+      }
+      main {
+        max-width: 840px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+      }
 
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px;box-shadow:var(--shadow);margin-bottom:24px}
+      .page-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: var(--accent-soft);
+        border: 1px solid rgba(45, 91, 227, 0.15);
+        padding: 5px 12px;
+        border-radius: 100px;
+        margin-bottom: 18px;
+      }
+      h1.page-title {
+        font-family: "DM Serif Display", serif;
+        font-size: 34px;
+        line-height: 1.2;
+        color: var(--ink);
+        margin-bottom: 6px;
+      }
+      .page-sub {
+        font-size: 14px;
+        color: var(--ink3);
+        margin-bottom: 36px;
+        max-width: 480px;
+      }
+     
+      .app-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        padding: 32px;
+        box-shadow: var(--shadow);
+        margin-bottom: 24px;
+      }
 
-  .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
-  .form-group label{font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase}
+      .bg-danger-cust {
+        background-color: rgba(255, 2, 2, 0.195);
+      }
 
-  input,select,textarea{
-    font-family:'Sora',sans-serif;font-size:14px;color:var(--ink);
-    background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);
-    padding:10px 14px;width:100%;outline:none;transition:all .15s;resize:vertical
-  }
-  input:focus,select:focus,textarea:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(45,91,227,.1)}
-  textarea::placeholder{color:var(--ink3)}
-  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7f92' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+      .form-group label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink2);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
 
-  /* TEXT INPUTS stacked */
-  #textInputs{display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
-  .text-input{min-height:90px}
+      input,
+      select,
+      textarea {
+        font-family: "Sora", sans-serif;
+        font-size: 14px;
+        color: var(--ink);
+        background: var(--surface2);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 10px 14px;
+        width: 100%;
+        outline: none;
+        transition: all 0.15s;
+        resize: vertical;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--accent);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(45, 91, 227, 0.1);
+      }
+      textarea::placeholder {
+        color: var(--ink3);
+      }
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7f92' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 38px;
+      }
 
-  /* UPLOAD AREA */
-  .upload-area{
-    border:2px dashed var(--border-strong);border-radius:var(--radius-lg);
-    padding:40px 24px;text-align:center;cursor:pointer;
-    transition:all .2s;background:var(--surface2);
-    display:flex;flex-direction:column;align-items:center;gap:10px
-  }
-  .upload-area:hover{border-color:var(--accent);background:var(--accent-soft)}
-  .upload-area i{font-size:32px;color:var(--ink3)}
-  .upload-area:hover i{color:var(--accent)}
-  .upload-area p{font-size:14px;color:var(--ink3);font-weight:500}
-  .upload-area:hover p{color:var(--accent)}
+      /* TEXT INPUTS stacked */
+      #textInputs {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .text-input {
+        min-height: 90px;
+      }
 
-  /* FILE LIST */
-  .file-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;margin-bottom:0}
-  .file-item{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:9px 14px;font-size:13px;color:var(--ink2)}
-  .file-item i{color:var(--accent);font-size:15px;flex-shrink:0}
+      /* UPLOAD AREA */
+      .upload-area {
+        border: 2px dashed var(--border-strong);
+        border-radius: var(--radius-lg);
+        padding: 40px 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--surface2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .upload-area:hover {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+      }
+      .upload-area i {
+        font-size: 32px;
+        color: var(--ink3);
+      }
+      .upload-area:hover i {
+        color: var(--accent);
+      }
+      .upload-area p {
+        font-size: 14px;
+        color: var(--ink3);
+        font-weight: 500;
+      }
+      .upload-area:hover p {
+        color: var(--accent);
+      }
 
-  /* BUTTONS */
-  .btn-primary{
-    width:100%;margin-top:24px;padding:14px 28px;
-    background:var(--ink);color:#fff;
-    font-family:'Sora',sans-serif;font-size:15px;font-weight:600;
-    border:none;border-radius:var(--radius);cursor:pointer;
-    display:flex;align-items:center;justify-content:center;gap:10px;
-    transition:all .18s;letter-spacing:.01em
-  }
-  .btn-primary:hover{background:var(--accent);transform:translateY(-1px);box-shadow:0 4px 20px rgba(45,91,227,.28)}
-  .btn-primary:active{transform:translateY(0)}
+      /* FILE LIST */
+      .file-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 12px;
+        margin-bottom: 0;
+      }
+      .file-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 9px 14px;
+        font-size: 13px;
+        color: var(--ink2);
+      }
+      .file-item i {
+        color: var(--accent);
+        font-size: 15px;
+        flex-shrink: 0;
+      }
 
-  .btn-secondary{
-    display:inline-flex;align-items:center;gap:7px;
-    font-family:'Sora',sans-serif;font-size:13px;font-weight:600;
-    background:transparent;color:var(--ink2);
-    border:1.5px solid var(--border-strong);border-radius:var(--radius);
-    padding:8px 16px;cursor:pointer;transition:all .18s;margin-top:4px
-  }
-  .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+      /* BUTTONS */
+      .btn-primary {
+        width: 100%;
+        margin-top: 24px;
+        padding: 14px 28px;
+        background: var(--ink);
+        color: #fff;
+        font-family: "Sora", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.18s;
+        letter-spacing: 0.01em;
+      }
+      .btn-primary:hover {
+        background: var(--accent);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(45, 91, 227, 0.28);
+      }
+      .btn-primary:active {
+        transform: translateY(0);
+      }
 
-  .btn-analisis:disabled {
-  opacity: 0.6 !important;
-  cursor: not-allowed !important;
-}
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-family: "Sora", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        background: transparent;
+        color: var(--ink2);
+        border: 1.5px solid var(--border-strong);
+        border-radius: var(--radius);
+        padding: 8px 16px;
+        cursor: pointer;
+        transition: all 0.18s;
+        margin-top: 4px;
+      }
+      .btn-secondary:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-soft);
+      }
 
+      .btn-analisis:disabled {
+        opacity: 0.6 !important;
+        cursor: not-allowed !important;
+      }
 
-  /* RESULT */
-  .result-card{border-left:4px solid var(--accent)}
-  .result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
-  .result-header h3{font-family:'DM Serif Display',serif;font-size:20px;color:var(--ink)}
+      /* RESULT */
+      .result-card {
+        border-left: 4px solid var(--accent);
+      }
+      .result-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .result-header h3 {
+        font-family: "DM Serif Display", serif;
+        font-size: 20px;
+        color: var(--ink);
+      }
 
-  .hidden{display:none!important}
+      .hidden {
+        display: none !important;
+      }
 
-  #correction-output{font-size:14px;line-height:1.8;color:var(--ink2)}
-  #correction-output h1,#correction-output h2,#correction-output h3{font-family:'DM Serif Display',serif;color:var(--ink);margin:1.2em 0 .4em}
-  #correction-output table{width:100%;border-collapse:collapse;font-size:13px;margin:1em 0}
-  #correction-output th{background:var(--surface2);font-weight:600;padding:8px 12px;text-align:left;border:1px solid var(--border)}
-  #correction-output td{padding:8px 12px;border:1px solid var(--border)}
-  #correction-output tr:nth-child(even) td{background:var(--surface2)}
+      #correction-output {
+        font-size: 14px;
+        line-height: 1.8;
+        color: var(--ink2);
+      }
+      #correction-output h1,
+      #correction-output h2,
+      #correction-output h3 {
+        font-family: "DM Serif Display", serif;
+        color: var(--ink);
+        margin: 1.2em 0 0.4em;
+      }
+      #correction-output table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin: 1em 0;
+      }
+      #correction-output th {
+        background: var(--surface2);
+        font-weight: 600;
+        padding: 8px 12px;
+        text-align: left;
+        border: 1px solid var(--border);
+      }
+      #correction-output td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+      }
+      #correction-output tr:nth-child(even) td {
+        background: var(--surface2);
+      }
 
-
-</style>
+      .pdfNumberUploaded{
+        font-size: 1.2rem !important;
+        color: red !important;
+      }
+    </style>
   </head>
-<!---->
+  <!---->
   <body>
-    
-
-
-<nav>
-  <div class="nav-inner">
-    <div class="logo"><span class="logo-dot"></span> CorAI</div>
-    <ul class="nav-links">
-      <li><a href="index.html">Generator RPP</a></li>
-      <li><a href="plagiasi.html" class="active">Koreksi Plagiasi</a></li>
-    </ul>
-  </div>
-</nav>
-
-<main>
-  <div class="page-eyebrow">✦ Deteksi Otomatis</div>
-  <h1 class="page-title">Koreksi Plagiasi</h1>
-  <p class="page-sub">Input tugas siswa untuk dianalisis kesamaan dan indikasi plagiasi secara otomatis.</p>
-
-  <section class="app-section active">
-    <div class="card">
-      <form id="plagiasiForm">
-
-        <div class="form-group">
-          <label>Pilih Mode Input</label>
-          <select id="inputMode">
-            <option value="pdf" selected>Upload PDF (Direkomendasikan)</option>
-            <option value="text">Input Teks</option>
-          </select>
-        </div>
-
-        <!-- TEXT MODE -->
-        <div id="textContainer" style="display:none;">
-          <div class="form-group">
-            <label>Jawaban Siswa</label>
-            <div id="textInputs">
-              <textarea class="text-input" rows="4" placeholder="Jawaban siswa 1"></textarea>
-              <textarea class="text-input" rows="4" placeholder="Jawaban siswa 2"></textarea>
-            </div>
-            <button type="button" id="addText" class="btn-secondary">+ Tambah Jawaban</button>
-          </div>
-        </div>
-
-        <!-- PDF MODE -->
-        <div id="pdfContainer">
-          <div class="form-group">
-            <label>Upload File PDF</label>
-            <div class="upload-area" id="dropZone">
-              <i class="fas fa-file-pdf"></i>
-              <p id="pdfDragFile">Klik atau seret file PDF ke sini</p> <br><span style="color: red;">*Maks. 5MB</span> <br><span style="color: red;">*Maks. 5 FIle sekaligus</span>
-              <input type="file" id="pdfInput" accept="application/pdf" multiple hidden />
-            </div>
-          </div>
-        </div>
-
-        <div id="fileList" class="file-list"></div>
-
-        <button type="submit" class="btn-primary">
-          <i class="fas fa-search"></i> Analisis Jawaban
-        </button>
-
-      </form>
-    </div>
-
-    <!-- RESULT -->
-    <div id="correction-result" class="card result-card hidden">
-      <div class="result-header">
-        <h3>Hasil Analisis</h3>
-        <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--green);background:var(--green-soft);border:1px solid rgba(26,158,106,.2);padding:4px 10px;border-radius:100px;letter-spacing:.04em">
-          ✓ Selesai dianalisis
-        </div>
+    <nav>
+      <div class="nav-inner">
+        <div class="logo"><span class="logo-dot"></span> CorAI</div>
+        <ul class="nav-links">
+          <li><a href="index.html">Generator RPP</a></li>
+          <li><a href="plagiasi.html" class="active">Koreksi Plagiasi</a></li>
+        </ul>
       </div>
-      <div id="correction-output" class="markdown-body"></div>
-    </div>
-  </section>
-</main>
+    </nav>
+
+    <main>
+      <div class="page-eyebrow">✦ Deteksi Otomatis</div>
+      <h1 class="page-title">Koreksi Plagiasi</h1>
+      <p class="page-sub">
+        Input tugas siswa untuk dianalisis kesamaan dan indikasi plagiasi secara
+        otomatis.
+      </p>
+
+      <section class="app-section active">
+        <div class="app-card">
+          <form id="plagiasiForm">
+            <div class="form-group">
+              <label>Pilih Mode Input</label>
+              <select id="inputMode">
+                <option value="pdf" selected>
+                  Upload PDF (Direkomendasikan)
+                </option>
+                <option value="text">Input Teks</option>
+              </select>
+            </div>
+
+            <!-- TEXT MODE -->
+            <div id="textContainer" style="display: none">
+              <div class="form-group">
+                <label>Jawaban Siswa</label>
+                <div id="textInputs">
+                  <textarea
+                    class="text-input"
+                    rows="4"
+                    placeholder="Jawaban siswa 1"
+                  ></textarea>
+                  <textarea
+                    class="text-input"
+                    rows="4"
+                    placeholder="Jawaban siswa 2"
+                  ></textarea>
+                </div>
+                <button type="button" id="addText" class="btn-secondary">
+                  + Tambah Jawaban
+                </button>
+              </div>
+            </div>
+
+            <!-- PDF MODE -->
+            <div id="pdfContainer">
+              <div class="form-group">
+                <label>Upload File PDF</label>
+
+                <div class="upload-area" id="dropZone">
+                  <i class="fas fa-file-pdf"></i>
+                  <p id="pdfDragFile">Klik atau seret file PDF ke sini</p>
+                  <input
+                    type="file"
+                    id="pdfInput"
+                    accept="application/pdf"
+                    multiple
+                    hidden
+                  />
+                </div>
+                <br />
+                <div
+                  class="card border-warning text-danger bg-danger-cust mb-3"
+                  style="max-width: max-content"
+                >
+                  <div class="card-header">Catatan Penting</div>
+                  <div class="card-body">
+                    <ul>
+                      <li>
+                        <span style="font-size: small" class="card-text">
+                          Deteksi plagiasi bersifat indikatif, tetap disarankan
+                          melakukan pemeriksaan manual.
+                        </span>
+                      </li>
+                      <br />
+                      <li>
+                        <span style="font-size: small" class="card-text"
+                          >Maks. Ukuran File 5MB</span
+                        >
+                      </li>
+                      <br />
+                      <li>
+                        <span style="font-size: small" class="card-text"
+                          >Maks. Upload 5 File sekaligus</span
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="fileList" class="file-list"></div>
+
+            <button type="submit" class="btn-primary">
+              <i class="fas fa-search"></i> Analisis Jawaban
+            </button>
+          </form>
+        </div>
+
+        <!-- RESULT -->
+        <div id="correction-result" class="app-card result-card hidden">
+          <div class="result-header">
+            <h3>Hasil Analisis</h3>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 11px;
+                font-weight: 600;
+                color: var(--green);
+                background: var(--green-soft);
+                border: 1px solid rgba(26, 158, 106, 0.2);
+                padding: 4px 10px;
+                border-radius: 100px;
+                letter-spacing: 0.04em;
+              "
+            >
+              ✓ Selesai dianalisis
+            </div>
+          </div>
+          <div id="correction-output" class="markdown-body"></div>
+        </div>
+      </section>
+    </main>
 
     <!-- SCRIPT -->
     <script defer src="js/utils.js"></script>
     <script defer src="js/components.js"></script>
     <!-- <script defer src="js/script.js"></script> -->
     <script defer src="js/plagiasi.js"></script>
-
   </body>
-
 </html>

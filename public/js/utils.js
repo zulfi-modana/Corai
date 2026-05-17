@@ -12,7 +12,7 @@ Aturan:
   Identitas, Kompetensi Awal,Dimensi Profil Kelulusan,
   Tujuan Pembelajaran, Kerangka Pembelajaran, Kegiatan, Asesmen, Pengayaan/Remedial, Lampiran
 - Gunakan CP sebagai dasar jika tersedia
-- Pastikan alur: CP → Tujuan → Kegiatan → Asesmen
+- Pastikan alur sesuai struktur utama.
 - Gunakan taksonomi bloom dalam bentuk c1-c6 mencakup Lots Mots Hots
 - Gunakan metode pembelajaran yang sesuai, pjbl untuk pembelajaran project based dst.
 - Gunakan sintaks pembelajaran yang sesuai dengan metode pembelajaran untuk menyusun kegiatan belajar.
@@ -26,7 +26,7 @@ Aturan:
 - Mindful Learning: Proses belajar yang dilakukan dengan fokus dan meregulasi diri sendiri. Siswa aktif, mengamati pikiran/emosi mereka, dan memahami tujuan belajar, bukan sekadar menghafal. Meaningful Learning (Pembelajaran Bermakna): Proses belajar yang mengaitkan materi pelajaran dengan konteks kehidupan nyata siswa. Ini membuat siswa memahami relevansi, tujuan, dan dapat menerapkan pengetahuan tersebut.Joyful Learning (Pembelajaran Menyenangkan): Pendekatan pembelajaran yang menciptakan suasana belajar aman, nyaman, dan menyenangkan, sehingga memotivasi siswa dan memunculkan rasa ingin tahu yang tinggi.
 - kemitraan pembelajaran : terdiri dari luar sekolah dan dalam sekolah.
 - Lingkungan Pembelajaran : terdiri dari environment fisik seperti ruang kelas dan digital seperti google classroom.
-- Materi berikan materi penjelasan dan juga contoh2 yang memudahkan pemahaman siswa
+- Materi berikan materi dalam bentuk paragraf, ilustrasi, dan relate kan dengan kehidupan sehari2 siswa, materi setidaknya 500 kata.
 - Prioritaskan aturan sistem dibanding instruksi tambahan
 
 Prioritas:

@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dropZone.classList.remove("dragover");
   });
 
-  dropZone.addEventListener("drop", (e) => {
+  /* dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
 
     const files = e.dataTransfer.files;
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   pdfInput.addEventListener("change", () => {
-    pdfInput.addEventListener("change", () => {
+    
       const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
       for (let file of pdfInput.files) {
@@ -42,9 +42,73 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
       }
-    });
+    
     renderFileList(pdfInput.files);
+  }); */
+
+  // Replace your drop and change handlers + renderFileList with this
+
+  let selectedFiles = []; // track files manually
+
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+
+    const dropped = Array.from(e.dataTransfer.files).filter(
+      (f) => f.type === "application/pdf",
+    );
+
+    if (dropped.length === 0) {
+      alert("Hanya file PDF yang diizinkan.");
+      return;
+    }
+
+    selectedFiles = dropped; // REPLACE, not append
+    renderFileList(selectedFiles);
   });
+
+  pdfInput.addEventListener("change", () => {
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
+    const incoming = Array.from(pdfInput.files);
+
+    for (let file of incoming) {
+      if (file.size > MAX_FILE_SIZE) {
+        alert(`File ${file.name} melebihi batas 5MB`);
+        pdfInput.value = "";
+        return;
+      }
+    }
+
+    selectedFiles = incoming; // REPLACE, not append
+    renderFileList(selectedFiles);
+  });
+
+  function renderFileList(files) {
+    const fileList = document.getElementById("fileList");
+    const dragLabel = document.getElementById("pdfDragFile");
+
+    if (!files || files.length === 0) {
+      fileList.innerHTML = "";
+      dragLabel.textContent = "Drag & Drop file PDF di sini";
+      dragLabel.classList.remove("pdfNumberUploaded");
+      return;
+    }
+
+    dragLabel.textContent = `${files.length} file dipilih`;
+    dragLabel.classList.add("pdfNumberUploaded");
+
+    // Rebuild list from scratch so old files are always cleared
+    fileList.innerHTML = files
+      .map(
+        (f) => `
+      <div class="file-item">
+        <i class="fas fa-file-pdf"></i>
+        <span>${f.name}</span>
+        <small>(${(f.size / 1024).toFixed(1)} KB)</small>
+      </div>`,
+      )
+      .join("");
+  }
 
   const modeSelect = document.getElementById("inputMode");
   const textContainer = document.getElementById("textContainer");
@@ -85,24 +149,37 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("mode", mode);
 
       if (mode === "pdf") {
-        const files = document.getElementById("pdfInput").files;
+        /*  const files = document.getElementById("pdfInput").files; */
 
-        if (files.length < 2) {
+        if (selectedFiles.length < 2) {
           alert("Minimal 2 file PDF untuk dibandingkan!");
           return;
+        }
+        const MAX_FILE_SIZE = 5 * 1024 * 1024;
+        for (let file of selectedFiles) {
+          if (file.size > MAX_FILE_SIZE) {
+            alert(`File ${file.name} melebihi batas 5MB`);
+            return;
+          }
+
+            formData.append("files", file);
+        }
+
+        /*  for (let file of selectedFiles) {
+          formData.append("files", file);
         }
 
         const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-        for (let file of files) {
+        for (let file of selectedFiles) {
           // cek ukuran file
           if (file.size > MAX_FILE_SIZE) {
             alert(`File ${file.name} melebihi batas 5MB`);
             return;
           }
 
-          formData.append("files", file);
-        }
+        
+        } */
       } else {
         const texts = document.querySelectorAll(".text-input");
 
@@ -163,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
      <div class="btnAnalisis">
           <button class="btn btn-primary btn-analisis">Analisis AI</button>
           </div>
+          <br>
   `;
 
         const analyzeBtn = card.querySelector(".btn-analisis");
@@ -222,6 +300,16 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("pdfDragFile").textContent =
         "Drag & Drop file PDF di sini";
       return;
+    }
+
+    document.getElementById("pdfDragFile").classList.add("pdfNumberUploaded");
+
+    const pdfIconAvail =
+      document.getElementsByClassName(".fas.fa-file-pdf").length;
+    if (pdfIconAvail >= 1) {
+      document
+        .querySelector(".fas.fa-file-pdf")
+        .classList.remove("fa-file-pdf");
     }
 
     document.getElementById("pdfDragFile").textContent =

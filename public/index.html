@@ -1,268 +1,458 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CorAI</title>
-</head>
-<body>
-  <style>
-  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap');
-
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --ink:#0f1117;--ink2:#3a3d4a;--ink3:#7a7f92;
-    --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0efe9;
-    --accent:#2d5be3;--accent-soft:#e8edfc;--accent-dark:#1a3dab;
-    --green:#1a9e6a;--green-soft:#e1f5ec;
-    --border:#e2e0d8;--border-strong:#c8c5bb;
-    --radius:10px;--radius-lg:16px;--radius-xl:24px;
-    --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.04);
-  }
-  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.6}
-
-  /* NAV */
-  nav{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-  .nav-inner{max-width:840px;margin:0 auto;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between}
-  .logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);display:flex;align-items:center;gap:8px}
-  .logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;display:inline-block}
-  .nav-links{display:flex;gap:4px;list-style:none}
-  .nav-links a{font-size:13px;font-weight:500;padding:6px 14px;border-radius:100px;color:var(--ink2);text-decoration:none;transition:all .18s}
-  .nav-links a:hover{background:var(--surface2);color:var(--ink)}
-  .nav-links a.active{background:var(--accent);color:#fff}
-
-  /* MAIN */
-  main{max-width:840px;margin:0 auto;padding:40px 24px 80px}
-
-  /* HERO LABEL */
-  .page-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border:1px solid rgba(45,91,227,.15);padding:5px 12px;border-radius:100px;margin-bottom:18px}
-  .page-eyebrow i{font-size:12px}
-
-  h1.page-title{font-family:'DM Serif Display',serif;font-size:34px;line-height:1.2;color:var(--ink);margin-bottom:6px}
-  .page-sub{font-size:14px;color:var(--ink3);margin-bottom:36px;max-width:480px}
-
-  /* CARD */
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px;box-shadow:var(--shadow);margin-bottom:24px}
-
-  /* FORM GRID */
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-  @media(max-width:560px){.form-grid{grid-template-columns:1fr}}
-
-  .form-group{display:flex;flex-direction:column;gap:6px}
-  .form-group label{font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase}
-
-  input,select,textarea{
-    font-family:'Sora',sans-serif;font-size:14px;color:var(--ink);
-    background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);
-    padding:10px 14px;width:100%;outline:none;transition:all .15s;resize:vertical
-  }
-  input:focus,select:focus,textarea:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(45,91,227,.1)}
-  input::placeholder,textarea::placeholder{color:var(--ink3)}
-  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7f92' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
-
-  /* DIVIDER */
-  .section-sep{display:flex;align-items:center;gap:12px;margin:20px 0}
-  .section-sep span{font-size:11px;font-weight:600;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-  .section-sep::before,.section-sep::after{content:'';flex:1;height:1px;background:var(--border)}
-
-  /* ADVANCED TOGGLE */
-  .advanced-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--ink3);border:1px dashed var(--border-strong);border-radius:var(--radius);padding:9px 16px;cursor:pointer;transition:all .18s;width:100%;justify-content:center}
-  .advanced-toggle:hover{color:var(--ink);border-color:var(--ink3);background:var(--surface2)}
-  .advanced-toggle i{font-size:14px}
-  .advanced-toggle.locked{opacity:.5;cursor:default}
-  .advanced-toggle.locked:hover{color:var(--ink3);border-color:var(--border-strong);background:none}
-
-  .hidden{display:none!important}
-
-  /* SUBMIT BTN */
-  .btn-primary{
-    width:100%;margin-top:24px;padding:14px 28px;
-    background:var(--ink);color:#fff;
-    font-family:'Sora',sans-serif;font-size:15px;font-weight:600;
-    border:none;border-radius:var(--radius);cursor:pointer;
-    display:flex;align-items:center;justify-content:center;gap:10px;
-    transition:all .18s;letter-spacing:.01em
-  }
-  .btn-primary:hover{background:var(--accent);transform:translateY(-1px);box-shadow:0 4px 20px rgba(45,91,227,.28)}
-  .btn-primary:active{transform:translateY(0)}
-  .btn-primary i{font-size:16px}
-
-  /* RESULT */
-  .result-card{border-left:4px solid var(--accent)}
-  .result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
-  .result-header h3{font-family:'DM Serif Display',serif;font-size:20px;color:var(--ink)}
-  .result-badge{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--green);background:var(--green-soft);border:1px solid rgba(26,158,106,.2);padding:4px 10px;border-radius:100px;letter-spacing:.04em}
-
-  .btn-secondary{
-    display:flex;align-items:center;gap:7px;
-    font-family:'Sora',sans-serif;font-size:13px;font-weight:600;
-    background:var(--ink);color:#fff;
-    border:none;border-radius:var(--radius);padding:8px 18px;cursor:pointer;transition:all .18s
-  }
-  .btn-secondary:hover{background:var(--accent);box-shadow:0 2px 12px rgba(45,91,227,.24)}
-  .btn-secondary i{font-size:14px}
-  .btn-secondary p{margin:0;display:inline}
-
-  /* MARKDOWN OUTPUT */
-  #rpp-output{font-size:14px;line-height:1.8;color:var(--ink2)}
-  #rpp-output h1,#rpp-output h2,#rpp-output h3{font-family:'DM Serif Display',serif;color:var(--ink);margin:1.2em 0 .4em}
-  #rpp-output p{margin:.5em 0}
-  #rpp-output table{width:100%;border-collapse:collapse;font-size:13px;margin:1em 0}
-  #rpp-output th{background:var(--surface2);font-weight:600;padding:8px 12px;text-align:left;border:1px solid var(--border)}
-  #rpp-output td{padding:8px 12px;border:1px solid var(--border)}
-  #rpp-output tr:nth-child(even) td{background:var(--surface2)}
-
-  /* TOAST */
-  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ink);color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:500;padding:10px 20px;border-radius:100px;opacity:0;pointer-events:none;transition:all .3s;z-index:999}
-  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-</style>
-
-<nav>
-  <div class="nav-inner">
-    <div class="logo"><span class="logo-dot"></span> CorAI</div>
-    <ul class="nav-links">
-      <li><a href="index.html" class="active">Generator RPP</a></li>
-      <li><a href="plagiasi.html">Koreksi Plagiasi</a></li>
-    </ul>
-  </div>
-</nav>
-
-<main>
-  <div class="page-eyebrow"><i>✦</i> Kurikulum Merdeka</div>
-  <h1 class="page-title">Generator Modul Ajar & RPP</h1>
-  <p class="page-sub">Sesuaikan input di bawah untuk menghasilkan RPP Kurikulum Merdeka secara otomatis dan profesional.</p>
-
-  <section id="generator-section" class="app-section active">
-    <div class="card">
-      <form id="rpp-form">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="schoolName">Nama Sekolah</label>
-            <input type="text" id="schoolName" placeholder="Contoh: SMK Nasional" required />
-          </div>
-          <div class="form-group">
-            <label for="taskOption">Jenis Tugas</label>
-            <select id="taskOption">
-              <option value="Praktik">Praktik</option>
-              <option value="Soal-Uraian">Soal Uraian</option>
-              <option value="Pilihan-Ganda">Pilihan Ganda</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="jurusan">Jurusan</label>
-            <input type="text" id="jurusan" placeholder="Contoh: Rekayasa Perangkat Lunak" required />
-          </div>
-          <div class="form-group">
-            <label for="subject">Bidang Studi</label>
-            <input type="text" id="subject" placeholder="Contoh: Pemrograman Website" required />
-          </div>
-          <div class="form-group">
-            <label for="gradeLevel">Fase / Kelas</label>
-            <input type="text" id="gradeLevel" placeholder="Contoh: Fase F / Kelas 11" required />
-          </div>
-        </div>
-
-        <div class="form-group" style="margin-bottom:16px">
-          <label for="topic">Topik / Materi Pokok</label>
-          <textarea id="topic" rows="3" placeholder="Contoh: Pengenalan HTML dan struktur dasar halaman web"></textarea>
-        </div>
-
-        <div class="section-sep"><span>Opsional</span></div>
-
-        <div class="advanced-toggle locked" id="advancedToggle">
-          <i>⚙</i> Kustomisasi Prompt API (Lanjutan)
-        </div>
-
-        <div id="prompt-config" class="hidden">
-          <div class="form-group" style="margin-top:14px">
-            <label for="userInstruction">Kustomisasi Output</label>
-            <textarea id="userInstruction" rows="3" placeholder="Contoh: gunakan bahasa lebih baku / buat soal HOTS / tambahkan indikator C6"></textarea>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-primary" id="btnGenerate">
-          <i>📄</i> Generate RPP Sekarang
-        </button>
-      </form>
-    </div>
-
-    <div id="result-container" class="card result-card hidden">
-      <div class="result-header">
-        <div>
-          <h3>Hasil Generasi</h3>
-          <div class="result-badge" style="margin-top:6px">✓ Selesai diproses</div>
-        </div>
-        <button class="btn-secondary" type="button" onclick="exportToWord()" id="downloadBtn">
-          <i>⬇</i> <p>Download Word</p>
-        </button>
-      </div>
-      <div id="rpp-output" class="markdown-body"></div>
-    </div>
-  </section>
-</main>
-
-<div id="toast" class="toast"></div>
-
-    <script defer src="js/utils.js"></script>
-    <script defer src="js/components.js"></script>
-    <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-
-    <script defer src="js/script.js"></script>
-</body>
-</html>
-
-
-
-
-
-<!--
 <!doctype html>
-<html lang="id">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CorAI - Generator RPP Kurikulum Merdeka</title>
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
+    <title>CorAI</title>
+       <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    /> 
   </head>
   <body>
-  -->
-     
-    
-    <!-- NAVBAR -->
-     <!--
-    <nav class="navbar">
-      <div class="container">
-        <div class="logo">
-          <i class="fas fa-graduation-cap"></i> CorAI
-        </div>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap");
+      
 
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --ink: #0f1117;
+        --ink2: #3a3d4a;
+        --ink3: #7a7f92;
+        --bg: #f5f4f0;
+        --surface: #ffffff;
+        --surface2: #f0efe9;
+        --accent: #2d5be3;
+        --accent-soft: #e8edfc;
+        --accent-dark: #1a3dab;
+        --green: #1a9e6a;
+        --green-soft: #e1f5ec;
+        --border: #e2e0d8;
+        --border-strong: #c8c5bb;
+        --radius: 10px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+      }
+      body {
+        font-family: "Sora", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      /* NAV */
+      nav {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav-inner {
+        max-width: 840px;
+        margin: 0 auto;
+        padding: 0 24px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        font-family: "DM Serif Display", serif;
+        font-size: 22px;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .logo-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .nav-links {
+        display: flex;
+        gap: 4px;
+        list-style: none;
+      }
+      .nav-links a {
+        font-size: 13px;
+        font-weight: 500;
+        padding: 6px 14px;
+        border-radius: 100px;
+        color: var(--ink2);
+        text-decoration: none;
+        transition: all 0.18s;
+      }
+      .nav-links a:hover {
+        background: var(--surface2);
+        color: var(--ink);
+      }
+      .nav-links a.active {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      /* MAIN */
+      main {
+        max-width: 840px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+      }
+
+      /* HERO LABEL */
+      .page-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: var(--accent-soft);
+        border: 1px solid rgba(45, 91, 227, 0.15);
+        padding: 5px 12px;
+        border-radius: 100px;
+        margin-bottom: 18px;
+      }
+      .page-eyebrow i {
+        font-size: 12px;
+      }
+
+      h1.page-title {
+        font-family: "DM Serif Display", serif;
+        font-size: 34px;
+        line-height: 1.2;
+        color: var(--ink);
+        margin-bottom: 6px;
+      }
+      .page-sub {
+        font-size: 14px;
+        color: var(--ink3);
+        margin-bottom: 36px;
+        max-width: 480px;
+      }
+
+      /* CARD */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        padding: 32px;
+        box-shadow: var(--shadow);
+        margin-bottom: 24px;
+      }
+
+      /* FORM GRID */
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      @media (max-width: 560px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .form-group label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink2);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      input,
+      select,
+      textarea {
+        font-family: "Sora", sans-serif;
+        font-size: 14px;
+        color: var(--ink);
+        background: var(--surface2);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 10px 14px;
+        width: 100%;
+        outline: none;
+        transition: all 0.15s;
+        resize: vertical;
+      }
+
+      input[type="checkbox"] {
+        width: fit-content !important;
+        padding: 0 !important;
+        display: inline !important;
+        
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--accent);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(45, 91, 227, 0.1);
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: var(--ink3);
+      }
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7f92' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 38px;
+      }
+
+      /* DIVIDER */
+      .section-sep {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 20px 0;
+      }
+      .section-sep span {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--ink3);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .section-sep::before,
+      .section-sep::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      /* ADVANCED TOGGLE */
+      .advanced-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ink3);
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius);
+        padding: 9px 16px;
+        cursor: pointer;
+        transition: all 0.18s;
+        width: 100%;
+        justify-content: center;
+      }
+      .advanced-toggle:hover {
+        color: var(--ink);
+        border-color: var(--ink3);
+        background: var(--surface2);
+      }
+      .advanced-toggle i {
+        font-size: 14px;
+      }
+      .advanced-toggle.locked {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .advanced-toggle.locked:hover {
+        color: var(--ink3);
+        border-color: var(--border-strong);
+        background: none;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* SUBMIT BTN */
+      .btn-primary {
+        width: 100%;
+        margin-top: 24px;
+        padding: 14px 28px;
+        background: var(--ink);
+        color: #fff;
+        font-family: "Sora", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.18s;
+        letter-spacing: 0.01em;
+      }
+      .btn-primary:hover {
+        background: var(--accent);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(45, 91, 227, 0.28);
+      }
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+      .btn-primary i {
+        font-size: 16px;
+      }
+
+      /* RESULT */
+      .result-card {
+        border-left: 4px solid var(--accent);
+      }
+      .result-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .result-header h3 {
+        font-family: "DM Serif Display", serif;
+        font-size: 20px;
+        color: var(--ink);
+      }
+      .result-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--green);
+        background: var(--green-soft);
+        border: 1px solid rgba(26, 158, 106, 0.2);
+        padding: 4px 10px;
+        border-radius: 100px;
+        letter-spacing: 0.04em;
+      }
+
+      .btn-secondary {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-family: "Sora", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        background: var(--ink);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius);
+        padding: 8px 18px;
+        cursor: pointer;
+        transition: all 0.18s;
+      }
+      .btn-secondary:hover {
+        background: var(--accent);
+        box-shadow: 0 2px 12px rgba(45, 91, 227, 0.24);
+      }
+      .btn-secondary i {
+        font-size: 14px;
+      }
+      .btn-secondary p {
+        margin: 0;
+        display: inline;
+      }
+
+      /* MARKDOWN OUTPUT */
+      #rpp-output {
+        font-size: 14px;
+        line-height: 1.8;
+        color: var(--ink2);
+      }
+      #rpp-output h1,
+      #rpp-output h2,
+      #rpp-output h3 {
+        font-family: "DM Serif Display", serif;
+        color: var(--ink);
+        margin: 1.2em 0 0.4em;
+      }
+      #rpp-output p {
+        margin: 0.5em 0;
+      }
+      #rpp-output table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin: 1em 0;
+      }
+      #rpp-output th {
+        background: var(--surface2);
+        font-weight: 600;
+        padding: 8px 12px;
+        text-align: left;
+        border: 1px solid var(--border);
+      }
+      #rpp-output td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+      }
+      #rpp-output tr:nth-child(even) td {
+        background: var(--surface2);
+      }
+
+      /* TOAST */
+      #toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(60px);
+        background: red;
+        color: #fff;
+        font-family: "Sora", sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 10px 20px;
+        border-radius: 100px;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s;
+        z-index: 999;
+      }
+      #toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    </style>
+
+    <nav>
+      <div class="nav-inner">
+        <div class="logo"><span class="logo-dot"></span> CorAI</div>
         <ul class="nav-links">
-          <li>
-            <a href="index.html" class="active">Generator RPP</a>
-          </li>
-          <li>
-            <a href="plagiasi.html" >Koreksi Plagiasi</a>
-          </li>
+          <li><a href="index.html" class="active">Generator RPP</a></li>
+          <li><a href="plagiasi.html">Koreksi Plagiasi</a></li>
         </ul>
       </div>
     </nav>
 
+    <main>
+      <div class="page-eyebrow"><i>✦</i> Kurikulum Merdeka</div>
+      <h1 class="page-title">Generator Modul Ajar</h1>
+      <p class="page-sub">
+        Sesuaikan input di bawah untuk menghasilkan RPP Kurikulum Merdeka secara
+        otomatis dan profesional.
+      </p>
 
-    <main class="container">
       <section id="generator-section" class="app-section active">
         <div class="card">
-          <h2>
-            <i class="fas fa-file-invoice"></i> Generator Modul Ajar / RPP
-          </h2>
-          <p class="subtitle">
-            Sesuaikan input untuk menghasilkan RPP Kurikulum Merdeka otomatis.
-          </p>
           <form id="rpp-form">
             <div class="form-grid">
               <div class="form-group">
@@ -270,8 +460,8 @@
                 <input
                   type="text"
                   id="schoolName"
-                  placeholder="Contoh: SMK NASIONAL "
-                  required
+                  placeholder="Contoh: SMK Nasional"
+                 
                 />
               </div>
               <div class="form-group">
@@ -280,16 +470,16 @@
                   <option value="Praktik">Praktik</option>
                   <option value="Soal-Uraian">Soal Uraian</option>
                   <option value="Pilihan-Ganda">Pilihan Ganda</option>
-                  
                 </select>
               </div>
-                <div class="form-group">
-                <label for="subject">Jurusan</label>
+
+              <div class="form-group">
+                <label for="jurusan">Jurusan</label>
                 <input
                   type="text"
                   id="jurusan"
-                  placeholder="Contoh: Rekayasa perangkat lunak"
-                  required
+                  placeholder="Contoh: Rekayasa Perangkat Lunak"
+                 
                 />
               </div>
               <div class="form-group">
@@ -298,7 +488,7 @@
                   type="text"
                   id="subject"
                   placeholder="Contoh: Pemrograman Website"
-                  required
+               
                 />
               </div>
               <div class="form-group">
@@ -307,78 +497,216 @@
                   type="text"
                   id="gradeLevel"
                   placeholder="Contoh: Fase F / Kelas 11"
-                  required
+                  
                 />
+              </div>
+
+
+                  <div class="form-group">
+                <label for="metode">Metode Pembelajaran</label>
+                <input
+                  type="text"
+                  id="metode"
+                  placeholder="Metode Project Based Learnning"
+                  
+                />
+              </div>
+              <div class="form-group">
+                <label for="tujuan">Tujuan</label>
+               <!--  <input
+                  type="text"
+                  id="tujuan"
+                  placeholder="Contoh: Siswa mampu menerapkan style CSS"
+                 
+                /> -->
+                <textarea rows="3" name="tujuan" id="tujuan" placeholder="1.Siswa mampu menerapkan style css  2. siswa mampu menerapkan table html"></textarea>
               </div>
             </div>
 
             <div class="form-group">
+              <label for="customCP" hidden class="cpLabel">CP</label>
+              <textarea
+                id="customCP"
+                placeholder="Contoh: Siswa pada fase f mampu memahami struktur dasar html dan css..."
+                hidden
+              ></textarea>
+            </div>
+            <br />
+
+            <div class="form-group" style="margin-bottom: 16px">
               <label for="topic">Topik / Materi Pokok</label>
               <textarea
                 id="topic"
-                rows="2"
-                placeholder="Contoh: Pengenalan HTML"
+                rows="3"
+                placeholder="Contoh: Pengenalan HTML dan struktur dasar halaman web"
               ></textarea>
             </div>
 
-            <div
-              class="advanced-toggle locked"
-              id="advancedToggle"
-            
-            >
-              <i class="fas fa-cog"></i> Kustomisasi Prompt API (Lanjutan)
+            <div class="form-group" style="margin-bottom: 0">
+              <p>Dimensi Profil Kelulusan</p>
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <input
+                type="checkbox"
+                name="DPK1"
+                id="DPK1"
+                value="DPL 1 Keimanan dan Ketakwaan terhadap Tuhan YME"
+              />
+              <label for="DPK1" style="font-size: 0.65rem">
+                DPL 1 Keimanan dan Ketakwaan terhadap Tuhan YME
+              </label>
+              </div>
+              <br />
+              
+
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <input
+                type="checkbox"
+                name="DPK2"
+                id="DPK2"
+                value="DPL 2 Kewargaan"
+              />
+              <label for="DPK2" style="font-size: 0.65rem">
+                DPL 2 Kewargaan
+              </label>
+              </div>
+              <br />
+
+              
+<div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <input
+                type="checkbox"
+                name="DPK3"
+                id="DPK3"
+                value="DPL 3 Penalaran Kritis"
+                
+              />
+              <label for="DPK3" style="font-size: 0.65rem">
+                DPL 3 Penalaran Kritis
+              </label>
+              </div>
+              <br />
+
+
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <input
+                type="checkbox"
+                name="DPK4"
+                id="DPK4"
+                value="DPL 4 Kreativitas"
+                
+              />
+              <label for="DPK4" style="font-size: 0.65rem">
+                DPL 4 Kreativitas
+              </label>
+              </div>
+              <br />
+
+
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <input
+                type="checkbox"
+                name="DPK5"
+                id="DPK5"
+                value="DPL 5 Kolaborasi"
+                
+              />
+              <label for="DPK5" style="font-size: 0.65rem">
+                DPL 5 Kolaborasi
+              </label>
+              </div>
+              <br />
+
+
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <input
+                type="checkbox"
+                name="DPK6"
+                id="DPK6"
+                value="DPL 6 Kemandirian"
+                
+              />
+              <label for="DPK6" style="font-size: 0.65rem">
+                DPL 6 Kemandirian
+              </label>
+              </div>
+              <br />
+
+
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <input
+                type="checkbox"
+                name="DPK7"
+                id="DPK7"
+                value="DPL 7 Kesehatan"
+              />
+              <label for="DPK7" style="font-size: 0.65rem">
+                DPL 7 Kesehatan
+              </label>
+              </div>
+              <br />
+
+
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <input
+                type="checkbox"
+                name="DPK8"
+                id="DPK8"
+                value="DPL 8 Komunikasi"
+                
+              />
+              <label for="DPK8" style="font-size: 0.65rem">
+                DPL 8 Komunikasi
+              </label>
+              </div>
+            </div>
+
+            <div class="section-sep"><span>Advanced</span></div>
+
+            <div class="advanced-toggle locked" id="advancedToggle">
+              <i>⚙</i> Kustomisasi Prompt
             </div>
 
             <div id="prompt-config" class="hidden">
-              <div class="form-group">
-              -->
-               <!--  <label for="systemPrompt">System Prompt</label>
-                <textarea id="systemPrompt" rows="4"></textarea> -->
-
-                <!--
-                <label for="userInstruction">Kustomisasi Output (Opsional)</label>
-<textarea
-  id="userInstruction"
-  rows="3"
-  placeholder="Contoh: gunakan bahasa lebih baku / buat soal HOTS / tambahkan indikator C6"
-></textarea>
-
+              <div class="form-group" style="margin-top: 14px">
+                <label for="userInstruction">Kustomisasi Output</label>
+                <textarea
+                  id="userInstruction"
+                  rows="3"
+                  placeholder="Contoh: gunakan bahasa lebih baku / buat soal HOTS / tambahkan indikator C6"
+                ></textarea>
               </div>
             </div>
 
             <button type="submit" class="btn-primary" id="btnGenerate">
-              <i class="fas fa-book"></i> Generate RPP Sekarang
+              <i>📄</i> Generate Sekarang
             </button>
-
-            
           </form>
         </div>
 
         <div id="result-container" class="card result-card hidden">
           <div class="result-header">
-            <h3>Hasil Generasi</h3>
-            
+            <div>
+              <h3>Hasil Generasi</h3>
+              <div class="result-badge" style="margin-top: 6px">
+                ✓ Selesai diproses
+              </div>
+            </div>
             <button
               class="btn-secondary"
               type="button"
               onclick="exportToWord()"
               id="downloadBtn"
             >
-              <i class="fas fa-download"></i> <p>Download Word</p>
+              <i>⬇</i>
+              <p>Download Word</p>
             </button>
           </div>
           <div id="rpp-output" class="markdown-body"></div>
         </div>
       </section>
-    -->
+    </main>
 
-    <!-- <div id="loader" class="loader-overlay hidden">
-      <div class="spinner"></div>
-      <p>Sedang memproses permintaan Anda...</p>
-    </div> -->
-
-
-    <!--
+    <div id="toast" class="toast"></div>
 
     <script defer src="js/utils.js"></script>
     <script defer src="js/components.js"></script>
@@ -386,20 +714,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <script defer src="js/script.js"></script>
-    
-  -->
-  <!--   <script>
-    
-      if (!cpAvailable) {
-  alert("⚠️ Capaian Pembelajaran tidak ditemukan, sistem menggunakan AI tanpa CP");
-}
-
-    </script> -->
-    <!--
   </body>
-
-  <div id="toast" class="toast"></div>
-
 </html>
-
--->

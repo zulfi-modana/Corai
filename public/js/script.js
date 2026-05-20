@@ -1,8 +1,8 @@
 /* let generatedRPP = null; */
 
-
-  let abortController = null;
-  let isGenerating = false;
+let abortController = null;
+let isGenerating = false;
+let btnGenerate = document.getElementById("btnGenerate");
 
 function alertSwal() {
   Swal.fire({
@@ -89,7 +89,7 @@ function cancelGenerate() {
   localStorage.removeItem("generatingLabel");
   btnGenerate.disabled = false;
   btnGenerate.innerHTML = '<i class="fas fa-magic"></i> Generate RPP Sekarang';
-  document.getElementById("btnCancel").style.display = "none"; 
+  document.getElementById("btnCancel").style.display = "none";
 }
 
 function clearGeneratedRPP() {
@@ -108,12 +108,13 @@ function clearGeneratedRPP() {
 
   setPromptCustomizationLocked(true);
 }
-
 function updateGenerateButton(text, icon = "fa-spinner") {
   btnGenerate.disabled = true;
-document.getElementById("btnCancel").style.display = "block";
 
-  // Persist current label so it survives navigation
+  btnGenerate.innerHTML = `<i class="fas ${icon} fa-spin"></i> ${text}`;
+
+  document.getElementById("btnCancel").style.display = "block";
+
   localStorage.setItem("generatingLabel", JSON.stringify({ text, icon }));
 }
 /* btn download word */
@@ -208,9 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setButtonVisibility(false);
   typeWriter();
- 
-
-
 
   const saved = localStorage.getItem("generatedRPP");
 
@@ -305,7 +303,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // RPP Generator Logic
   const rppForm = document.getElementById("rpp-form");
-  const btnGenerate = document.getElementById("btnGenerate");
 
   rppForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -444,7 +441,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("CP:", cpText);
       console.log("CP Available:", cpAvailable);
     } catch (error) {
-      if (error.name === "AbortError") return; 
+      if (error.name === "AbortError") return;
       console.error("Terjadi error saat ambil cp:", error.message);
     }
 
@@ -569,7 +566,7 @@ Tambahan struktur:
 
       btnGenerate.innerHTML =
         '<i class="fas fa-magic"></i> Generate RPP Sekarang';
-        document.getElementById("btnCancel").style.display = "none";
+      document.getElementById("btnCancel").style.display = "none";
     }
   });
 });

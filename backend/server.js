@@ -1,10 +1,18 @@
 require("dotenv").config();
 
 const express = require("express");
+const Swal = require('sweetalert2');
 const { getCapaian } = require("./scraper");
 
 const app = express();
-
+Swal.fire({
+  title: 'Auto theme',
+  theme: 'auto',
+ title: 'Error!',
+  text: 'Do you want to continue',
+  icon: 'error',
+  confirmButtonText: 'Cool'
+});
 // ===== CUSTOM QUEUE =====
 const aiQueue = {
   running: 0,
@@ -45,8 +53,8 @@ const plagiasiAnalisisRoutes = require("./plagiasi-analyze.js");
 app.use("/api/plagiasi/analyze", plagiasiAnalisisRoutes);
 
 // ===== CACHE =====
-const baseCache = new Map();      // hasil utama
-const modifiedCache = new Map();  // hasil modifikasi
+const baseCache = new Map(); // hasil utama
+const modifiedCache = new Map(); // hasil modifikasi
 
 const CACHE_TTL = 1000 * 60 * 60; // 1 jam
 
@@ -68,7 +76,7 @@ Aturan:
 
 // helper cek expired
 function isExpired(entry) {
-  return !entry || (Date.now() - entry.time > CACHE_TTL);
+  return !entry || Date.now() - entry.time > CACHE_TTL;
 }
 
 /* =========================
@@ -109,7 +117,7 @@ app.post("/api/ai", async (req, res) => {
    */
   const modifiedKey = JSON.stringify({
     baseKey,
-    userInstruction
+    userInstruction,
   });
 
   // =========================
@@ -122,7 +130,7 @@ app.post("/api/ai", async (req, res) => {
     return res.json({
       success: true,
       result: modifiedCached.data,
-      cached: "modified"
+      cached: "modified",
     });
   }
 
@@ -150,7 +158,7 @@ app.post("/api/ai", async (req, res) => {
 
     baseCache.set(baseKey, {
       data: baseResult,
-      time: Date.now()
+      time: Date.now(),
     });
 
     if (baseCache.size > 500) {
@@ -179,8 +187,8 @@ Lakukan modifikasi berikut TANPA mengubah struktur utama:
 
 ${userInstruction}
 `,
-          modifyPrompt
-        )
+          modifyPrompt,
+        ),
       );
     } catch (err) {
       return res.status(503).json({ error: err.message });
@@ -188,14 +196,14 @@ ${userInstruction}
 
     modifiedCache.set(modifiedKey, {
       data: finalResult,
-      time: Date.now()
+      time: Date.now(),
     });
   }
 
   return res.json({
     success: true,
     result: finalResult,
-    cached: false
+    cached: false,
   });
 });
 
@@ -204,13 +212,11 @@ ${userInstruction}
 ========================= */
 async function callAI(prompt, formatPrompt) {
   const models = [
-    "gemma-4-26b-a4b-it:free",
-    "gemma-4-31b-it:free",
-    
     "gpt-oss-120b:free",
     "gpt-oss-20b:free",
     "openrouter/free",
-    "gpt-oss-120b"
+    "gemma-4-26b-a4b-it:free",
+    "gemma-4-31b-it:free",
   ];
 
   for (let model of models) {
@@ -227,18 +233,21 @@ async function callAI(prompt, formatPrompt) {
           signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`
+            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           },
           body: JSON.stringify({
             model,
             messages: [
-              { role: "system", content: formatPrompt || "You are helpful assistant" },
-              { role: "user", content: prompt }
+              {
+                role: "system",
+                content: formatPrompt || "You are helpful assistant",
+              },
+              { role: "user", content: prompt },
             ],
             temperature: 0.2,
-            max_tokens: 1200
-          })
-        }
+            max_tokens: 3000,
+          }),
+        },
       );
 
       clearTimeout(timeout);
@@ -252,10 +261,9 @@ async function callAI(prompt, formatPrompt) {
       console.log(`✅ Success: ${model}`);
 
       return data.choices[0].message.content;
-
     } catch (err) {
       console.warn(`❌ Gagal di ${model}:`, err.message);
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 1000));
     }
   }
 
@@ -270,3 +278,20 @@ const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`🚀 Server jalan di http://localhost:${PORT}`);
 });
+
+/* database */
+
+const mysql = require("mysql2/promise");
+
+async function test() {
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "CorAI",
+  });
+
+  console.log("Connected!");
+}
+
+test();

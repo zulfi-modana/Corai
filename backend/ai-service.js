@@ -34,12 +34,11 @@ async function callAI(prompt, formatPrompt) {
 
 async function _callAI(prompt, formatPrompt) {
   const models = [
-    "gemma-4-26b-a4b-it:free",
-    "gemma-4-31b-it:free",
     "gpt-oss-120b:free",
     "gpt-oss-20b:free",
     "openrouter/free",
-    "gpt-oss-120b"
+    "gemma-4-26b-a4b-it:free",
+    "gemma-4-31b-it:free",
   ];
 
   for (let model of models) {
@@ -56,18 +55,21 @@ async function _callAI(prompt, formatPrompt) {
           signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`
+            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           },
           body: JSON.stringify({
             model,
             messages: [
-              { role: "system", content: formatPrompt || "You are helpful assistant" },
-              { role: "user", content: prompt }
+              {
+                role: "system",
+                content: formatPrompt || "You are helpful assistant",
+              },
+              { role: "user", content: prompt },
             ],
             temperature: 0.2,
-            max_tokens: 1200
-          })
-        }
+            max_tokens: 1200,
+          }),
+        },
       );
 
       clearTimeout(timeout);
@@ -81,10 +83,9 @@ async function _callAI(prompt, formatPrompt) {
       console.log(`✅ Success: ${model}`);
 
       return data.choices[0].message.content;
-
     } catch (err) {
       console.warn(`❌ Gagal di ${model}:`, err.message);
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 1000));
     }
   }
 

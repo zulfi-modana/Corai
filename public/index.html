@@ -4,22 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CorAI</title>
-       <link
+    <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
       crossorigin="anonymous"
-    /> 
+    />
   </head>
   <body>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap");
-      
 
       * {
         box-sizing: border-box;
-        margin: 0;
-        padding: 0;
       }
       :root {
         --ink: #0f1117;
@@ -50,6 +47,63 @@
 
       /* NAV */
       nav {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      /* The background overlay */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+      }
+
+      /* Modal Box */
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 300px;
+        border-radius: 8px;
+      }
+
+      /* Button layout */
+      .modal-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .modal-buttons button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .cancel-btn {
+        background-color: #ddd;
+      }
+      .delete-btn {
+        background-color: #f44336;
+        color: white;
+      }
+
+      nav {
+        width: 100%;
+        display: block;
+        margin: 0 !important;
+        padding: 0 !important;
         background: var(--surface);
         border-bottom: 1px solid var(--border);
         position: sticky;
@@ -200,7 +254,6 @@
         width: fit-content !important;
         padding: 0 !important;
         display: inline !important;
-        
       }
       input:focus,
       select:focus,
@@ -246,12 +299,13 @@
 
       /* ADVANCED TOGGLE */
       .advanced-toggle {
+        background-color: #1fc683;
         display: inline-flex;
         align-items: center;
         gap: 8px;
         font-size: 13px;
         font-weight: 500;
-        color: var(--ink3);
+        color: var(--ink);
         border: 1px dashed var(--border-strong);
         border-radius: var(--radius);
         padding: 9px 16px;
@@ -282,6 +336,26 @@
         display: none !important;
       }
 
+      .btn-remove-tujuan {
+        background-color: #ff2364;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        width: 34px;
+        height: 34px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-soft);
+        font-size: 14px;
+        flex-shrink: 0;
+        transition: all 0.15s;
+      }
+      .btn-remove-tujuan:hover {
+        border-color: #e24b4a;
+        color: #e24b4a;
+        background: #fcebeb;
+      }
       /* SUBMIT BTN */
       .btn-primary {
         width: 100%;
@@ -314,6 +388,16 @@
         font-size: 16px;
       }
 
+      .btn.btn-secondary.btn-delete {
+        background-color: #ff2364;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(45, 91, 227, 0.28);
+      }
+      .btn.btn-secondary.btn-delete:hover {
+        border-color: #e24b4a;
+        color: #e24b4a;
+        background: #fcebeb;
+      }
       /* RESULT */
       .result-card {
         border-left: 4px solid var(--accent);
@@ -377,6 +461,34 @@
         font-size: 14px;
         line-height: 1.8;
         color: var(--ink2);
+      }
+
+      /* cegah margin pertama dorong parent */
+      .result-card {
+        overflow: hidden;
+      }
+
+      /* reset margin atas elemen pertama hasil AI */
+      #rpp-output > *:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+      }
+
+      /* reset semua heading */
+      #rpp-output h1,
+      #rpp-output h2,
+      #rpp-output h3,
+      #rpp-output h4,
+      #rpp-output h5,
+      #rpp-output h6 {
+        margin-top: 0.8em;
+      }
+
+      /* khusus heading pertama */
+      #rpp-output h1:first-child,
+      #rpp-output h2:first-child,
+      #rpp-output h3:first-child {
+        margin-top: 0 !important;
       }
       #rpp-output h1,
       #rpp-output h2,
@@ -445,7 +557,7 @@
 
     <main>
       <div class="page-eyebrow"><i>✦</i> Kurikulum Merdeka</div>
-      <h1 class="page-title">Generator Modul Ajar</h1>
+      <h1 class="page-title" id="page-title"></h1>
       <p class="page-sub">
         Sesuaikan input di bawah untuk menghasilkan RPP Kurikulum Merdeka secara
         otomatis dan profesional.
@@ -456,12 +568,18 @@
           <form id="rpp-form">
             <div class="form-grid">
               <div class="form-group">
+                <label for="judul"
+                  >Judul
+                  <span style="color: var(--accent)">(opsional)</span></label
+                >
+                <input type="text" name="judul" id="judul" />
+              </div>
+              <div class="form-group">
                 <label for="schoolName">Nama Sekolah</label>
                 <input
                   type="text"
                   id="schoolName"
                   placeholder="Contoh: SMK Nasional"
-                 
                 />
               </div>
               <div class="form-group">
@@ -470,6 +588,7 @@
                   <option value="Praktik">Praktik</option>
                   <option value="Soal-Uraian">Soal Uraian</option>
                   <option value="Pilihan-Ganda">Pilihan Ganda</option>
+                  <option value="Projek">Projek</option>
                 </select>
               </div>
 
@@ -479,7 +598,6 @@
                   type="text"
                   id="jurusan"
                   placeholder="Contoh: Rekayasa Perangkat Lunak"
-                 
                 />
               </div>
               <div class="form-group">
@@ -488,7 +606,7 @@
                   type="text"
                   id="subject"
                   placeholder="Contoh: Pemrograman Website"
-               
+                  oninput="judulGenerate()"
                 />
               </div>
               <div class="form-group">
@@ -497,44 +615,166 @@
                   type="text"
                   id="gradeLevel"
                   placeholder="Contoh: Fase F / Kelas 11"
-                  
+                  oninput="judulGenerate()"
                 />
               </div>
 
-
-                  <div class="form-group">
-                <label for="metode">Metode Pembelajaran</label>
+              <div class="form-group">
+                <label for="metode"
+                  >Metode Pembelajaran
+                  <span style="color: var(--accent)">(opsional)</span></label
+                >
                 <input
                   type="text"
                   id="metode"
-                  placeholder="Metode Project Based Learnning"
-                  
+                  placeholder="Metode Project Based Learning"
                 />
               </div>
-              <div class="form-group">
+
+              <!--  <div class="form-group">
                 <label for="tujuan">Tujuan</label>
-               <!--  <input
-                  type="text"
-                  id="tujuan"
-                  placeholder="Contoh: Siswa mampu menerapkan style CSS"
-                 
-                /> -->
                 <textarea rows="3" name="tujuan" id="tujuan" placeholder="1.Siswa mampu menerapkan style css  2. siswa mampu menerapkan table html"></textarea>
-              </div>
+              </div>-->
             </div>
 
             <div class="form-group">
-              <label for="customCP" hidden class="cpLabel">CP</label>
+              <label
+                >Tujuan
+                <span id="tujuan-counter" style="color: red">(0/3)</span></label
+              >
+              <div id="tujuan-list">
+                <div
+                  class="tujuan-item"
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin-bottom: 10px;
+                  "
+                >
+                  <span
+                    class="tujuan-num"
+                    style="
+                      font-size: 11px;
+                      font-weight: 600;
+                      color: var(--ink3);
+                      letter-spacing: 0.06em;
+                      text-transform: uppercase;
+                      min-width: 64px;
+                    "
+                    >Tujuan 1</span
+                  >
+                  <input
+                    type="text"
+                    placeholder="Contoh: Siswa mampu menerapkan style CSS"
+                    oninput="updateTujuanCounter()"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove-tujuan"
+                    onclick="removeTujuan(this)"
+                    title="Hapus"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div
+                  class="tujuan-item"
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin-bottom: 10px;
+                  "
+                >
+                  <span
+                    class="tujuan-num"
+                    style="
+                      font-size: 11px;
+                      font-weight: 600;
+                      color: var(--ink3);
+                      letter-spacing: 0.06em;
+                      text-transform: uppercase;
+                      min-width: 64px;
+                    "
+                    >Tujuan 2</span
+                  >
+                  <input
+                    type="text"
+                    placeholder="Contoh: Siswa mampu membuat tabel HTML"
+                    oninput="updateTujuanCounter()"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove-tujuan"
+                    onclick="removeTujuan(this)"
+                    title="Hapus"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div
+                  class="tujuan-item"
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin-bottom: 10px;
+                  "
+                >
+                  <span
+                    class="tujuan-num"
+                    style="
+                      font-size: 11px;
+                      font-weight: 600;
+                      color: var(--ink3);
+                      letter-spacing: 0.06em;
+                      text-transform: uppercase;
+                      min-width: 64px;
+                    "
+                    >Tujuan 3</span
+                  >
+                  <input
+                    type="text"
+                    placeholder="Contoh: Siswa mampu memahami semantik HTML"
+                    oninput="updateTujuanCounter()"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove-tujuan"
+                    onclick="removeTujuan(this)"
+                    title="Hapus"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="advanced-toggle"
+                style="margin-top: 4px"
+                onclick="addTujuan()"
+              >
+                <i>＋</i> Tambah Tujuan
+              </button>
+            </div>
+
+            <br />
+            <div class="form-group">
+              <label for="customCP" class="cpLabel"
+                >CP <span style="color: var(--accent);">(opsional)</span></label
+              >
               <textarea
                 id="customCP"
                 placeholder="Contoh: Siswa pada fase f mampu memahami struktur dasar html dan css..."
-                hidden
+                rows="3"
+                
               ></textarea>
             </div>
             <br />
 
             <div class="form-group" style="margin-bottom: 16px">
-              <label for="topic">Topik / Materi Pokok</label>
+              <label for="topic">Topik / Materi Pokok <span style="color: var(--accent);">(opsional)</span></label>
               <textarea
                 id="topic"
                 rows="3"
@@ -544,121 +784,201 @@
 
             <div class="form-group" style="margin-bottom: 0">
               <p>Dimensi Profil Kelulusan</p>
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-              <input
-                type="checkbox"
-                name="DPK1"
-                id="DPK1"
-                value="DPL 1 Keimanan dan Ketakwaan terhadap Tuhan YME"
-              />
-              <label for="DPK1" style="font-size: 0.65rem">
-                DPL 1 Keimanan dan Ketakwaan terhadap Tuhan YME
-              </label>
-              </div>
-              <br />
-              
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                  gap: 10px 16px;
+                  margin-top: 8px;
+                "
+              >
+                <div style="display: flex; align-items: center; gap: 6px">
+                  <input
+                    type="checkbox"
+                    name="DPK1"
+                    id="DPK1"
+                    value="DPL 1 Keimanan dan Ketakwaan terhadap Tuhan YME"
+                  />
+                  <label for="DPK1" style="font-size: 0.65rem">
+                    DPL 1 Keimanan dan Ketakwaan terhadap Tuhan YME
+                  </label>
+                </div>
 
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-              <input
-                type="checkbox"
-                name="DPK2"
-                id="DPK2"
-                value="DPL 2 Kewargaan"
-              />
-              <label for="DPK2" style="font-size: 0.65rem">
-                DPL 2 Kewargaan
-              </label>
-              </div>
-              <br />
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    name="DPK2"
+                    id="DPK2"
+                    value="DPL 2 Kewargaan"
+                  />
+                  <label for="DPK2" style="font-size: 0.65rem">
+                    DPL 2 Kewargaan
+                  </label>
+                </div>
 
-              
-<div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-              <input
-                type="checkbox"
-                name="DPK3"
-                id="DPK3"
-                value="DPL 3 Penalaran Kritis"
-                
-              />
-              <label for="DPK3" style="font-size: 0.65rem">
-                DPL 3 Penalaran Kritis
-              </label>
-              </div>
-              <br />
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    name="DPK3"
+                    id="DPK3"
+                    value="DPL 3 Penalaran Kritis"
+                  />
+                  <label for="DPK3" style="font-size: 0.65rem">
+                    DPL 3 Penalaran Kritis
+                  </label>
+                </div>
 
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    name="DPK4"
+                    id="DPK4"
+                    value="DPL 4 Kreativitas"
+                  />
+                  <label for="DPK4" style="font-size: 0.65rem">
+                    DPL 4 Kreativitas
+                  </label>
+                </div>
 
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-              <input
-                type="checkbox"
-                name="DPK4"
-                id="DPK4"
-                value="DPL 4 Kreativitas"
-                
-              />
-              <label for="DPK4" style="font-size: 0.65rem">
-                DPL 4 Kreativitas
-              </label>
-              </div>
-              <br />
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    name="DPK5"
+                    id="DPK5"
+                    value="DPL 5 Kolaborasi"
+                  />
+                  <label for="DPK5" style="font-size: 0.65rem">
+                    DPL 5 Kolaborasi
+                  </label>
+                </div>
 
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    name="DPK6"
+                    id="DPK6"
+                    value="DPL 6 Kemandirian"
+                  />
+                  <label for="DPK6" style="font-size: 0.65rem">
+                    DPL 6 Kemandirian
+                  </label>
+                </div>
 
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-              <input
-                type="checkbox"
-                name="DPK5"
-                id="DPK5"
-                value="DPL 5 Kolaborasi"
-                
-              />
-              <label for="DPK5" style="font-size: 0.65rem">
-                DPL 5 Kolaborasi
-              </label>
-              </div>
-              <br />
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    name="DPK7"
+                    id="DPK7"
+                    value="DPL 7 Kesehatan"
+                  />
+                  <label for="DPK7" style="font-size: 0.65rem">
+                    DPL 7 Kesehatan
+                  </label>
+                </div>
 
-
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-              <input
-                type="checkbox"
-                name="DPK6"
-                id="DPK6"
-                value="DPL 6 Kemandirian"
-                
-              />
-              <label for="DPK6" style="font-size: 0.65rem">
-                DPL 6 Kemandirian
-              </label>
-              </div>
-              <br />
-
-
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-              <input
-                type="checkbox"
-                name="DPK7"
-                id="DPK7"
-                value="DPL 7 Kesehatan"
-              />
-              <label for="DPK7" style="font-size: 0.65rem">
-                DPL 7 Kesehatan
-              </label>
-              </div>
-              <br />
-
-
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-              <input
-                type="checkbox"
-                name="DPK8"
-                id="DPK8"
-                value="DPL 8 Komunikasi"
-                
-              />
-              <label for="DPK8" style="font-size: 0.65rem">
-                DPL 8 Komunikasi
-              </label>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    margin-bottom: 4px;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    name="DPK8"
+                    id="DPK8"
+                    value="DPL 8 Komunikasi"
+                  />
+                  <label for="DPK8" style="font-size: 0.65rem">
+                    DPL 8 Komunikasi
+                  </label>
+                </div>
               </div>
             </div>
+
+<div>
+<div style="margin-top:1rem; width:max-content;">
+              <button
+              class="btn btn-secondary btn-delete"
+              type="button"
+              onclick="
+                document.getElementById('deleteModalForm').style.display = 'block'
+              "
+            >
+              Reset Form      </button>
+              </div>
+              </div>
+
+                <div id="deleteModalForm" class="modal">
+            <div class="modal-content">
+              <div class="container">
+                <h2>Delete Item</h2>
+                <p>
+                  Apakah anda yakin ingin menghapus hasil ini?
+                </p>
+
+                <div class="modal-buttons">
+                  <button
+                  type="button"
+                    onclick="
+                      document.getElementById('deleteModalForm').style.display =
+                        'none'
+                    "
+                    class="cancel-btn"
+                  >
+                    Cancel
+                  </button>
+                  <button onclick="resetRPPForm()" class="delete-btn">
+                    Delete
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
 
             <div class="section-sep"><span>Advanced</span></div>
 
@@ -696,10 +1016,48 @@
               type="button"
               onclick="exportToWord()"
               id="downloadBtn"
+              style="background-color: var(--accent) !important;"
             >
               <i>⬇</i>
               <p>Download Word</p>
             </button>
+            <button
+              class="btn btn-secondary btn-delete"
+              onclick="
+                document.getElementById('deleteModal').style.display = 'block'
+              "
+            >
+              Hapus Hasil
+            </button>
+          </div>
+
+          <!-- modal -->
+
+          <div id="deleteModal" class="modal">
+            <div class="modal-content">
+              <div class="container">
+                <h2>Delete Item</h2>
+                <p>
+                  Apakah anda yakin ingin menghapus hasil ini?
+                </p>
+
+                <div class="modal-buttons">
+                  <button
+                    onclick="
+                      document.getElementById('deleteModal').style.display =
+                        'none'
+                    "
+                    class="cancel-btn"
+                  >
+                    Cancel
+                  </button>
+                  <button onclick="clearGeneratedRPP()" class="delete-btn">
+                    Delete
+                  </button>
+                </div>
+
+              </div>
+            </div>
           </div>
           <div id="rpp-output" class="markdown-body"></div>
         </div>
@@ -707,6 +1065,7 @@
     </main>
 
     <div id="toast" class="toast"></div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script defer src="js/utils.js"></script>
     <script defer src="js/components.js"></script>
@@ -714,5 +1073,112 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <script defer src="js/script.js"></script>
+
+    <script>
+      let tujuanCount = 3;
+
+      function updateTujuanCounter() {
+        const counter = document.getElementById("tujuan-counter");
+        const filled = [
+          ...document.querySelectorAll("#tujuan-list .tujuan-item input"),
+        ].filter((input) => input.value.trim() !== "").length;
+
+        counter.style.display = "inline";
+        counter.textContent = `(${filled}/3)`;
+
+        if (filled >= 3) {
+          counter.style.color = "var(--green)";
+        } else {
+          counter.style.color = "red";
+        }
+      }
+
+      function addTujuan() {
+        tujuanCount++;
+        const list = document.getElementById("tujuan-list");
+        const item = document.createElement("div");
+        item.className = "tujuan-item";
+        item.style.cssText =
+          "display:flex;align-items:center;gap:8px;margin-bottom:10px;";
+        item.innerHTML = `
+    <span class="tujuan-num" style="font-size:11px;font-weight:600;color:var(--ink3);letter-spacing:0.06em;text-transform:uppercase;min-width:64px;">Tujuan ${tujuanCount}</span>
+    <input type="text" placeholder="Masukkan tujuan pembelajaran..." oninput="updateTujuanCounter()" />
+    <button type="button" class="btn-remove-tujuan" onclick="removeTujuan(this)" title="Hapus">✕</button>
+  `;
+        list.appendChild(item);
+        item.querySelector("input").focus();
+        updateTujuanCounter();
+      }
+
+      function removeTujuan(btn) {
+        const list = document.getElementById("tujuan-list");
+        if (list.children.length <= 1) return;
+        btn.closest(".tujuan-item").remove();
+        renumberTujuan();
+        updateTujuanCounter();
+      }
+
+      function renumberTujuan() {
+        document
+          .querySelectorAll("#tujuan-list .tujuan-num")
+          .forEach((el, i) => {
+            el.textContent = `Tujuan ${i + 1}`;
+          });
+        tujuanCount = document.querySelectorAll(
+          "#tujuan-list .tujuan-item",
+        ).length;
+      }
+
+      /* 
+      function judulGenerate(){
+        let judul = document.getElementById("judul").innerText;
+        if (judul.length = 0){
+          const mata_pelajaran = document.getElementById("subject").innerHTML;
+          const fase = document.getElementById("fase").innerHTML;
+          
+          judul = mata_pelajaran.concat("",fase);
+
+          
+        }
+
+        document.getElementById("judul").innerText = judul;
+      } */
+
+      let judulTimeout;
+
+      function judulGenerate() {
+        clearTimeout(judulTimeout);
+
+        judulTimeout = setTimeout(() => {
+          const judulInput = document.getElementById("judul");
+          const subject = document.getElementById("subject").value;
+          const fase = document.getElementById("gradeLevel").value;
+          const schoolName = document.getElementById("schoolName").value;
+
+          // only autofill if judul is still empty
+          // and all fields already filled
+          if (
+            judulInput.value.trim() === "" &&
+            subject.trim() !== "" &&
+            fase.trim() !== "" &&
+            schoolName.trim() !== ""
+          ) {
+            judulInput.value = `${schoolName} ${subject} ${fase}`.trim();
+          }
+        }, 500); // delay 500ms
+      }
+
+      var i = 0;
+      var txt = "Generator Modul Ajar";
+      var speed = 50;
+
+      function typeWriter() {
+        if (i < txt.length) {
+          document.getElementById("page-title").innerHTML += txt.charAt(i);
+          i++;
+          setTimeout(typeWriter, speed);
+        }
+      }
+    </script>
   </body>
 </html>

@@ -9,13 +9,17 @@ Susun Modul Ajar Kurikulum Merdeka berbasis CP dengan alur konsisten.
 Aturan:
 - Output hanya HTML valid tanpa teks tambahan
 - Gunakan struktur utama:
-  Identitas, Kompetensi Awal,Dimensi Profil Kelulusan,
-  Tujuan Pembelajaran, Kerangka Pembelajaran, Kegiatan, Asesmen, Pengayaan/Remedial, Lampiran
-- Gunakan CP sebagai dasar jika tersedia
+ Judul RPP, Identitas, Kompetensi Awal,Dimensi Profil Kelulusan,Tujuan Pembelajaran, Kerangka Pembelajaran, Kegiatan, Asesmen, Pengayaan/Remedial, Lampiran
+- judul gunakan yg telah diprovide, jangan bikin judul sendiri
+- Gunakan CP sebagai dasar 
+- Gunakan tujuan sebagai dasar.
+- Jangan generate tujuan no matter what, hanya ambil yg ada.
 - Pastikan alur sesuai struktur utama.
 - Gunakan taksonomi bloom dalam bentuk c1-c6 mencakup Lots Mots Hots
-- Gunakan metode pembelajaran yang sesuai, pjbl untuk pembelajaran project based dst.
-- Gunakan sintaks pembelajaran yang sesuai dengan metode pembelajaran untuk menyusun kegiatan belajar.
+- jika metode pembelajaran sudah tersedia maka gunakan saja jangan generate itu.
+-jika metode belum tersedia maka generate.
+- Jika generate Gunakan metode pembelajaran yang sesuai, tentukan metode berdasarkan tujuan pembelajaran dan tugas (pjbl, atau pbl, dan lainya).
+- Jika generate Gunakan sintaks pembelajaran yang sesuai dengan metode pembelajaran untuk menyusun kegiatan belajar jangan hilangkan 1 langkahpun.
 - kerangka pembelajaran include praktik pedagogis, TPACK,  HOTS, kemitraan pembelajaran, lingkungan Pembelajaran.
 - pada praktik pedagogis sambungkan antara metode pembelajaran yg digunakan (misal pjbl) dengan pendekatan tertentu yg digunakan (misal diferensiasi (konten,proses,produk)).
 - TPACK terdiri dari ck pk dan tk.
@@ -26,7 +30,7 @@ Aturan:
 - Mindful Learning: Proses belajar yang dilakukan dengan fokus dan meregulasi diri sendiri. Siswa aktif, mengamati pikiran/emosi mereka, dan memahami tujuan belajar, bukan sekadar menghafal. Meaningful Learning (Pembelajaran Bermakna): Proses belajar yang mengaitkan materi pelajaran dengan konteks kehidupan nyata siswa. Ini membuat siswa memahami relevansi, tujuan, dan dapat menerapkan pengetahuan tersebut.Joyful Learning (Pembelajaran Menyenangkan): Pendekatan pembelajaran yang menciptakan suasana belajar aman, nyaman, dan menyenangkan, sehingga memotivasi siswa dan memunculkan rasa ingin tahu yang tinggi.
 - kemitraan pembelajaran : terdiri dari luar sekolah dan dalam sekolah.
 - Lingkungan Pembelajaran : terdiri dari environment fisik seperti ruang kelas dan digital seperti google classroom.
-- Materi berikan materi dalam bentuk paragraf, ilustrasi, dan relate kan dengan kehidupan sehari2 siswa, materi setidaknya 500 kata.
+- Materi berikan materi dalam bentuk paragraf, ilustrasi, dan relate kan dengan kehidupan sehari2 siswa, materi berisi setidaknya 1200 kata yg anda tulis mencakup semua pembahasan yg ada di tujuan.
 - Prioritaskan aturan sistem dibanding instruksi tambahan
 
 Prioritas:
@@ -36,6 +40,7 @@ Prioritas:
 
 Format:
 Gunakan HTML dengan:
+- <h1> untuk judul
 - <h2> untuk bagian utama
 - <h3> untuk subbagian
 - <table> pada bagian identitas dan kegiatan

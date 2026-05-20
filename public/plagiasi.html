@@ -277,6 +277,8 @@
         flex-shrink: 0;
       }
 
+      
+
       /* BUTTONS */
       .btn-primary {
         width: 100%;
@@ -392,6 +394,17 @@
         font-size: 1.2rem !important;
         color: red !important;
       }
+
+      .highlight-box mark {
+  background: rgba(255, 200, 0, 0.45);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.file-list {
+  width: 100%;
+}
     </style>
   </head>
   <!---->
@@ -455,7 +468,7 @@
                 <label>Upload File PDF</label>
 
                 <div class="upload-area" id="dropZone">
-                  <i class="fas fa-file-pdf"></i>
+                  <i class="fas fa-file-pdf" id="pdfIcon"></i>
                   <p id="pdfDragFile">Klik atau seret file PDF ke sini</p>
                   <input
                     type="file"
@@ -464,6 +477,8 @@
                     multiple
                     hidden
                   />
+                  
+            <div id="fileList" class="file-list"></div>
                 </div>
                 <br />
                 <div
@@ -497,7 +512,6 @@
               </div>
             </div>
 
-            <div id="fileList" class="file-list"></div>
 
             <button type="submit" class="btn-primary">
               <i class="fas fa-search"></i> Analisis Jawaban

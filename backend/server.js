@@ -1,18 +1,17 @@
 require("dotenv").config();
 
 const express = require("express");
-const Swal = require('sweetalert2');
+const Swal = require("sweetalert2");
 const { getCapaian } = require("./scraper");
-
 
 const app = express();
 Swal.fire({
-  title: 'Auto theme',
-  theme: 'auto',
- title: 'Error!',
-  text: 'Do you want to continue',
-  icon: 'error',
-  confirmButtonText: 'Cool'
+  title: "Auto theme",
+  theme: "auto",
+  title: "Error!",
+  text: "Do you want to continue",
+  icon: "error",
+  confirmButtonText: "Cool",
 });
 // ===== CUSTOM QUEUE =====
 const aiQueue = {
@@ -86,9 +85,8 @@ function isExpired(entry) {
 app.get("/capaian", async (req, res) => {
   const { jurusan, mapel, fase } = req.query;
 
-   const ac = new AbortController();
+  const ac = new AbortController();
   req.on("close", () => ac.abort());
-  
 
   try {
     const data = await getCapaian(jurusan, mapel, fase);
@@ -289,7 +287,7 @@ app.listen(PORT, () => {
 
 const mysql = require("mysql2/promise");
 
-async function test() {
+/* async function test() {
   const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -298,6 +296,6 @@ async function test() {
   });
 
   console.log("Connected!");
-}
+} */
 
 test();

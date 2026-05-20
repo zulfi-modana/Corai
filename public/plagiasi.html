@@ -109,7 +109,7 @@
         color: #fff;
       }
 
-      ul{
+      ul {
         padding: 0.2rem 1rem;
       }
       main {
@@ -146,7 +146,7 @@
         margin-bottom: 36px;
         max-width: 480px;
       }
-     
+
       .app-card {
         background: var(--surface);
         border: 1px solid var(--border);
@@ -277,8 +277,6 @@
         flex-shrink: 0;
       }
 
-      
-
       /* BUTTONS */
       .btn-primary {
         width: 100%;
@@ -390,21 +388,30 @@
         background: var(--surface2);
       }
 
-      .pdfNumberUploaded{
+      .pdfNumberUploaded {
         font-size: 1.2rem !important;
         color: red !important;
       }
 
-      .highlight-box mark {
+      /*  .highlight-box mark {
   background: rgba(255, 200, 0, 0.45);
   color: inherit;
   border-radius: 3px;
   padding: 0 2px;
-}
+} */
 
-.file-list {
-  width: 100%;
-}
+      .highlight-box mark {
+        background: rgba(239, 159, 39, 0.35);
+        color: inherit;
+        border-radius: 3px;
+        padding: 1px 3px;
+        border-bottom: 2px solid #ba7517;
+        font-weight: 500;
+      }
+
+      .file-list {
+        width: 100%;
+      }
     </style>
   </head>
   <!---->
@@ -477,8 +484,8 @@
                     multiple
                     hidden
                   />
-                  
-            <div id="fileList" class="file-list"></div>
+
+                  <div id="fileList" class="file-list"></div>
                 </div>
                 <br />
                 <div
@@ -512,10 +519,10 @@
               </div>
             </div>
 
-
             <button type="submit" class="btn-primary">
               <i class="fas fa-search"></i> Analisis Jawaban
             </button>
+            <button class="btn btn-secondary bg-danger-cust" onclick="deletePlagiasiResult()" type="button">Hapus Hasil</button>
           </form>
         </div>
 
@@ -548,6 +555,7 @@
 
     <!-- SCRIPT -->
     <script defer src="js/utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="js/components.js"></script>
     <!-- <script defer src="js/script.js"></script> -->
     <script defer src="js/plagiasi.js"></script>

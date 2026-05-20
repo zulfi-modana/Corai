@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function getCapaian(jurusan, elemen_capaian, fase) {
+async function getCapaian(jurusan, elemen_capaian, fase,signal) {
   if (!jurusan || !elemen_capaian || !fase) {
     throw new Error(
       "Parameter tidak lengkap: jurusan, elemen_capaian, dan fase wajib diisi",
@@ -12,7 +12,21 @@ async function getCapaian(jurusan, elemen_capaian, fase) {
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
+  const onAbort = () => {
+    console.log("🛑 Scraping dibatalkan oleh client");
+    browser.close();
+  };
+
+  if (signal) signal.addEventListener("abort", onAbort);
+
+
+  
+  
   try {
+
+       const checkAbort = () => {
+      if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+    };
     // 1 - 12 TETAP (tidak diubah sama sekali)
     console.log("step 1 :goto");
     await page.goto(
@@ -20,18 +34,18 @@ async function getCapaian(jurusan, elemen_capaian, fase) {
       { waitUntil: "networkidle2" },
     );
 
-    await delay(800);
+    await delay(800); checkAbort();
 
     console.log("step 2 :pilih jenjang");
     await page.locator("text=Pilih jenjang pendidikan").click();
     await page.locator("text=SMK").click();
 
-    await delay(800);
+    await delay(800); checkAbort();
 
     console.log("step 3 :waitmapelbutton");
     await page.waitForSelector(".mapel-button");
 
-    await delay(800);
+    await delay(800); checkAbort();
 
     console.log("step 4 : wait mapel btn enabled");
     await page.waitForFunction(() => {
@@ -39,7 +53,7 @@ async function getCapaian(jurusan, elemen_capaian, fase) {
       return btn && !btn.disabled && !btn.classList.contains("btn-disabled");
     });
 
-    await delay(400);
+    await delay(800); checkAbort();
 
     console.log("step 5 :click dropdown jurusan");
     await page.evaluate(() => {
@@ -55,21 +69,21 @@ async function getCapaian(jurusan, elemen_capaian, fase) {
       btn.dispatchEvent(new Event("click", evtOpts));
     });
 
-    await delay(800);
+    await delay(800); checkAbort();
 
     console.log("step 6 :tunggu input modal");
     await page.waitForSelector('input[placeholder="Cari Mata Pelajaran"]', {
       visible: true,
     });
 
-    await delay(800);
+    await delay(800); checkAbort();
 
     console.log("step 7 :isi jurusan");
     await page.type('input[placeholder="Cari Mata Pelajaran"]', jurusan, {
       delay: 100,
     });
 
-    await delay(800);
+    await delay(800); checkAbort();
 
     console.log("step 8 :select jurusan");
     await page.waitForFunction(
@@ -91,7 +105,7 @@ async function getCapaian(jurusan, elemen_capaian, fase) {
       jurusan,
     );
 
-    await delay(800);
+    await delay(800); checkAbort();
 
     console.log("step 9 :klik tombol pilih");
     await page.evaluate(() => {
@@ -117,7 +131,7 @@ async function getCapaian(jurusan, elemen_capaian, fase) {
       if (btn) btn.click();
     });
 
-    await delay(800);
+    await delay(800); checkAbort();
 
     console.log("step 11 :klik fase");
 
@@ -145,7 +159,7 @@ async function getCapaian(jurusan, elemen_capaian, fase) {
       };
     }
 
-    await delay(800);
+    await delay(800); checkAbort();
 
     console.log("step 12 :tunggu accordion");
 
@@ -154,7 +168,7 @@ async function getCapaian(jurusan, elemen_capaian, fase) {
       { visible: true },
     );
 
-    await delay(800);
+    await delay(800); checkAbort();
 
     // =========================
     // 🔥 STEP 13 FIXED (COSINE SIMILARITY)

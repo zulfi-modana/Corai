@@ -762,19 +762,21 @@
             <br />
             <div class="form-group">
               <label for="customCP" class="cpLabel"
-                >CP <span style="color: var(--accent);">(opsional)</span></label
+                >CP <span style="color: var(--accent)">(opsional)</span></label
               >
               <textarea
                 id="customCP"
                 placeholder="Contoh: Siswa pada fase f mampu memahami struktur dasar html dan css..."
                 rows="3"
-                
               ></textarea>
             </div>
             <br />
 
             <div class="form-group" style="margin-bottom: 16px">
-              <label for="topic">Topik / Materi Pokok <span style="color: var(--accent);">(opsional)</span></label>
+              <label for="topic"
+                >Topik / Materi Pokok
+                <span style="color: var(--accent)">(opsional)</span></label
+              >
               <textarea
                 id="topic"
                 rows="3"
@@ -939,46 +941,46 @@
               </div>
             </div>
 
-<div>
-<div style="margin-top:1rem; width:max-content;">
-              <button
-              class="btn btn-secondary btn-delete"
-              type="button"
-              onclick="
-                document.getElementById('deleteModalForm').style.display = 'block'
-              "
-            >
-              Reset Form      </button>
-              </div>
-              </div>
-
-                <div id="deleteModalForm" class="modal">
-            <div class="modal-content">
-              <div class="container">
-                <h2>Delete Item</h2>
-                <p>
-                  Apakah anda yakin ingin menghapus hasil ini?
-                </p>
-
-                <div class="modal-buttons">
-                  <button
+            <div>
+              <div style="margin-top: 1rem; width: max-content">
+                <button
+                  class="btn btn-secondary btn-delete"
                   type="button"
-                    onclick="
-                      document.getElementById('deleteModalForm').style.display =
-                        'none'
-                    "
-                    class="cancel-btn"
-                  >
-                    Cancel
-                  </button>
-                  <button onclick="resetRPPForm()" class="delete-btn">
-                    Delete
-                  </button>
-                </div>
-
+                  onclick="
+                    document.getElementById('deleteModalForm').style.display =
+                      'block'
+                  "
+                >
+                  Reset Form
+                </button>
               </div>
             </div>
-          </div>
+
+            <div id="deleteModalForm" class="modal">
+              <div class="modal-content">
+                <div class="container">
+                  <h2>Delete Item</h2>
+                  <p>Apakah anda yakin ingin menghapus hasil ini?</p>
+
+                  <div class="modal-buttons">
+                    <button
+                      type="button"
+                      onclick="
+                        document.getElementById(
+                          'deleteModalForm',
+                        ).style.display = 'none'
+                      "
+                      class="cancel-btn"
+                    >
+                      Cancel
+                    </button>
+                    <button onclick="resetRPPForm()" class="delete-btn">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div class="section-sep"><span>Advanced</span></div>
 
@@ -1000,6 +1002,15 @@
             <button type="submit" class="btn-primary" id="btnGenerate">
               <i>📄</i> Generate Sekarang
             </button>
+            <button
+              type="button"
+              class="btn-primary"
+              id="btnCancel"
+              onclick="cancelGenerate()"
+              style="display: none; background: #e24b4a; margin-top: 8px"
+            >
+              <i class="fas fa-times"></i> Batal
+            </button>
           </form>
         </div>
 
@@ -1016,7 +1027,7 @@
               type="button"
               onclick="exportToWord()"
               id="downloadBtn"
-              style="background-color: var(--accent) !important;"
+              style="background-color: var(--accent) !important"
             >
               <i>⬇</i>
               <p>Download Word</p>
@@ -1037,9 +1048,7 @@
             <div class="modal-content">
               <div class="container">
                 <h2>Delete Item</h2>
-                <p>
-                  Apakah anda yakin ingin menghapus hasil ini?
-                </p>
+                <p>Apakah anda yakin ingin menghapus hasil ini?</p>
 
                 <div class="modal-buttons">
                   <button
@@ -1055,7 +1064,6 @@
                     Delete
                   </button>
                 </div>
-
               </div>
             </div>
           </div>

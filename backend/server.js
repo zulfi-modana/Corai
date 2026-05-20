@@ -4,6 +4,7 @@ const express = require("express");
 const Swal = require('sweetalert2');
 const { getCapaian } = require("./scraper");
 
+
 const app = express();
 Swal.fire({
   title: 'Auto theme',
@@ -85,10 +86,15 @@ function isExpired(entry) {
 app.get("/capaian", async (req, res) => {
   const { jurusan, mapel, fase } = req.query;
 
+   const ac = new AbortController();
+  req.on("close", () => ac.abort());
+  
+
   try {
     const data = await getCapaian(jurusan, mapel, fase);
     res.json({ success: true, data });
   } catch (err) {
+    if (err.name === "AbortError") return; // client cancelled, do nothing
     console.error("Scraping error:", err.message);
     res.status(500).json({ success: false, error: err.message });
   }

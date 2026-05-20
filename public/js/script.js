@@ -1,5 +1,9 @@
 /* let generatedRPP = null; */
 
+
+  let abortController = null;
+  let isGenerating = false;
+
 function alertSwal() {
   Swal.fire({
     title: "Sukses Menghapus",
@@ -66,16 +70,26 @@ function resetRPPForm() {
       input.value = "";
     });
 
-  document
-    .querySelectorAll('input[type="checkbox"]')
-    .forEach((cb) => {
-      cb.checked = false;
-    });
+  document.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+    cb.checked = false;
+  });
 
   document.getElementById("metode").value = "";
-   document.getElementById("deleteModalForm").style.display = "none";
+  document.getElementById("deleteModalForm").style.display = "none";
 
-   alertSwal();
+  alertSwal();
+}
+
+function cancelGenerate() {
+  if (abortController) {
+    abortController.abort();
+    abortController = null;
+  }
+  localStorage.removeItem("isGenerating");
+  localStorage.removeItem("generatingLabel");
+  btnGenerate.disabled = false;
+  btnGenerate.innerHTML = '<i class="fas fa-magic"></i> Generate RPP Sekarang';
+  document.getElementById("btnCancel").style.display = "none"; 
 }
 
 function clearGeneratedRPP() {
@@ -84,8 +98,6 @@ function clearGeneratedRPP() {
   document.getElementById("rpp-output").innerHTML = "";
 
   document.getElementById("result-container").classList.add("hidden");
-
-  
 
   alertSwal();
 
@@ -98,12 +110,11 @@ function clearGeneratedRPP() {
 }
 
 function updateGenerateButton(text, icon = "fa-spinner") {
-  btnGenerate.classList.add("Generate");
+  btnGenerate.disabled = true;
+document.getElementById("btnCancel").style.display = "block";
 
-  btnGenerate.innerHTML = `
-    <i class="fas ${icon}"></i>
-    ${text}
-  `;
+  // Persist current label so it survives navigation
+  localStorage.setItem("generatingLabel", JSON.stringify({ text, icon }));
 }
 /* btn download word */
 function setButtonVisibility(isVisible) {
@@ -194,8 +205,12 @@ console.log("DOM loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
   setPromptCustomizationLocked(true);
+
   setButtonVisibility(false);
   typeWriter();
+ 
+
+
 
   const saved = localStorage.getItem("generatedRPP");
 
@@ -209,6 +224,26 @@ document.addEventListener("DOMContentLoaded", () => {
     setButtonVisibility(true);
   }
 
+  const isGenerating = localStorage.getItem("isGenerating");
+
+  if (isGenerating) {
+    // Restore the loading UI
+    const btn = document.getElementById("btnGenerate");
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-brain fa-spin"></i> Generate Modul...';
+
+    const savedLabel = localStorage.getItem("generatingLabel");
+    if (savedLabel) {
+      const { text, icon } = JSON.parse(savedLabel);
+      btn.innerHTML = `<i class="fas ${icon} fa-spin"></i> ${text}`;
+    } else {
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Memproses...`;
+    }
+
+    // Show a toast so the user knows what's happening
+    showToast("Masih dalam proses generate, harap tunggu...", 4000);
+  }
+
   const savedForm = localStorage.getItem("formValue");
 
   if (savedForm) {
@@ -220,8 +255,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("topic").value = formData.topic;
 
-    /* formData.cpText = cpText */;
-    document.getElementById("customCP").value = formData.cpText || "";
+    /* formData.cpText = cpText */ document.getElementById("customCP").value =
+      formData.cpText || "";
     document.getElementById("jurusan").value = formData.jurusan;
     document.getElementById("gradeLevel").value = formData.grade;
 
@@ -238,8 +273,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const selectedDPK = (formData.dpk || "")
-  .split(",")
-  .map((item) => item.trim());
+      .split(",")
+      .map((item) => item.trim());
     document.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
       cb.checked = selectedDPK.includes(cb.value);
     });
@@ -352,7 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formData = {
       school: document.getElementById("schoolName").value,
       level: document.getElementById("taskOption").value,
-      jurusan : document.getElementById("jurusan").value,
+      jurusan: document.getElementById("jurusan").value,
       subject: document.getElementById("subject").value,
       grade: document.getElementById("gradeLevel").value,
       topic: document.getElementById("topic").value,
@@ -365,20 +400,21 @@ document.addEventListener("DOMContentLoaded", () => {
         .map((cb) => cb.value)
         .join(", "),
       judul: document.getElementById("judul").value,
-
     };
-
-   
 
     // 🔥 ambil CP dari backend
     const fase = getFase(formData.grade);
     let cpText = "";
     let cpAvailable = false;
+    localStorage.setItem("isGenerating", "true");
+    localStorage.setItem("isGenerating", "true");
+    abortController = new AbortController();
     updateGenerateButton("Mencari CP...", "fa-search");
 
     try {
       const res = await fetch(
         `/capaian?jurusan=${encodeURIComponent(document.getElementById("jurusan").value)}&mapel=${encodeURIComponent(formData.subject)}&fase=${encodeURIComponent(fase)}`,
+        { signal: abortController.signal },
       );
 
       if (!res.ok) {
@@ -407,12 +443,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log("CP:", cpText);
       console.log("CP Available:", cpAvailable);
-      
     } catch (error) {
+      if (error.name === "AbortError") return; 
       console.error("Terjadi error saat ambil cp:", error.message);
     }
 
-   
     const customCPInput = document.querySelector("#customCP");
 
     if (!cpAvailable) {
@@ -439,9 +474,9 @@ document.addEventListener("DOMContentLoaded", () => {
       cpText = customCPInput.value.trim();
     }
 
-     formData.cpText = cpText;
+    formData.cpText = cpText;
 
-     localStorage.setItem("formValue", JSON.stringify(formData));
+    localStorage.setItem("formValue", JSON.stringify(formData));
 
     updateGenerateButton("Generate Modul...", "fa-brain");
 
@@ -488,6 +523,7 @@ Tambahan struktur:
             metode: formData.metode == "" ? "belum tersedia" : formData.metode,
           },
         }),
+        signal: abortController.signal,
       });
 
       const dataAI = await resAI.json();
@@ -519,14 +555,21 @@ Tambahan struktur:
       setButtonVisibility(true);
       setPromptCustomizationLocked(false);
     } catch (error) {
+      if (error.name === "AbortError") {
+        // User cancelled — already cleaned up in cancelGenerate()
+        return;
+      }
       alert("Gagal generate RPP: " + error.message);
     } finally {
+      localStorage.removeItem("isGenerating");
+      localStorage.removeItem("generatingLabel");
       btnGenerate.disabled = false;
 
       btnGenerate.classList.remove("generating");
 
       btnGenerate.innerHTML =
         '<i class="fas fa-magic"></i> Generate RPP Sekarang';
+        document.getElementById("btnCancel").style.display = "none";
     }
   });
 });

@@ -2,7 +2,7 @@
 
 let abortController = null;
 let isGenerating = false;
-let btnGenerate = document.getElementById("btnGenerate");
+let btnGenerate;
 
 function alertSwal() {
   Swal.fire({
@@ -28,7 +28,9 @@ function createRow(label, value) {
 
 function showToast(message, duration = 3000) {
   const toast = document.getElementById("toast");
+
   toast.textContent = message;
+
   toast.classList.add("show");
 
   setTimeout(() => {
@@ -43,7 +45,9 @@ var speed = 70;
 function typeWriter() {
   if (i < txt.length) {
     document.getElementById("page-title").innerHTML += txt.charAt(i);
+
     i++;
+
     setTimeout(typeWriter, speed);
   }
 }
@@ -51,12 +55,14 @@ function typeWriter() {
 function getFase(grade) {
   if (grade.includes("10") || grade.toLowerCase().includes("fase e"))
     return "E";
+
   if (
     grade.includes("11") ||
     grade.includes("12") ||
     grade.toLowerCase().includes("fase f")
   )
     return "F";
+
   return "F";
 }
 
@@ -75,6 +81,7 @@ function resetRPPForm() {
   });
 
   document.getElementById("metode").value = "";
+
   document.getElementById("deleteModalForm").style.display = "none";
 
   alertSwal();
@@ -85,10 +92,17 @@ function cancelGenerate() {
     abortController.abort();
     abortController = null;
   }
+
   localStorage.removeItem("isGenerating");
   localStorage.removeItem("generatingLabel");
+  localStorage.removeItem("generateStage");
+  localStorage.removeItem("cpText");
+
   btnGenerate.disabled = false;
-  btnGenerate.innerHTML = '<i class="fas fa-magic"></i> Generate RPP Sekarang';
+
+  btnGenerate.innerHTML =
+    '<i class="fas fa-magic"></i> Generate RPP Sekarang';
+
   document.getElementById("btnCancel").style.display = "none";
 }
 
@@ -101,13 +115,13 @@ function clearGeneratedRPP() {
 
   alertSwal();
 
-  // Close the modal
   document.getElementById("deleteModal").style.display = "none";
 
   setButtonVisibility(false);
 
   setPromptCustomizationLocked(true);
 }
+
 function updateGenerateButton(text, icon = "fa-spinner") {
   btnGenerate.disabled = true;
 
@@ -115,11 +129,16 @@ function updateGenerateButton(text, icon = "fa-spinner") {
 
   document.getElementById("btnCancel").style.display = "block";
 
-  localStorage.setItem("generatingLabel", JSON.stringify({ text, icon }));
+  localStorage.setItem(
+    "generatingLabel",
+    JSON.stringify({ text, icon }),
+  );
 }
+
 /* btn download word */
 function setButtonVisibility(isVisible) {
   const downloadBtn = document.getElementById("downloadBtn");
+
   if (downloadBtn) {
     downloadBtn.style.display = isVisible ? "block" : "none";
   }
@@ -127,7 +146,6 @@ function setButtonVisibility(isVisible) {
 
 function scopeAIStyles(html) {
   return html.replace(/<style>([\s\S]*?)<\/style>/gi, (match, css) => {
-    // prefix semua selector dengan #rpp-output
     const scopedCSS = css.replace(
       /(^|\})([^{@}][^{]*)\{/g,
       (m, brace, selector) => {
@@ -166,25 +184,28 @@ function exportToWord() {
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
+
   link.href = url;
+
   link.download = "Modul_Ajar_Kurikulum_Merdeka.docx";
 
   document.body.appendChild(link);
+
   link.click();
+
   document.body.removeChild(link);
 }
 
 function setPromptCustomizationLocked(isLocked = true) {
   const toggle = document.getElementById("advancedToggle");
+
   const config = document.getElementById("prompt-config");
 
   if (isLocked) {
     toggle.classList.add("locked");
 
-    // sembunyikan config
     config.classList.add("hidden");
 
-    // klik diblok
     toggle.onclick = (e) => {
       e.preventDefault();
 
@@ -202,12 +223,133 @@ function setPromptCustomizationLocked(isLocked = true) {
   }
 }
 
+async function generateAI(
+  formData,
+  cpText,
+  formatPrompt,
+  userInstruction,
+) {
+  updateGenerateButton("Generate Modul...", "fa-brain");
+
+  localStorage.setItem("generateStage", "generating_ai");
+
+  abortController = new AbortController();
+
+  try {
+    const prompt = `
+[DATA]
+Judul : ${formData.judul}
+Sekolah: ${formData.school}
+Jurusan : ${formData.jurusan}
+Mapel: ${formData.subject}
+Kelas: ${formData.grade}
+Materi: ${formData.topic}
+Tujuan: ${formData.tujuan}
+Metode Belajar :  ${
+      formData.metode == "" ? "belum tersedia" : formData.metode
+    }
+Dimensi Profil Pancasila : Dimensi Profil Kelulusan: ${formData.dpk}
+
+CP:
+${cpText || "Belum tersedia"}
+
+[INSTRUKSI]
+Buat modul ajar lengkap.
+
+Tambahan struktur:
+- Lampiran berisi: materi, referensi, LKPD, dan rubrik penilaian
+- Gunakan tujuan pembelajaran sebagai dasar penyusunan materi
+`;
+
+    const resAI = await fetch("/api/ai", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        prompt,
+        formatPrompt,
+        userInstruction,
+
+        meta: {
+          school: formData.school,
+          subject: formData.subject,
+          grade: formData.grade,
+          topic: formData.topic,
+          tujuan: formData.tujuan,
+          dpk: formData.dpk,
+          metode:
+            formData.metode == "" ? "belum tersedia" : formData.metode,
+        },
+      }),
+
+      signal: abortController.signal,
+    });
+
+    const dataAI = await resAI.json();
+
+    updateGenerateButton("Menyusun Output...", "fa-file-lines");
+
+    if (!resAI.ok || !dataAI.success) {
+      throw new Error(dataAI.error || "AI error");
+    }
+
+    const aiResult = dataAI.result;
+
+    const finalHTML = aiResult;
+
+    const generateResult = document.getElementById("rpp-output");
+
+    const safeHTML = scopeAIStyles(finalHTML);
+
+    generateResult.innerHTML = safeHTML;
+
+    localStorage.setItem("generatedRPP", safeHTML);
+
+    document.getElementById("result-container").classList.remove("hidden");
+
+    window.scrollTo({
+      top: document.getElementById("result-container").offsetTop - 10,
+      behavior: "smooth",
+    });
+
+    setButtonVisibility(true);
+
+    setPromptCustomizationLocked(false);
+  } catch (error) {
+    if (error.name === "AbortError") {
+      return;
+    }
+
+    alert("Gagal generate RPP: " + error.message);
+  } finally {
+    localStorage.removeItem("isGenerating");
+    localStorage.removeItem("generatingLabel");
+    localStorage.removeItem("generateStage");
+    localStorage.removeItem("cpText");
+
+    btnGenerate.disabled = false;
+
+    btnGenerate.classList.remove("generating");
+
+    btnGenerate.innerHTML =
+      '<i class="fas fa-magic"></i> Generate RPP Sekarang';
+
+    document.getElementById("btnCancel").style.display = "none";
+  }
+}
+
 console.log("DOM loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
+  btnGenerate = document.getElementById("btnGenerate");
+
   setPromptCustomizationLocked(true);
 
   setButtonVisibility(false);
+
   typeWriter();
 
   const saved = localStorage.getItem("generatedRPP");
@@ -216,30 +358,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (saved && output) {
     output.innerHTML = saved;
+
     document.getElementById("result-container").classList.remove("hidden");
 
     setPromptCustomizationLocked(false);
+
     setButtonVisibility(true);
   }
 
-  const isGenerating = localStorage.getItem("isGenerating");
+  const savedGeneratingState =
+    localStorage.getItem("isGenerating");
 
-  if (isGenerating) {
-    // Restore the loading UI
+  if (savedGeneratingState) {
     const btn = document.getElementById("btnGenerate");
+
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-brain fa-spin"></i> Generate Modul...';
+
+    document.getElementById("btnCancel").style.display = "block";
+
+    btn.innerHTML =
+      '<i class="fas fa-brain fa-spin"></i> Generate Modul...';
 
     const savedLabel = localStorage.getItem("generatingLabel");
+
     if (savedLabel) {
       const { text, icon } = JSON.parse(savedLabel);
-      btn.innerHTML = `<i class="fas ${icon} fa-spin"></i> ${text}`;
+
+      btn.innerHTML =
+        `<i class="fas ${icon} fa-spin"></i> ${text}`;
     } else {
-      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Memproses...`;
+      btn.innerHTML =
+        `<i class="fas fa-spinner fa-spin"></i> Memproses...`;
     }
 
-    // Show a toast so the user knows what's happening
-    showToast("Masih dalam proses generate, harap tunggu...", 4000);
+    showToast(
+      "Masih dalam proses generate, harap tunggu...",
+      4000,
+    );
   }
 
   const savedForm = localStorage.getItem("formValue");
@@ -247,18 +402,26 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedForm) {
     const formData = JSON.parse(savedForm);
 
-    document.getElementById("schoolName").value = formData.school;
+    document.getElementById("schoolName").value =
+      formData.school;
 
-    document.getElementById("subject").value = formData.subject;
+    document.getElementById("subject").value =
+      formData.subject;
 
-    document.getElementById("topic").value = formData.topic;
+    document.getElementById("topic").value =
+      formData.topic;
 
-    /* formData.cpText = cpText */ document.getElementById("customCP").value =
+    document.getElementById("customCP").value =
       formData.cpText || "";
-    document.getElementById("jurusan").value = formData.jurusan;
-    document.getElementById("gradeLevel").value = formData.grade;
 
-    const tujuanInputs = document.querySelectorAll("#tujuan-list input");
+    document.getElementById("jurusan").value =
+      formData.jurusan;
+
+    document.getElementById("gradeLevel").value =
+      formData.grade;
+
+    const tujuanInputs =
+      document.querySelectorAll("#tujuan-list input");
 
     if (formData.tujuan) {
       const tujuanArray = formData.tujuan.split("\n");
@@ -273,31 +436,236 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedDPK = (formData.dpk || "")
       .split(",")
       .map((item) => item.trim());
-    document.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
-      cb.checked = selectedDPK.includes(cb.value);
-    });
-    document.getElementById("metode").value = formData.metode;
-    document.getElementById("judul").value = formData.judul;
+
+    document
+      .querySelectorAll('input[type="checkbox"]')
+      .forEach((cb) => {
+        cb.checked = selectedDPK.includes(cb.value);
+      });
+
+    document.getElementById("metode").value =
+      formData.metode;
+
+    document.getElementById("judul").value =
+      formData.judul;
   }
 
-  // 🔒 SYSTEM PROMPT DIKUNCI (tidak dari user)
   const formatPrompt = utils.defaultPrompts.rppSystem;
 
-  // ✅ USER INSTRUCTION (optional dari UI)
+  const generateStage =
+    localStorage.getItem("generateStage");
+
+  if (generateStage === "fetching_cp") {
+    const savedFormData = JSON.parse(
+      localStorage.getItem("formValue"),
+    );
+
+    if (!savedFormData) {
+      localStorage.removeItem("isGenerating");
+
+      localStorage.removeItem("generateStage");
+
+      return;
+    }
+
+    showToast(
+      "Melanjutkan pencarian CP...",
+      3000,
+    );
+
+    (async () => {
+      try {
+        updateGenerateButton(
+          "Mencari CP...",
+          "fa-search",
+        );
+
+        abortController = new AbortController();
+
+        const fase = getFase(savedFormData.grade);
+
+        let cpText = "";
+
+        let cpAvailable = false;
+
+        const res = await fetch(
+          `/capaian?jurusan=${encodeURIComponent(savedFormData.jurusan)}&mapel=${encodeURIComponent(savedFormData.subject)}&fase=${encodeURIComponent(fase)}`,
+          {
+            signal: abortController.signal,
+          },
+        );
+
+        if (!res.ok) {
+          throw new Error(
+            `HTTP error! status: ${res.status}`,
+          );
+        }
+
+        const resJson = await res.json();
+
+        const success = resJson.success;
+
+        const data = resJson.data.data;
+
+        const meta = resJson.data.meta;
+
+        if (!success) {
+          throw new Error("Gagal ambil CP");
+        }
+
+        cpAvailable = meta?.cpAvailable ?? false;
+
+        if (cpAvailable && data && data.length > 0) {
+          cpText = data
+            .map(
+              (item) =>
+                `${item.title}: ${item.content}`,
+            )
+            .join("\n");
+        }
+
+        const customCPInput =
+          document.querySelector("#customCP");
+
+        if (!cpAvailable) {
+          if (
+            customCPInput.value.trim() === ""
+          ) {
+            showToast(
+              "CP tidak ditemukan, silahkan isi CP secara manual",
+              3000,
+            );
+
+            btnGenerate.disabled = false;
+
+            btnGenerate.innerHTML =
+              '<i class="fas fa-magic"></i> Generate RPP Sekarang';
+
+            localStorage.removeItem(
+              "isGenerating",
+            );
+
+            localStorage.removeItem(
+              "generateStage",
+            );
+
+            customCPInput.focus();
+
+            return;
+          }
+
+          cpText =
+            customCPInput.value.trim();
+        }
+
+        savedFormData.cpText = cpText;
+
+        localStorage.setItem(
+          "formValue",
+          JSON.stringify(savedFormData),
+        );
+
+        localStorage.setItem(
+          "cpText",
+          cpText,
+        );
+
+        localStorage.setItem(
+          "generateStage",
+          "generating_ai",
+        );
+
+        const userInstruction =
+          document.getElementById(
+            "userInstruction",
+          )?.value.trim() || "";
+
+        await generateAI(
+          savedFormData,
+          cpText,
+          formatPrompt,
+          userInstruction,
+        );
+      } catch (error) {
+        if (error.name === "AbortError") {
+          return;
+        }
+
+        console.error(
+          "Resume fetching CP gagal:",
+          error,
+        );
+
+        showToast(
+          "Gagal melanjutkan generate",
+          3000,
+        );
+
+        localStorage.removeItem(
+          "isGenerating",
+        );
+
+        localStorage.removeItem(
+          "generateStage",
+        );
+
+        localStorage.removeItem("cpText");
+
+        btnGenerate.disabled = false;
+
+        btnGenerate.innerHTML =
+          '<i class="fas fa-magic"></i> Generate RPP Sekarang';
+
+        document.getElementById(
+          "btnCancel",
+        ).style.display = "none";
+      }
+    })();
+  }
+
+  if (generateStage === "generating_ai") {
+    const savedFormData = JSON.parse(
+      localStorage.getItem("formValue"),
+    );
+
+    const savedCPText =
+      localStorage.getItem("cpText");
+
+    const userInstruction =
+      document.getElementById("userInstruction")?.value.trim() ||
+      "";
+
+    generateAI(
+      savedFormData,
+      savedCPText,
+      formatPrompt,
+      userInstruction,
+    );
+  }
 
   // Navigation Logic
   const navLinks = document.querySelectorAll(".nav-links a");
+
   navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
-      /* e.preventDefault(); */
-      navLinks.forEach((l) => l.classList.remove("active"));
+      navLinks.forEach((l) =>
+        l.classList.remove("active"),
+      );
+
       link.classList.add("active");
 
-      const targetId = link.getAttribute("data-target");
-      document.querySelectorAll(".app-section").forEach((section) => {
-        section.classList.remove("active");
-      });
-      document.getElementById(targetId).classList.add("active");
+      const targetId =
+        link.getAttribute("data-target");
+
+      document
+        .querySelectorAll(".app-section")
+        .forEach((section) => {
+          section.classList.remove("active");
+        });
+
+      document
+        .getElementById(targetId)
+        .classList.add("active");
     });
   });
 
@@ -312,14 +680,17 @@ document.addEventListener("DOMContentLoaded", () => {
         el: document.getElementById("schoolName"),
         msg: "Nama Sekolah tidak boleh kosong",
       },
+
       {
         el: document.getElementById("jurusan"),
         msg: "Jurusan tidak boleh kosong",
       },
+
       {
         el: document.getElementById("subject"),
         msg: "Bidang Studi tidak boleh kosong",
       },
+
       {
         el: document.getElementById("gradeLevel"),
         msg: "Fase / Kelas tidak boleh kosong",
@@ -329,43 +700,46 @@ document.addEventListener("DOMContentLoaded", () => {
     for (const { el, msg } of validations) {
       if (!el.value.trim()) {
         showToast(msg, 3000);
+
         el.focus();
+
         return;
       }
     }
 
-    /* function validateTujuanCount(){
-      if (formData.tujuan.length <3){
-        showToast("Isi minimal 3 tujuan",3000);
-        focus();
-        return;
-      }
-
-      else if (formData.tujuan.length == 0){
-        showToast("tujuan tidak boleh kosong",3000);
-        focus();
-        return;
-      }
-    } */
-
     function validateTujuanCount() {
-      const tujuanInputs = [...document.querySelectorAll("#tujuan-list input")];
+      const tujuanInputs = [
+        ...document.querySelectorAll("#tujuan-list input"),
+      ];
 
-      const filled = tujuanInputs.filter((input) => input.value.trim() !== "");
+      const filled = tujuanInputs.filter(
+        (input) => input.value.trim() !== "",
+      );
 
       if (filled.length < 3) {
         showToast("Isi minimal 3 tujuan", 3000);
+
         tujuanInputs[0].focus();
+
         return false;
       }
 
       return true;
     }
 
-    const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+    const checked =
+      document.querySelectorAll(
+        'input[type="checkbox"]:checked',
+      );
+
     if (checked.length < 2) {
-      showToast("Pilih minimal 2 Dimensi Profil Kelulusan", 3000);
+      showToast(
+        "Pilih minimal 2 Dimensi Profil Kelulusan",
+        3000,
+      );
+
       focus();
+
       return;
     }
 
@@ -374,88 +748,146 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const userInstruction =
-      document.getElementById("userInstruction")?.value.trim() || "";
+      document.getElementById("userInstruction")?.value.trim() ||
+      "";
 
     btnGenerate.disabled = true;
 
-    /*   btnGenerate.innerHTML =
-      '<i class="fas fa-spinner fa-spin"></i> Generating...'; */
-
     const formData = {
-      school: document.getElementById("schoolName").value,
-      level: document.getElementById("taskOption").value,
-      jurusan: document.getElementById("jurusan").value,
-      subject: document.getElementById("subject").value,
-      grade: document.getElementById("gradeLevel").value,
-      topic: document.getElementById("topic").value,
-      tujuan: [...document.querySelectorAll("#tujuan-list input")]
+      school:
+        document.getElementById("schoolName").value,
+
+      level:
+        document.getElementById("taskOption").value,
+
+      jurusan:
+        document.getElementById("jurusan").value,
+
+      subject:
+        document.getElementById("subject").value,
+
+      grade:
+        document.getElementById("gradeLevel").value,
+
+      topic:
+        document.getElementById("topic").value,
+
+      tujuan: [
+        ...document.querySelectorAll("#tujuan-list input"),
+      ]
         .map((el, i) => `${i + 1}. ${el.value}`)
-        .filter((v) => v.trim() !== `${v.split(".")[0]}.`)
+        .filter(
+          (v) =>
+            v.trim() !== `${v.split(".")[0]}.`,
+        )
         .join("\n"),
-      metode: document.getElementById("metode").value,
-      dpk: [...document.querySelectorAll('input[type="checkbox"]:checked')]
+
+      metode:
+        document.getElementById("metode").value,
+
+      dpk: [
+        ...document.querySelectorAll(
+          'input[type="checkbox"]:checked',
+        ),
+      ]
         .map((cb) => cb.value)
         .join(", "),
-      judul: document.getElementById("judul").value,
+
+      judul:
+        document.getElementById("judul").value,
     };
 
-    // 🔥 ambil CP dari backend
+    localStorage.setItem(
+      "formValue",
+      JSON.stringify(formData),
+    );
+
     const fase = getFase(formData.grade);
+
     let cpText = "";
+
     let cpAvailable = false;
+
     localStorage.setItem("isGenerating", "true");
-    localStorage.setItem("isGenerating", "true");
+
+    localStorage.setItem(
+      "generateStage",
+      "fetching_cp",
+    );
+
     abortController = new AbortController();
-    updateGenerateButton("Mencari CP...", "fa-search");
+
+    updateGenerateButton(
+      "Mencari CP...",
+      "fa-search",
+    );
 
     try {
       const res = await fetch(
         `/capaian?jurusan=${encodeURIComponent(document.getElementById("jurusan").value)}&mapel=${encodeURIComponent(formData.subject)}&fase=${encodeURIComponent(fase)}`,
-        { signal: abortController.signal },
+        {
+          signal: abortController.signal,
+        },
       );
 
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+        throw new Error(
+          `HTTP error! status: ${res.status}`,
+        );
       }
 
-      /*    const { success, data, meta } = await res.json(); */
       const resJson = await res.json();
 
       const success = resJson.success;
+
       const data = resJson.data.data;
+
       const meta = resJson.data.meta;
 
       if (!success) {
         throw new Error("Gagal ambil CP");
       }
 
-      /*  let cpText = ""; */
       cpAvailable = meta?.cpAvailable ?? false;
 
       if (cpAvailable && data && data.length > 0) {
         cpText = data
-          .map((item) => `${item.title}: ${item.content}`)
+          .map(
+            (item) =>
+              `${item.title}: ${item.content}`,
+          )
           .join("\n");
       }
 
       console.log("CP:", cpText);
-      console.log("CP Available:", cpAvailable);
+
+      console.log(
+        "CP Available:",
+        cpAvailable,
+      );
     } catch (error) {
-      if (error.name === "AbortError") return;
-      console.error("Terjadi error saat ambil cp:", error.message);
+      if (error.name === "AbortError") {
+        return;
+      }
+
+      console.error(
+        "Terjadi error saat ambil cp:",
+        error.message,
+      );
     }
 
-    const customCPInput = document.querySelector("#customCP");
+    const customCPInput =
+      document.querySelector("#customCP");
 
     if (!cpAvailable) {
-      const cpLabel = document.querySelector(".cpLabel");
+      const cpLabel =
+        document.querySelector(".cpLabel");
 
-      /*   customCPInput.removeAttribute("hidden");
-      cpLabel.removeAttribute("hidden"); */
-
-      // kalau user BELUM isi CP → stop
       if (customCPInput.value.trim() === "") {
-        showToast("CP tidak ditemukan, silahkan isi CP secara manual", 3000);
+        showToast(
+          "CP tidak ditemukan, silahkan isi CP secara manual",
+          3000,
+        );
 
         btnGenerate.disabled = false;
 
@@ -464,109 +896,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
         customCPInput.focus();
 
+        localStorage.removeItem(
+          "isGenerating",
+        );
+
+        localStorage.removeItem(
+          "generateStage",
+        );
+
         return;
       }
 
-      // kalau SUDAH isi → pakai CP manual
       cpText = customCPInput.value.trim();
     }
 
     formData.cpText = cpText;
 
-    localStorage.setItem("formValue", JSON.stringify(formData));
+    localStorage.setItem(
+      "formValue",
+      JSON.stringify(formData),
+    );
 
-    updateGenerateButton("Generate Modul...", "fa-brain");
+    localStorage.setItem("cpText", cpText);
 
-    try {
-      const prompt = `
-[DATA]
-Judul : ${formData.judul}
-Sekolah: ${formData.school}
-Jurusan : ${formData.jurusan}
-Mapel: ${formData.subject}
-Kelas: ${formData.grade}
-Materi: ${formData.topic}
-Tujuan: ${formData.tujuan}
-Metode Belajar :  ${formData.metode == "" ? "belum tersedia" : formData.metode}
-Dimensi Profil Pancasila : Dimensi Profil Kelulusan: ${formData.dpk}
-
-CP:
-${cpText || "Belum tersedia"}
-
-[INSTRUKSI]
-Buat modul ajar lengkap.
-
-Tambahan struktur:
-- Lampiran berisi: materi, referensi, LKPD, dan rubrik penilaian
-- Gunakan tujuan pembelajaran sebagai dasar penyusunan materi
-`;
-
-      const resAI = await fetch("/api/ai", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt,
-          formatPrompt,
-          userInstruction,
-          meta: {
-            school: formData.school,
-            subject: formData.subject,
-            grade: formData.grade,
-            topic: formData.topic,
-            tujuan: formData.tujuan,
-            dpk: formData.dpk,
-            metode: formData.metode == "" ? "belum tersedia" : formData.metode,
-          },
-        }),
-        signal: abortController.signal,
-      });
-
-      const dataAI = await resAI.json();
-      updateGenerateButton("Menyusun Output...", "fa-file-lines");
-
-      if (!resAI.ok || !dataAI.success) {
-        throw new Error(dataAI.error || "AI error");
-      }
-
-      const aiResult = dataAI.result;
-
-      const finalHTML = aiResult;
-
-      const generateResult = document.getElementById("rpp-output");
-      /*generateResult.innerHTML = finalHTML; */
-
-      const safeHTML = scopeAIStyles(finalHTML);
-      generateResult.innerHTML = safeHTML;
-
-      localStorage.setItem("generatedRPP", safeHTML);
-
-      document.getElementById("result-container").classList.remove("hidden");
-
-      window.scrollTo({
-        top: document.getElementById("result-container").offsetTop - 10,
-        behavior: "smooth",
-      });
-
-      setButtonVisibility(true);
-      setPromptCustomizationLocked(false);
-    } catch (error) {
-      if (error.name === "AbortError") {
-        // User cancelled — already cleaned up in cancelGenerate()
-        return;
-      }
-      alert("Gagal generate RPP: " + error.message);
-    } finally {
-      localStorage.removeItem("isGenerating");
-      localStorage.removeItem("generatingLabel");
-      btnGenerate.disabled = false;
-
-      btnGenerate.classList.remove("generating");
-
-      btnGenerate.innerHTML =
-        '<i class="fas fa-magic"></i> Generate RPP Sekarang';
-      document.getElementById("btnCancel").style.display = "none";
-    }
+    await generateAI(
+      formData,
+      cpText,
+      formatPrompt,
+      userInstruction,
+    );
   });
 });

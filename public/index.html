@@ -54,6 +54,24 @@
         z-index: 100;
       }
 
+      body.restoring {
+        opacity: 0.7;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+
+      body.restoring::before {
+        content: "Memuat data...";
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        background: #111;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+      }
       /* The background overlay */
       .modal {
         display: none;

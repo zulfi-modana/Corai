@@ -344,6 +344,7 @@ Tambahan struktur:
 console.log("DOM loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
+    document.body.classList.add("restoring");
   btnGenerate = document.getElementById("btnGenerate");
 
   setPromptCustomizationLocked(true);
@@ -925,5 +926,9 @@ document.addEventListener("DOMContentLoaded", () => {
       formatPrompt,
       userInstruction,
     );
+
+  });
+     requestAnimationFrame(() => {
+    document.body.classList.remove("restoring");
   });
 });

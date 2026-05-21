@@ -215,22 +215,31 @@ document.addEventListener(
     const pdfInput =
       document.getElementById("pdfInput");
 
-    const saved = loadPlagiasiResult();
+  const saved = loadPlagiasiResult();
 
-    // =========================
-    // Restore Saved Result
-    // =========================
-    if (saved) {
-      document
-        .getElementById("correction-result")
-        .classList.remove("hidden");
+// =========================
+// Restore Saved Result
+// =========================
+if (saved) {
+  const restoreSavedResult = () => {
+    document
+      .getElementById("correction-result")
+      .classList.remove("hidden");
 
-      document.getElementById(
-        "correction-output",
-      ).innerHTML = saved.resultHTML;
+    document.getElementById(
+      "correction-output",
+    ).innerHTML = saved.resultHTML;
 
-      restoreCardEvents();
-    }
+    restoreCardEvents();
+  };
+
+  // biarkan UI & dropzone siap dulu
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(restoreSavedResult);
+  } else {
+    setTimeout(restoreSavedResult, 0);
+  }
+}
 
     // =========================
     // Dropzone

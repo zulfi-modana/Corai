@@ -542,13 +542,13 @@ document.addEventListener("DOMContentLoaded", () => {
             btnGenerate.innerHTML =
               '<i class="fas fa-magic"></i> Generate RPP Sekarang';
 
-            localStorage.removeItem(
-              "isGenerating",
-            );
-
-            localStorage.removeItem(
-              "generateStage",
-            );
+            
+ document.getElementById("btnCancel").style.display = "none";
+              // reset generating state
+  localStorage.removeItem("isGenerating");
+  localStorage.removeItem("generateStage");
+  localStorage.removeItem("generatingLabel");
+  localStorage.removeItem("cpText");
 
             customCPInput.focus();
 
@@ -897,13 +897,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         customCPInput.focus();
 
-        localStorage.removeItem(
-          "isGenerating",
-        );
+        document.getElementById("btnCancel").style.display = "none";
 
-        localStorage.removeItem(
-          "generateStage",
-        );
+        // reset generating state
+  localStorage.removeItem("isGenerating");
+  localStorage.removeItem("generateStage");
+  localStorage.removeItem("generatingLabel");
+  localStorage.removeItem("cpText");
 
         return;
       }

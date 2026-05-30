@@ -103,7 +103,8 @@ function cancelGenerate() {
   btnGenerate.innerHTML =
     '<i class="fas fa-magic"></i> Generate RPP Sekarang';
 
-  document.getElementById("btnCancel").style.display = "none";
+ 
+  closeProcessingSwal();
 }
 
 function clearGeneratedRPP() {
@@ -122,17 +123,40 @@ function clearGeneratedRPP() {
   setPromptCustomizationLocked(true);
 }
 
+function showProcessingSwal(message = "Sedang memproses...") {
+  Swal.fire({
+    title: "⏳ Sedang Generate",
+    text: message,
+    icon: "info",
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    showConfirmButton: false,
+    showCancelButton: true,
+    cancelButtonText: '<i class="fas fa-times"></i> Batalkan',
+    cancelButtonColor: "#d33",
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  }).then((result) => {
+    if (result.dismiss === Swal.DismissReason.cancel) {
+      cancelGenerate();
+    }
+  });
+}
+
 function updateGenerateButton(text, icon = "fa-spinner") {
   btnGenerate.disabled = true;
 
   btnGenerate.innerHTML = `<i class="fas ${icon} fa-spin"></i> ${text}`;
 
-  document.getElementById("btnCancel").style.display = "block";
+ 
 
   localStorage.setItem(
     "generatingLabel",
     JSON.stringify({ text, icon }),
   );
+
+   showProcessingSwal(text);
 }
 
 /* btn download word */
@@ -337,7 +361,8 @@ Tambahan struktur:
     btnGenerate.innerHTML =
       '<i class="fas fa-magic"></i> Generate RPP Sekarang';
 
-    document.getElementById("btnCancel").style.display = "none";
+    
+    closeProcessingSwal();
   }
 }
 
@@ -375,7 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     btn.disabled = true;
 
-    document.getElementById("btnCancel").style.display = "block";
+  
 
     btn.innerHTML =
       '<i class="fas fa-brain fa-spin"></i> Generate Modul...';
@@ -543,7 +568,7 @@ document.addEventListener("DOMContentLoaded", () => {
               '<i class="fas fa-magic"></i> Generate RPP Sekarang';
 
             
- document.getElementById("btnCancel").style.display = "none";
+
               // reset generating state
   localStorage.removeItem("isGenerating");
   localStorage.removeItem("generateStage");
@@ -617,9 +642,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btnGenerate.innerHTML =
           '<i class="fas fa-magic"></i> Generate RPP Sekarang';
 
-        document.getElementById(
-          "btnCancel",
-        ).style.display = "none";
+       
       }
     })();
   }
@@ -897,7 +920,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         customCPInput.focus();
 
-        document.getElementById("btnCancel").style.display = "none";
+  
 
         // reset generating state
   localStorage.removeItem("isGenerating");

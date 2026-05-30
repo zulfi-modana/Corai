@@ -292,6 +292,15 @@ if (saved) {
           return;
         }
 
+         if (incoming.length > 15) {
+    Swal.fire({
+      title: "Terlalu Banyak File",
+      text: "Maksimal 15 file PDF yang diizinkan.",
+      icon: "error",
+    });
+    pdfInput.value = "";
+    return;
+  }
         selectedFiles = dropped;
 
         renderFileList(selectedFiles);
@@ -308,6 +317,15 @@ if (saved) {
           pdfInput.files,
         );
 
+         if (incoming.length > 15) {
+    Swal.fire({
+      title: "Terlalu Banyak File",
+      text: "Maksimal 15 file PDF yang diizinkan.",
+      icon: "error",
+    });
+    pdfInput.value = "";
+    return;
+  }
         for (let file of incoming) {
           if (file.size > MAX_FILE_SIZE) {
             alert(
@@ -318,7 +336,12 @@ if (saved) {
 
             return;
           }
+
+        
         }
+
+         
+
 
         selectedFiles = incoming;
 
@@ -464,6 +487,7 @@ if (saved) {
         async (e) => {
           e.preventDefault();
 
+          
           const mode =
             modeSelect.value;
 
@@ -502,6 +526,7 @@ if (saved) {
                 return;
               }
 
+              
               formData.append(
                 "files",
                 file,

@@ -46,7 +46,7 @@ function tokenize(text) {
 
 function getLabel(score) {
   if (score >= 0.8) return { text: "Tinggi", icon: "⚠️", className: "danger" };
-  if (score >= 0.5) return { text: "Sedang", icon: "🟡", className: "warning" };
+  if (score >= 0.35) return { text: "Sedang", icon: "🟡", className: "warning" };
   if (score >= 0.2) return { text: "Rendah", icon: "✅", className: "safe" };
   return { text: "Tidak Ditemukan Indikasi Plagiasi", icon: "✅", className: "safe" };
 }

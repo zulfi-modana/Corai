@@ -350,6 +350,9 @@ Tambahan struktur:
       top: document.getElementById("result-container").offsetTop - 10,
       behavior: "smooth",
     });
+closeProcessingSwal(); // ✅ close processing FIRST, then show success
+
+    showedSuccess = true; // ✅ mark so finally doesn't close it
 
     setButtonVisibility(true);
 
@@ -369,8 +372,8 @@ Tambahan struktur:
 
      Swal.fire("Gagal Generate", error.message, "error");
   } finally {
-       
-    closeProcessingSwal();
+       if (!showedSuccess) closeProcessingSwal();
+
     localStorage.removeItem("isGenerating");
     localStorage.removeItem("generatingLabel");
     localStorage.removeItem("generateStage");

@@ -144,6 +144,11 @@ function showProcessingSwal(message = "Sedang memproses...") {
   });
 }
 
+function updateSwalText(message) {
+  const swalText = document.querySelector(".swal2-html-container, .swal2-content");
+  if (swalText) swalText.textContent = message;
+}
+
 function updateGenerateButton(text, icon = "fa-spinner") {
   btnGenerate.disabled = true;
 
@@ -314,8 +319,7 @@ Tambahan struktur:
 
     const dataAI = await resAI.json();
 
-    updateGenerateButton("Menyusun Output...", "fa-file-lines");
-
+ updateSwalText("Menyusun output, mohon tunggu...");
     if (!resAI.ok || !dataAI.success) {
       throw new Error(dataAI.error || "AI error");
     }
@@ -347,8 +351,10 @@ Tambahan struktur:
       return;
     }
 
-    alert("Gagal generate RPP: " + error.message);
+     Swal.fire("Gagal Generate", error.message, "error");
   } finally {
+       
+    closeProcessingSwal();
     localStorage.removeItem("isGenerating");
     localStorage.removeItem("generatingLabel");
     localStorage.removeItem("generateStage");
@@ -361,8 +367,7 @@ Tambahan struktur:
     btnGenerate.innerHTML =
       '<i class="fas fa-magic"></i> Generate RPP Sekarang';
 
-    
-    closeProcessingSwal();
+ 
   }
 }
 

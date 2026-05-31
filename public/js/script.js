@@ -361,7 +361,7 @@ closeProcessingSwal(); // ✅ close processing FIRST, then show success
       title: "✅ Berhasil!",
       text: "Modul ajar berhasil digenerate!",
       icon: "success",
-      timer: 2500,
+      timer: 7500,
       timerProgressBar: true,
       showConfirmButton: true,
     });

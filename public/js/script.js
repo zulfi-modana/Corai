@@ -13,6 +13,10 @@ function alertSwal() {
   });
 }
 
+function closeProcessingSwal() {
+  Swal.close();
+}
+
 function createRow(label, value) {
   return new docx.TableRow({
     children: [
@@ -160,9 +164,13 @@ function updateGenerateButton(text, icon = "fa-spinner") {
     "generatingLabel",
     JSON.stringify({ text, icon }),
   );
-
-   showProcessingSwal(text);
+    if (!Swal.isVisible()) {
+    showProcessingSwal(text);
+  } else {
+    updateSwalText(text);
+  }
 }
+   
 
 /* btn download word */
 function setButtonVisibility(isVisible) {

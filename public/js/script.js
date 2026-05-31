@@ -354,6 +354,14 @@ Tambahan struktur:
     setButtonVisibility(true);
 
     setPromptCustomizationLocked(false);
+       await Swal.fire({
+      title: "✅ Berhasil!",
+      text: "Modul ajar berhasil digenerate!",
+      icon: "success",
+      timer: 2500,
+      timerProgressBar: true,
+      showConfirmButton: true,
+    });
   } catch (error) {
     if (error.name === "AbortError") {
       return;

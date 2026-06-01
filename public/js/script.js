@@ -364,6 +364,7 @@ closeProcessingSwal(); // ✅ close processing FIRST, then show success
       timer: 7500,
       timerProgressBar: true,
       showConfirmButton: true,
+      confirmButtonColor: "#28a745",
     });
   } catch (error) {
     if (error.name === "AbortError") {

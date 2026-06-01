@@ -40,6 +40,7 @@ function attachCardEvents(card) {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Hapus",
+        confirmButtonColor: "#f70a0a",
       }).then((result) => {
         if (result.isConfirmed) {
           card.remove();
@@ -134,6 +135,7 @@ function attachCardEvents(card) {
           timer: 7500,
           timerProgressBar: true,
           showConfirmButton: true,
+          confirmButtonColor: "#28a745",
         });
 
       } catch (err) {
@@ -159,6 +161,7 @@ function deletePlagiasiResult() {
     icon: "warning",
     showCancelButton: true,
     confirmButtonText: "Hapus",
+    confirmButtonColor: "#ff0000",
   }).then((result) => {
     if (result.isConfirmed) {
       clearPlagiasiResult();
@@ -323,7 +326,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // PDF MODE
     if (mode === "pdf") {
       if (selectedFiles.length < 2) {
-        Swal.fire({ title: "Kurang File", text: "Minimal 2 file PDF untuk dibandingkan!", icon: "warning" });
+        Swal.fire({ title: "Kurang File", text: "Minimal 2 file PDF untuk dibandingkan!", icon: "warning" ,confirmButtonColor: "#28a745",},
+          
+        );
         return;
       }
       const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -446,6 +451,7 @@ document.addEventListener("DOMContentLoaded", () => {
         timer: 7500,
         timerProgressBar: true,
         showConfirmButton: true,
+        confirmButtonColor: "#28a745",
       });
 
     } catch (err) {

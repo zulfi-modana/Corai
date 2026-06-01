@@ -317,13 +317,13 @@
 
       /* ADVANCED TOGGLE */
       .advanced-toggle {
-        background-color: #1fc683;
+        background-color: var(--accent);
         display: inline-flex;
         align-items: center;
         gap: 8px;
         font-size: 13px;
         font-weight: 500;
-        color: var(--ink);
+        color: var(--accent-soft);
         border: 1px dashed var(--border-strong);
         border-radius: var(--radius);
         padding: 9px 16px;
@@ -772,6 +772,7 @@
                 class="advanced-toggle"
                 style="margin-top: 4px"
                 onclick="addTujuan()"
+                style="background-color:var(--accent) !important;"
               >
                 <i>＋</i> Tambah Tujuan
               </button>
@@ -1017,7 +1018,7 @@
               </div>
             </div>
 
-            <button type="submit" class="btn-primary" id="btnGenerate">
+            <button type="submit" class="btn-primary" id="btnGenerate" style="background-color: var(--accent);">
               <i>📄</i> Generate Sekarang
             </button>
            

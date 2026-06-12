@@ -104,10 +104,8 @@ function cancelGenerate() {
 
   btnGenerate.disabled = false;
 
-  btnGenerate.innerHTML =
-    '<i class="fas fa-magic"></i> Generate RPP Sekarang';
+  btnGenerate.innerHTML = '<i class="fas fa-magic"></i> Generate RPP Sekarang';
 
- 
   closeProcessingSwal();
 }
 
@@ -149,7 +147,9 @@ function showProcessingSwal(message = "Sedang memproses...") {
 }
 
 function updateSwalText(message) {
-  const swalText = document.querySelector(".swal2-html-container, .swal2-content");
+  const swalText = document.querySelector(
+    ".swal2-html-container, .swal2-content",
+  );
   if (swalText) swalText.textContent = message;
 }
 
@@ -158,19 +158,13 @@ function updateGenerateButton(text, icon = "fa-spinner") {
 
   btnGenerate.innerHTML = `<i class="fas ${icon} fa-spin"></i> ${text}`;
 
- 
-
-  localStorage.setItem(
-    "generatingLabel",
-    JSON.stringify({ text, icon }),
-  );
-    if (!Swal.isVisible()) {
+  localStorage.setItem("generatingLabel", JSON.stringify({ text, icon }));
+  if (!Swal.isVisible()) {
     showProcessingSwal(text);
   } else {
     updateSwalText(text);
   }
 }
-   
 
 /* btn download word */
 function setButtonVisibility(isVisible) {
@@ -260,17 +254,14 @@ function setPromptCustomizationLocked(isLocked = true) {
   }
 }
 
-async function generateAI(
-  formData,
-  cpText,
-  formatPrompt,
-  userInstruction,
-) {
+async function generateAI(formData, cpText, formatPrompt, userInstruction) {
   updateGenerateButton("Generate Modul...", "fa-brain");
 
   localStorage.setItem("generateStage", "generating_ai");
 
   abortController = new AbortController();
+
+  let showedSuccess = false;
 
   try {
     const prompt = `
@@ -282,13 +273,13 @@ Mapel: ${formData.subject}
 Kelas: ${formData.grade}
 Materi: ${formData.topic}
 Tujuan: ${formData.tujuan}
-Metode Belajar :  ${
-      formData.metode == "" ? "belum tersedia" : formData.metode
-    }
+Metode Belajar :  ${formData.metode == "" ? "belum tersedia" : formData.metode}
 Dimensi Profil Pancasila : Dimensi Profil Kelulusan: ${formData.dpk}
 
 CP:
 ${cpText || "Belum tersedia"}
+
+
 
 [INSTRUKSI]
 Buat modul ajar lengkap.
@@ -297,6 +288,7 @@ Tambahan struktur:
 - Lampiran berisi: materi, referensi, LKPD, dan rubrik penilaian
 - Gunakan tujuan pembelajaran sebagai dasar penyusunan materi
 `;
+
 
     const resAI = await fetch("/api/ai", {
       method: "POST",
@@ -317,8 +309,7 @@ Tambahan struktur:
           topic: formData.topic,
           tujuan: formData.tujuan,
           dpk: formData.dpk,
-          metode:
-            formData.metode == "" ? "belum tersedia" : formData.metode,
+          metode: formData.metode == "" ? "belum tersedia" : formData.metode,
         },
       }),
 
@@ -326,8 +317,9 @@ Tambahan struktur:
     });
 
     const dataAI = await resAI.json();
+    console.log("GENERATE AI START");
 
- updateSwalText("Menyusun output, mohon tunggu...");
+    updateSwalText("Menyusun output, mohon tunggu...");
     if (!resAI.ok || !dataAI.success) {
       throw new Error(dataAI.error || "AI error");
     }
@@ -350,14 +342,14 @@ Tambahan struktur:
       top: document.getElementById("result-container").offsetTop - 10,
       behavior: "smooth",
     });
-closeProcessingSwal(); // ✅ close processing FIRST, then show success
+    closeProcessingSwal(); // ✅ close processing FIRST, then show success
 
     showedSuccess = true; // ✅ mark so finally doesn't close it
 
     setButtonVisibility(true);
 
     setPromptCustomizationLocked(false);
-       await Swal.fire({
+    await Swal.fire({
       title: "✅ Berhasil!",
       text: "Modul ajar berhasil digenerate!",
       icon: "success",
@@ -370,11 +362,17 @@ closeProcessingSwal(); // ✅ close processing FIRST, then show success
     if (error.name === "AbortError") {
       return;
     }
+      closeProcessingSwal();
 
-     Swal.fire("Gagal Generate", error.message, "error");
+  await Swal.fire(
+    "Gagal Generate",
+    error.message,
+    "error"
+  );
+
   } finally {
-       if (!showedSuccess) closeProcessingSwal();
-
+  /*   if (!showedSuccess) closeProcessingSwal(); */
+    console.log("GENERATE AI FINALLY");
     localStorage.removeItem("isGenerating");
     localStorage.removeItem("generatingLabel");
     localStorage.removeItem("generateStage");
@@ -386,15 +384,13 @@ closeProcessingSwal(); // ✅ close processing FIRST, then show success
 
     btnGenerate.innerHTML =
       '<i class="fas fa-magic"></i> Generate RPP Sekarang';
-
- 
   }
 }
 
 console.log("DOM loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.body.classList.add("restoring");
+  document.body.classList.add("restoring");
   btnGenerate = document.getElementById("btnGenerate");
 
   setPromptCustomizationLocked(true);
@@ -417,35 +413,26 @@ document.addEventListener("DOMContentLoaded", () => {
     setButtonVisibility(true);
   }
 
-  const savedGeneratingState =
-    localStorage.getItem("isGenerating");
+  const savedGeneratingState = localStorage.getItem("isGenerating");
 
   if (savedGeneratingState) {
     const btn = document.getElementById("btnGenerate");
 
     btn.disabled = true;
 
-  
-
-    btn.innerHTML =
-      '<i class="fas fa-brain fa-spin"></i> Generate Modul...';
+    btn.innerHTML = '<i class="fas fa-brain fa-spin"></i> Generate Modul...';
 
     const savedLabel = localStorage.getItem("generatingLabel");
 
     if (savedLabel) {
       const { text, icon } = JSON.parse(savedLabel);
 
-      btn.innerHTML =
-        `<i class="fas ${icon} fa-spin"></i> ${text}`;
+      btn.innerHTML = `<i class="fas ${icon} fa-spin"></i> ${text}`;
     } else {
-      btn.innerHTML =
-        `<i class="fas fa-spinner fa-spin"></i> Memproses...`;
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Memproses...`;
     }
 
-    showToast(
-      "Masih dalam proses generate, harap tunggu...",
-      4000,
-    );
+    showToast("Masih dalam proses generate, harap tunggu...", 4000);
   }
 
   const savedForm = localStorage.getItem("formValue");
@@ -453,26 +440,19 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedForm) {
     const formData = JSON.parse(savedForm);
 
-    document.getElementById("schoolName").value =
-      formData.school;
+    document.getElementById("schoolName").value = formData.school;
 
-    document.getElementById("subject").value =
-      formData.subject;
+    document.getElementById("subject").value = formData.subject;
 
-    document.getElementById("topic").value =
-      formData.topic;
+    document.getElementById("topic").value = formData.topic;
 
-    document.getElementById("customCP").value =
-      formData.cpText || "";
+    document.getElementById("customCP").value = formData.cpText || "";
 
-    document.getElementById("jurusan").value =
-      formData.jurusan;
+    document.getElementById("jurusan").value = formData.jurusan;
 
-    document.getElementById("gradeLevel").value =
-      formData.grade;
+    document.getElementById("gradeLevel").value = formData.grade;
 
-    const tujuanInputs =
-      document.querySelectorAll("#tujuan-list input");
+    const tujuanInputs = document.querySelectorAll("#tujuan-list input");
 
     if (formData.tujuan) {
       const tujuanArray = formData.tujuan.split("\n");
@@ -488,28 +468,21 @@ document.addEventListener("DOMContentLoaded", () => {
       .split(",")
       .map((item) => item.trim());
 
-    document
-      .querySelectorAll('input[type="checkbox"]')
-      .forEach((cb) => {
-        cb.checked = selectedDPK.includes(cb.value);
-      });
+    document.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+      cb.checked = selectedDPK.includes(cb.value);
+    });
 
-    document.getElementById("metode").value =
-      formData.metode;
+    document.getElementById("metode").value = formData.metode;
 
-    document.getElementById("judul").value =
-      formData.judul;
+    document.getElementById("judul").value = formData.judul;
   }
 
   const formatPrompt = utils.defaultPrompts.rppSystem;
 
-  const generateStage =
-    localStorage.getItem("generateStage");
+  const generateStage = localStorage.getItem("generateStage");
 
   if (generateStage === "fetching_cp") {
-    const savedFormData = JSON.parse(
-      localStorage.getItem("formValue"),
-    );
+    const savedFormData = JSON.parse(localStorage.getItem("formValue"));
 
     if (!savedFormData) {
       localStorage.removeItem("isGenerating");
@@ -519,17 +492,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    showToast(
-      "Melanjutkan pencarian CP...",
-      3000,
-    );
+    showToast("Melanjutkan pencarian CP...", 3000);
 
     (async () => {
       try {
-        updateGenerateButton(
-          "Mencari CP...",
-          "fa-search",
-        );
+        updateGenerateButton("Mencari CP...", "fa-search");
 
         abortController = new AbortController();
 
@@ -547,9 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         if (!res.ok) {
-          throw new Error(
-            `HTTP error! status: ${res.status}`,
-          );
+          throw new Error(`HTTP error! status: ${res.status}`);
         }
 
         const resJson = await res.json();
@@ -568,20 +533,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (cpAvailable && data && data.length > 0) {
           cpText = data
-            .map(
-              (item) =>
-                `${item.title}: ${item.content}`,
-            )
+            .map((item) => `${item.title}: ${item.content}`)
             .join("\n");
         }
 
-        const customCPInput =
-          document.querySelector("#customCP");
+        const customCPInput = document.querySelector("#customCP");
 
         if (!cpAvailable) {
-          if (
-            customCPInput.value.trim() === ""
-          ) {
+          if (customCPInput.value.trim() === "") {
             showToast(
               "CP tidak ditemukan, silahkan isi CP secara manual",
               3000,
@@ -592,73 +551,44 @@ document.addEventListener("DOMContentLoaded", () => {
             btnGenerate.innerHTML =
               '<i class="fas fa-magic"></i> Generate RPP Sekarang';
 
-            
-
-              // reset generating state
-  localStorage.removeItem("isGenerating");
-  localStorage.removeItem("generateStage");
-  localStorage.removeItem("generatingLabel");
-  localStorage.removeItem("cpText");
+            // reset generating state
+            localStorage.removeItem("isGenerating");
+            localStorage.removeItem("generateStage");
+            localStorage.removeItem("generatingLabel");
+            localStorage.removeItem("cpText");
 
             customCPInput.focus();
 
             return;
           }
 
-          cpText =
-            customCPInput.value.trim();
+          cpText = customCPInput.value.trim();
         }
 
         savedFormData.cpText = cpText;
 
-        localStorage.setItem(
-          "formValue",
-          JSON.stringify(savedFormData),
-        );
+        localStorage.setItem("formValue", JSON.stringify(savedFormData));
 
-        localStorage.setItem(
-          "cpText",
-          cpText,
-        );
+        localStorage.setItem("cpText", cpText);
 
-        localStorage.setItem(
-          "generateStage",
-          "generating_ai",
-        );
+        localStorage.setItem("generateStage", "generating_ai");
 
         const userInstruction =
-          document.getElementById(
-            "userInstruction",
-          )?.value.trim() || "";
+          document.getElementById("userInstruction")?.value.trim() || "";
 
-        await generateAI(
-          savedFormData,
-          cpText,
-          formatPrompt,
-          userInstruction,
-        );
+        await generateAI(savedFormData, cpText, formatPrompt, userInstruction);
       } catch (error) {
         if (error.name === "AbortError") {
           return;
         }
 
-        console.error(
-          "Resume fetching CP gagal:",
-          error,
-        );
+        console.error("Resume fetching CP gagal:", error);
 
-        showToast(
-          "Gagal melanjutkan generate",
-          3000,
-        );
+        showToast("Gagal melanjutkan generate", 3000);
 
-        localStorage.removeItem(
-          "isGenerating",
-        );
+        localStorage.removeItem("isGenerating");
 
-        localStorage.removeItem(
-          "generateStage",
-        );
+        localStorage.removeItem("generateStage");
 
         localStorage.removeItem("cpText");
 
@@ -666,30 +596,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         btnGenerate.innerHTML =
           '<i class="fas fa-magic"></i> Generate RPP Sekarang';
-
-       
       }
     })();
   }
 
   if (generateStage === "generating_ai") {
-    const savedFormData = JSON.parse(
-      localStorage.getItem("formValue"),
-    );
+    const savedFormData = JSON.parse(localStorage.getItem("formValue"));
 
-    const savedCPText =
-      localStorage.getItem("cpText");
+    const savedCPText = localStorage.getItem("cpText");
 
     const userInstruction =
-      document.getElementById("userInstruction")?.value.trim() ||
-      "";
+      document.getElementById("userInstruction")?.value.trim() || "";
 
-    generateAI(
-      savedFormData,
-      savedCPText,
-      formatPrompt,
-      userInstruction,
-    );
+    generateAI(savedFormData, savedCPText, formatPrompt, userInstruction);
   }
 
   // Navigation Logic
@@ -697,24 +616,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
-      navLinks.forEach((l) =>
-        l.classList.remove("active"),
-      );
+      navLinks.forEach((l) => l.classList.remove("active"));
 
       link.classList.add("active");
 
-      const targetId =
-        link.getAttribute("data-target");
+      const targetId = link.getAttribute("data-target");
 
-      document
-        .querySelectorAll(".app-section")
-        .forEach((section) => {
-          section.classList.remove("active");
-        });
+      document.querySelectorAll(".app-section").forEach((section) => {
+        section.classList.remove("active");
+      });
 
-      document
-        .getElementById(targetId)
-        .classList.add("active");
+      document.getElementById(targetId).classList.add("active");
     });
   });
 
@@ -757,13 +669,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function validateTujuanCount() {
-      const tujuanInputs = [
-        ...document.querySelectorAll("#tujuan-list input"),
-      ];
+      const tujuanInputs = [...document.querySelectorAll("#tujuan-list input")];
 
-      const filled = tujuanInputs.filter(
-        (input) => input.value.trim() !== "",
-      );
+      const filled = tujuanInputs.filter((input) => input.value.trim() !== "");
 
       if (filled.length < 3) {
         showToast("Isi minimal 3 tujuan", 3000);
@@ -776,16 +684,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return true;
     }
 
-    const checked =
-      document.querySelectorAll(
-        'input[type="checkbox"]:checked',
-      );
+    const checked = document.querySelectorAll('input[type="checkbox"]:checked');
 
     if (checked.length < 2) {
-      showToast(
-        "Pilih minimal 2 Dimensi Profil Kelulusan",
-        3000,
-      );
+      showToast("Pilih minimal 2 Dimensi Profil Kelulusan", 3000);
 
       focus();
 
@@ -797,59 +699,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const userInstruction =
-      document.getElementById("userInstruction")?.value.trim() ||
-      "";
+      document.getElementById("userInstruction")?.value.trim() || "";
 
     btnGenerate.disabled = true;
 
     const formData = {
-      school:
-        document.getElementById("schoolName").value,
+      school: document.getElementById("schoolName").value,
 
-      level:
-        document.getElementById("taskOption").value,
+      level: document.getElementById("taskOption").value,
 
-      jurusan:
-        document.getElementById("jurusan").value,
+      jurusan: document.getElementById("jurusan").value,
 
-      subject:
-        document.getElementById("subject").value,
+      subject: document.getElementById("subject").value,
 
-      grade:
-        document.getElementById("gradeLevel").value,
+      grade: document.getElementById("gradeLevel").value,
 
-      topic:
-        document.getElementById("topic").value,
+      topic: document.getElementById("topic").value,
 
-      tujuan: [
-        ...document.querySelectorAll("#tujuan-list input"),
-      ]
+      tujuan: [...document.querySelectorAll("#tujuan-list input")]
         .map((el, i) => `${i + 1}. ${el.value}`)
-        .filter(
-          (v) =>
-            v.trim() !== `${v.split(".")[0]}.`,
-        )
+        .filter((v) => v.trim() !== `${v.split(".")[0]}.`)
         .join("\n"),
 
-      metode:
-        document.getElementById("metode").value,
+      metode: document.getElementById("metode").value,
 
-      dpk: [
-        ...document.querySelectorAll(
-          'input[type="checkbox"]:checked',
-        ),
-      ]
+      dpk: [...document.querySelectorAll('input[type="checkbox"]:checked')]
         .map((cb) => cb.value)
         .join(", "),
 
-      judul:
-        document.getElementById("judul").value,
+      judul: document.getElementById("judul").value,
     };
 
-    localStorage.setItem(
-      "formValue",
-      JSON.stringify(formData),
-    );
+    localStorage.setItem("formValue", JSON.stringify(formData));
 
     const fase = getFase(formData.grade);
 
@@ -859,17 +740,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     localStorage.setItem("isGenerating", "true");
 
-    localStorage.setItem(
-      "generateStage",
-      "fetching_cp",
-    );
+    localStorage.setItem("generateStage", "fetching_cp");
 
     abortController = new AbortController();
 
-    updateGenerateButton(
-      "Mencari CP...",
-      "fa-search",
-    );
+    updateGenerateButton("Mencari CP...", "fa-search");
 
     try {
       const res = await fetch(
@@ -880,9 +755,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       if (!res.ok) {
-        throw new Error(
-          `HTTP error! status: ${res.status}`,
-        );
+        throw new Error(`HTTP error! status: ${res.status}`);
       }
 
       const resJson = await res.json();
@@ -901,42 +774,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (cpAvailable && data && data.length > 0) {
         cpText = data
-          .map(
-            (item) =>
-              `${item.title}: ${item.content}`,
-          )
+          .map((item) => `${item.title}: ${item.content}`)
           .join("\n");
       }
 
       console.log("CP:", cpText);
 
-      console.log(
-        "CP Available:",
-        cpAvailable,
-      );
+      console.log("CP Available:", cpAvailable);
     } catch (error) {
       if (error.name === "AbortError") {
         return;
       }
 
-      console.error(
-        "Terjadi error saat ambil cp:",
-        error.message,
-      );
+      console.error("Terjadi error saat ambil cp:", error.message);
     }
 
-    const customCPInput =
-      document.querySelector("#customCP");
+    const customCPInput = document.querySelector("#customCP");
 
     if (!cpAvailable) {
-      const cpLabel =
-        document.querySelector(".cpLabel");
+      const cpLabel = document.querySelector(".cpLabel");
 
       if (customCPInput.value.trim() === "") {
-        showToast(
-          "CP tidak ditemukan, silahkan isi CP secara manual",
-          3000,
-        );
+        showToast("CP tidak ditemukan, silahkan isi CP secara manual", 3000);
 
         btnGenerate.disabled = false;
 
@@ -945,13 +804,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         customCPInput.focus();
 
-  
-
         // reset generating state
-  localStorage.removeItem("isGenerating");
-  localStorage.removeItem("generateStage");
-  localStorage.removeItem("generatingLabel");
-  localStorage.removeItem("cpText");
+        localStorage.removeItem("isGenerating");
+        localStorage.removeItem("generateStage");
+        localStorage.removeItem("generatingLabel");
+        localStorage.removeItem("cpText");
 
         return;
       }
@@ -961,22 +818,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     formData.cpText = cpText;
 
-    localStorage.setItem(
-      "formValue",
-      JSON.stringify(formData),
-    );
+    localStorage.setItem("formValue", JSON.stringify(formData));
 
     localStorage.setItem("cpText", cpText);
 
-    await generateAI(
-      formData,
-      cpText,
-      formatPrompt,
-      userInstruction,
-    );
-
+    await generateAI(formData, cpText, formatPrompt, userInstruction);
   });
-     requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
     document.body.classList.remove("restoring");
   });
 });

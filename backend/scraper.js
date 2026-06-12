@@ -20,9 +20,6 @@ async function getCapaian(jurusan, elemen_capaian, fase,signal) {
 
   if (signal) signal.addEventListener("abort", onAbort);
 
-
-  
-  
   try {
 
        const checkAbort = () => {

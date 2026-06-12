@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const Swal = require("sweetalert2");
 const { getCapaian } = require("./scraper");
+const { searchIllustration } = require("./mediawiki");
 
 const app = express();
 Swal.fire({
@@ -104,6 +105,9 @@ app.get("/capaian", async (req, res) => {
 app.post("/api/ai", async (req, res) => {
   const { prompt, formatPrompt, userInstruction, meta } = req.body;
 
+ 
+
+
   console.log("SYSTEM PROMPT:", JSON.stringify(formatPrompt));
 
   if (!prompt) {
@@ -153,8 +157,45 @@ app.post("/api/ai", async (req, res) => {
     // =========================
     console.log("🌐 CALL AI (BASE)");
 
+
+
+ /* generate ilustration start */
+    let illustration = null;
+   
+try {
+  const keyword = await generateIllustrationKeyword(
+    meta.subject,
+    meta.topic,
+    meta.tujuan
+  );
+
+  console.log("Keyword:", keyword);
+
+  const images = await searchIllustration(keyword);
+
+  if (images.length > 0) {
+    illustration = images[0];
+  }
+} catch (err) {
+  console.err("Illustration fetch gagal:", err.message);
+}
+
+/* generate ilustration end */
+
+ let finalPrompt = prompt;
+ if (illustration) {
+  finalPrompt += `
+
+[ILUSTRASI]
+Judul: ${illustration.title}
+URL: ${illustration.imageUrl}
+
+Gunakan ilustrasi ini pada bagian Lampiran Materi.
+`;
+}
+
     try {
-      const result = await aiQueue.add(() => callAI(prompt, formatPrompt));
+      const result = await aiQueue.add(() => callAI(finalPrompt, formatPrompt));
       baseResult = result;
     } catch (err) {
       return res.status(503).json({ error: err.message });
@@ -210,6 +251,41 @@ ${userInstruction}
     cached: false,
   });
 });
+
+
+/* Media wiki AI helper */
+
+async function generateIllustrationKeyword(subject, topic, tujuan) {
+  const prompt = `
+Mata Pelajaran: ${subject}
+Materi: ${topic}
+Tujuan Pembelajaran:
+${tujuan}
+
+Tentukan keyword bahasa Inggris yang paling cocok untuk mencari ilustrasi dalam konteks pendidikan SEKOLAH MENENGAH KEJURUAN.
+
+Contoh:
+
+HTML Table dengan gaya CSS  -> html table CSS
+CSS Flexbox -> css flexbox
+Database Relasional -> relational database diagram
+Flowchart -> flowchart
+
+Output hanya keyword.
+`
+
+;
+
+
+
+  const result = await callAI(
+    prompt,
+    "Output hanya keyword tanpa penjelasan."
+  );
+
+  return result.trim().replace(/"/g, "");
+}
+
 
 /* =========================
    🔹 HELPER AI CALL
@@ -285,7 +361,7 @@ app.listen(PORT, () => {
 
 /* database */
 
-const mysql = require("mysql2/promise");
+/* const mysql = require("mysql2/promise"); */
 
 /* async function test() {
   const connection = await mysql.createConnection({

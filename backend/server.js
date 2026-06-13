@@ -282,8 +282,15 @@ Tentukan keyword bahasa Inggris yang paling cocok untuk mencari ilustrasi dalam 
 mata pelajaran dan tujuan pembelajaran, serta gunakan Materi sebagai konteks jika tersedia, jika tidak asumsikan konteks dari mata pelajaran dan tujuan pembelajaran.
 
 Contoh:
--Mata pelajaran: Pemrograman web, Materi: HTML Table, CSS, Tujuan: Siswa mampu menerapkan style CSS pada Table HTML -> html table CSS styling
--Mata pelajaran: Pemrograman web, Materi: "", Tujuan: Siswa mampu menerapkan CSS Flexbox -> css flexbox web dev
+-Mata pelajaran: Pemrograman web, Materi: HTML Table, CSS, Tujuan: Siswa mampu menerapkan style CSS pada Table HTML -> html table CSS styling illustration
+-Mata pelajaran: Pemrograman web, Materi: "", Tujuan: Siswa mampu menerapkan CSS Flexbox -> css flexbox illustration
+
+Prioritaskan:
+- diagram
+- illustration
+- infographic
+- schema
+- screenshot
 
 Output hanya keyword.
 `;

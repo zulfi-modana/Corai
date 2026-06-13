@@ -105,9 +105,6 @@ app.get("/capaian", async (req, res) => {
 app.post("/api/ai", async (req, res) => {
   const { prompt, formatPrompt, userInstruction, meta } = req.body;
 
- 
-
-
   console.log("SYSTEM PROMPT:", JSON.stringify(formatPrompt));
 
   if (!prompt) {
@@ -157,42 +154,62 @@ app.post("/api/ai", async (req, res) => {
     // =========================
     console.log("🌐 CALL AI (BASE)");
 
+    /* generate ilustration start */
+    let illustration = [];
+    const tujuanList = meta.tujuan
+      .split("\n")
+      .map((t) => t.replace(/^\d+\.\s*/, "").trim())
+      .filter(Boolean);
 
+    try {
+      for (const tujuan of tujuanList) {
+        const keyword = await generateIllustrationKeyword(
+          meta.subject,
+          meta.topic,
+          tujuan,
+        );
 
- /* generate ilustration start */
-    let illustration = null;
-   
-try {
-  const keyword = await generateIllustrationKeyword(
-    meta.subject,
-    meta.topic,
-    meta.tujuan
-  );
+        console.log("Keyword:", keyword);
 
-  console.log("Keyword:", keyword);
+        const images = await searchIllustration(keyword);
 
-  const images = await searchIllustration(keyword);
+        if (images.length > 0) {
+          illustration.push({
+            tujuan,
+            keyword,
+            ...images[0],
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Illustration fetch gagal:", err.message);
+    }
 
-  if (images.length > 0) {
-    illustration = images[0];
-  }
-} catch (err) {
-  console.err("Illustration fetch gagal:", err.message);
-}
+    /* generate ilustration end */
 
-/* generate ilustration end */
+    let finalPrompt = prompt;
 
- let finalPrompt = prompt;
- if (illustration) {
-  finalPrompt += `
+    if (illustration.length > 0) {
+      finalPrompt += `
 
 [ILUSTRASI]
-Judul: ${illustration.title}
-URL: ${illustration.imageUrl}
+${illustration.map((img, index) => `Ilustrasi ${index + 1}
 
-Gunakan ilustrasi ini pada bagian Lampiran Materi.
+Tujuan:
+${img.tujuan}
+
+Keyword:
+${img.keyword}
+
+Judul:
+${img.title}
+
+URL:
+${img.imageUrl}
+`,
+).join("\n")}
 `;
-}
+    }
 
     try {
       const result = await aiQueue.add(() => callAI(finalPrompt, formatPrompt));
@@ -252,7 +269,6 @@ ${userInstruction}
   });
 });
 
-
 /* Media wiki AI helper */
 
 async function generateIllustrationKeyword(subject, topic, tujuan) {
@@ -262,30 +278,20 @@ Materi: ${topic}
 Tujuan Pembelajaran:
 ${tujuan}
 
-Tentukan keyword bahasa Inggris yang paling cocok untuk mencari ilustrasi dalam konteks pendidikan SEKOLAH MENENGAH KEJURUAN.
+Tentukan keyword bahasa Inggris yang paling cocok untuk mencari ilustrasi dalam konteks pendidikan SMK sesuai dengan .
+mata pelajaran dan tujuan pembelajaran, serta gunakan Materi sebagai konteks jika tersedia, jika tidak asumsikan konteks dari mata pelajaran dan tujuan pembelajaran.
 
 Contoh:
-
-HTML Table dengan gaya CSS  -> html table CSS
-CSS Flexbox -> css flexbox
-Database Relasional -> relational database diagram
-Flowchart -> flowchart
+-Mata pelajaran: Pemrograman web, Materi: HTML Table, CSS, Tujuan: Siswa mampu menerapkan style CSS pada Table HTML -> html table CSS styling
+-Mata pelajaran: Pemrograman web, Materi: "", Tujuan: Siswa mampu menerapkan CSS Flexbox -> css flexbox web dev
 
 Output hanya keyword.
-`
+`;
 
-;
-
-
-
-  const result = await callAI(
-    prompt,
-    "Output hanya keyword tanpa penjelasan."
-  );
+  const result = await callAI(prompt, "Output hanya keyword tanpa penjelasan.");
 
   return result.trim().replace(/"/g, "");
 }
-
 
 /* =========================
    🔹 HELPER AI CALL
@@ -325,7 +331,7 @@ async function callAI(prompt, formatPrompt) {
               { role: "user", content: prompt },
             ],
             temperature: 0.2,
-            max_tokens: 3000,
+            max_tokens: 6000,
           }),
         },
       );
@@ -373,5 +379,3 @@ app.listen(PORT, () => {
 
   console.log("Connected!");
 } */
-
-

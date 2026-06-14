@@ -174,10 +174,19 @@ app.post("/api/ai", async (req, res) => {
         const images = await searchIllustration(keyword);
 
         if (images.length > 0) {
+          const bestImage = await selectBestIllustration(
+            meta.subject,
+            meta.topic,
+            tujuan,
+            images.slice(0, 5),
+            console.log("candidates: " + images.slice(0, 5)),
+          );
+          console.log("Selected: " + bestImage);
+
           illustration.push({
             tujuan,
             keyword,
-            ...images[0],
+            ...bestImage,
           });
         }
       }
@@ -193,7 +202,9 @@ app.post("/api/ai", async (req, res) => {
       finalPrompt += `
 
 [ILUSTRASI]
-${illustration.map((img, index) => `Ilustrasi ${index + 1}
+${illustration
+  .map(
+    (img, index) => `Ilustrasi ${index + 1}
 
 Tujuan:
 ${img.tujuan}
@@ -207,7 +218,8 @@ ${img.title}
 URL:
 ${img.imageUrl}
 `,
-).join("\n")}
+  )
+  .join("\n")}
 `;
     }
 
@@ -285,7 +297,7 @@ Perhatikan konteks mata pelajaran.
 Contoh:
 
 HTML Table
-=> html table code
+=> html table web development
 
 CSS Flexbox
 => css flexbox diagram
@@ -307,6 +319,59 @@ Output hanya keyword.
   return result.trim().replace(/"/g, "");
 }
 
+/* Helper AI image relevancy */
+
+async function selectBestIllustration(subject, topic, tujuan, images) {
+  if (!images || images.length === 0) {
+    return null;
+  }
+
+  const imageList = images
+    .map(
+      (img, index) => `
+${index + 1}
+Title: ${img.title}
+URL: ${img.imageUrl}
+`,
+    )
+    .join("\n");
+
+  const prompt = `
+Mata Pelajaran:
+${subject}
+
+Materi:
+${topic}
+
+Tujuan Pembelajaran:
+${tujuan}
+
+Pilih ilustrasi yang PALING relevan untuk membantu siswa memahami materi.
+
+Daftar ilustrasi:
+
+${imageList}
+
+
+Beri skor 1-10 untuk setiap gambar.
+Pilih skor tertinggi.
+
+Output:
+3
+
+Output hanya nomor.
+`;
+
+  const result = await callAI(prompt, "Output hanya angka.");
+
+  const index = parseInt(result.trim(), 10) - 1;
+
+  if (Number.isNaN(index) || !images[index]) {
+    return images[0];
+  }
+
+  return images[index];
+}
 /* =========================
    🔹 HELPER AI CALL
 ========================= */
@@ -345,7 +410,7 @@ async function callAI(prompt, formatPrompt) {
               { role: "user", content: prompt },
             ],
             temperature: 0.2,
-            max_tokens: 6000,
+            max_tokens: 9999,
           }),
         },
       );

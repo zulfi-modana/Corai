@@ -278,19 +278,26 @@ Materi: ${topic}
 Tujuan Pembelajaran:
 ${tujuan}
 
-Tentukan keyword bahasa Inggris yang paling cocok untuk mencari ilustrasi dalam konteks pendidikan SMK sesuai dengan .
-mata pelajaran dan tujuan pembelajaran, serta gunakan Materi sebagai konteks jika tersedia, jika tidak asumsikan konteks dari mata pelajaran dan tujuan pembelajaran.
+Tentukan keyword pencarian gambar yang paling spesifik.
+
+Perhatikan konteks mata pelajaran.
 
 Contoh:
--Mata pelajaran: Pemrograman web, Materi: HTML Table, CSS, Tujuan: Siswa mampu menerapkan style CSS pada Table HTML -> html table CSS styling illustration
--Mata pelajaran: Pemrograman web, Materi: "", Tujuan: Siswa mampu menerapkan CSS Flexbox -> css flexbox illustration
 
-Prioritaskan:
-- diagram
-- illustration
-- infographic
-- schema
-- screenshot
+HTML Table
+=> html table code
+
+CSS Flexbox
+=> css flexbox diagram
+
+JavaScript Function
+=> javascript function diagram
+
+Relational Database
+=> database schema diagram
+
+Star Topology
+=> star network topology diagram
 
 Output hanya keyword.
 `;

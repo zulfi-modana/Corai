@@ -428,7 +428,7 @@
 
     <main>
       <div class="page-eyebrow">✦ Deteksi Otomatis</div>
-      <h1 class="page-title">Koreksi Plagiasi</h1>
+       <h1 class="page-title" id="page-title"></h1>
       <p class="page-sub">
         Input tugas siswa untuk dianalisis kesamaan dan indikasi plagiasi secara
         otomatis.
@@ -519,7 +519,7 @@
               </div>
             </div>
 
-            <button type="submit" class="btn-primary">
+            <button type="submit" class="btn-primary" style="background-color:var(--accent) ;">
               <i class="fas fa-search"></i> Analisis Jawaban
             </button>
             <button class="btn btn-secondary bg-danger-cust" onclick="deletePlagiasiResult()" type="button">Hapus Hasil</button>
@@ -553,11 +553,26 @@
       </section>
     </main>
 
+    <script>      /* Text type effect */
+      var i = 0;
+      var txt = "Koreksi Plagiasi.";
+      var speed = 50;
+
+      function typeWriter() {
+        if (i < txt.length) {
+          document.getElementById("page-title").innerHTML += txt.charAt(i);
+          i++;
+          setTimeout(typeWriter, speed);
+        }
+      }</script>
+
     <!-- SCRIPT -->
     <script defer src="js/utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="js/components.js"></script>
     <!-- <script defer src="js/script.js"></script> -->
     <script defer src="js/plagiasi.js"></script>
+
+    
   </body>
 </html>

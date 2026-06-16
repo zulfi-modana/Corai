@@ -373,6 +373,7 @@ Tambahan struktur:
   } finally {
   /*   if (!showedSuccess) closeProcessingSwal(); */
     console.log("GENERATE AI FINALLY");
+    console.timeEnd("Waktu generate");
     localStorage.removeItem("isGenerating");
     localStorage.removeItem("generatingLabel");
     localStorage.removeItem("generateStage");
@@ -494,6 +495,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     showToast("Melanjutkan pencarian CP...", 3000);
 
+  
+
     (async () => {
       try {
         updateGenerateButton("Mencari CP...", "fa-search");
@@ -541,6 +544,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!cpAvailable) {
           if (customCPInput.value.trim() === "") {
+
+            closeProcessingSwal();
+            
             showToast(
               "CP tidak ditemukan, silahkan isi CP secara manual",
               3000,
@@ -634,6 +640,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const rppForm = document.getElementById("rpp-form");
 
   rppForm.addEventListener("submit", async (e) => {
+    console.time("Waktu generate")
     e.preventDefault();
 
     const validations = [

@@ -162,31 +162,22 @@ app.post("/api/ai", async (req, res) => {
       .filter(Boolean);
 
     try {
-      for (const tujuan of tujuanList) {
-        const keyword = await generateIllustrationKeyword(
-          meta.subject,
-          meta.topic,
-          tujuan,
-        );
+      const keywordResults = await generateIllustrationKeywords(
+        meta.subject,
+        meta.topic,
+        tujuanList,
+      );
 
-        console.log("Keyword:", keyword);
+      console.log(keywordResults);
 
-        const images = await searchIllustration(keyword);
-
+      for (const item of keywordResults) {
+        console.log("Keyword:", item.keyword);
+        const images = await searchIllustration(item.keyword);
         if (images.length > 0) {
-          const bestImage = await selectBestIllustration(
-            meta.subject,
-            meta.topic,
-            tujuan,
-            images.slice(0, 5),
-            console.log("candidates: " + images.slice(0, 5)),
-          );
-          console.log("Selected: " + bestImage);
-
           illustration.push({
-            tujuan,
-            keyword,
-            ...bestImage,
+            tujuan: item.tujuan,
+            keyword: item.keyword,
+            ...images[0],
           });
         }
       }
@@ -283,95 +274,49 @@ ${userInstruction}
 
 /* Media wiki AI helper */
 
-async function generateIllustrationKeyword(subject, topic, tujuan) {
+async function generateIllustrationKeywords(subject, topic, tujuanList) {
   const prompt = `
 Mata Pelajaran: ${subject}
 Materi: ${topic}
-Tujuan Pembelajaran:
-${tujuan}
 
-Tentukan keyword pencarian gambar yang paling spesifik.
+Tujuan:
 
-Perhatikan konteks mata pelajaran.
+${tujuanList.map((t, i) => `${i + 1}. ${t}`).join("\n")}
 
-Contoh:
+Buat keyword pencarian gambar UNTUK MASING2 TUJUAN.
 
-HTML Table
-=> html table web development
+JANGAN PERNAH LAKUKAN PENAMBAHAN KATA TUTORIAL, GUIDE, DIAGRAM, LATIHAN, OVERVIEW, VISUAL, DIAGRAM, ILLUSTRATION DSB. FOKUS SEBAGAI GURU YG MENCARI KEYWORD UNTUK MEMUDAHKAN SISWA, MISAL GURU HTML MENCARI KEYWORD " HTML ELEMENT STRUCTURE BREAKDOWN "
 
-CSS Flexbox
-=> css flexbox diagram
+Output hanya json array, pastikan keyword ringkas dan harus relevan dgn search wikimedia, gunakan konteks materi misal html javascript sebagai bahan utama keyword, utamakan mendapat gambar yg relevan dengan materi.
 
-JavaScript Function
-=> javascript function diagram
+Contoh hasil json array dengan mata pelajaran pemrograman web:
 
-Relational Database
-=> database schema diagram
+[
+ {
+  "tujuan":"siswa mampu menerapkan struktur elemen html",
+  "keyword":"html visual element structure breakdown"
+ },
+ {
+  "tujuan":"siswa mampu menerapkan media query css",
+  "keyword":"css grid layout media query"
+ },
+ {
+  "tujuan":"siswa mampu menerapkan javascript dom",
+  "keyword":"document model object javascript"
+ }
+]
 
-Star Topology
-=> star network topology diagram
+JANGAN output string array. JANGAN tambah penjelasan. HANYA JSON array.
 
-Output hanya keyword.
 `;
 
-  const result = await callAI(prompt, "Output hanya keyword tanpa penjelasan.");
+  const result = await callAI(prompt, "Output hanya JSON valid.");
 
-  return result.trim().replace(/"/g, "");
+  return JSON.parse(result);
 }
 
-/* Helper AI image relevancy */
-
-async function selectBestIllustration(subject, topic, tujuan, images) {
-  if (!images || images.length === 0) {
-    return null;
-  }
-
-  const imageList = images
-    .map(
-      (img, index) => `
-${index + 1}
-Title: ${img.title}
-URL: ${img.imageUrl}
-`,
-    )
-    .join("\n");
-
-  const prompt = `
-Mata Pelajaran:
-${subject}
-
-Materi:
-${topic}
-
-Tujuan Pembelajaran:
-${tujuan}
-
-Pilih ilustrasi yang PALING relevan untuk membantu siswa memahami materi.
-
-Daftar ilustrasi:
-
-${imageList}
 
 
-Beri skor 1-10 untuk setiap gambar.
-Pilih skor tertinggi.
-
-Output:
-3
-
-Output hanya nomor.
-`;
-
-  const result = await callAI(prompt, "Output hanya angka.");
-
-  const index = parseInt(result.trim(), 10) - 1;
-
-  if (Number.isNaN(index) || !images[index]) {
-    return images[0];
-  }
-
-  return images[index];
-}
 /* =========================
    🔹 HELPER AI CALL
 ========================= */

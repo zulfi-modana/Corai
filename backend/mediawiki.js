@@ -1,29 +1,48 @@
-require("dotenv").config();
+/* require("dotenv").config(); */
 
 async function searchIllustration(keyword) {
   try {
-    const response = await fetch(
-      `https://pixabay.com/api/?key=${process.env.PIXABAY_API_KEY}` +
-      `&q=${encodeURIComponent(keyword)}` +
-      `&image_type=illustration` +
-      `&per_page=5` +
-      `&safesearch=true`
-    );
+   const response = await fetch(
+  "https://commons.wikimedia.org/w/api.php?" +
+    new URLSearchParams({
+      action: "query",
+      generator: "search",
+      gsrnamespace: "6",
+      gsrsearch: keyword,
+      prop: "imageinfo",
+      iiprop: "url|mime",
+      format: "json",
+      origin: "*",
+      gsrlimit: "5",
+    })
+);
 
     const data = await response.json();
 
-    if (!data.hits || data.hits.length === 0) {
+    if (!data.query || !data.query.pages) {
       return [];
     }
 
-    return data.hits.map((img) => ({
-      title: img.tags,
-      imageUrl: img.webformatURL,
-    }));
+    const pages = Object.values(data.query.pages);
 
+return pages
+  .filter((page) => {
+    const info = page.imageinfo?.[0];
+
+    return (
+      info &&
+      info.url &&
+      info.mime &&
+      info.mime.startsWith("image/")
+    );
+  })
+  .map((page) => ({
+    title: page.title,
+    imageUrl: page.imageinfo[0].url,
+    mime: page.imageinfo[0].mime,
+  }));
   } catch (err) {
-    console.error("Pixabay Error:", err);
-
+    console.error("MediaWiki Error:", err);
     return [];
   }
 }

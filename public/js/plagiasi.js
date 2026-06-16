@@ -173,6 +173,7 @@ function deletePlagiasiResult() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  typeWriter();
   const dropZone = document.getElementById("dropZone");
   const pdfInput = document.getElementById("pdfInput");
   const saved = loadPlagiasiResult();

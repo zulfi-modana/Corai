@@ -285,7 +285,9 @@ ${tujuanList.map((t, i) => `${i + 1}. ${t}`).join("\n")}
 
 Buat keyword pencarian gambar UNTUK MASING2 TUJUAN.
 
-JANGAN PERNAH LAKUKAN PENAMBAHAN KATA TUTORIAL, GUIDE, DIAGRAM, LATIHAN, OVERVIEW, VISUAL, DIAGRAM, ILLUSTRATION DSB. FOKUS SEBAGAI GURU YG MENCARI KEYWORD UNTUK MEMUDAHKAN SISWA, MISAL GURU HTML MENCARI KEYWORD " HTML ELEMENT STRUCTURE BREAKDOWN "
+JANGAN PERNAH MENGGUNAKAN KATA TUTORIAL, GUIDE, DIAGRAM, LATIHAN, OVERVIEW, VISUAL, DIAGRAM, ILLUSTRATION DSB. FOKUS SEBAGAI GURU YG MENCARI KEYWORD UNTUK MEMUDAHKAN SISWA, MISAL GURU HTML MENCARI KEYWORD " HTML ELEMENT STRUCTURE BREAKDOWN ". Keyword yg digunakan akan digunakan untuk API database gambar umum sehingga avoid keyword yg tidak penting & ambigu /  kepanjangan (misal gunakan "css grid layout", bukan "css grid layout example")
+Tugasmu hanya membuat keyword supaya media ditemukan, tidak perlu menggunakan kata2 tutorial, example dll cukup keyword inti saja karna keyword akan dikirim ke API mediasearch.
+
 
 Output hanya json array, pastikan keyword ringkas dan harus relevan dgn search wikimedia, gunakan konteks materi misal html javascript sebagai bahan utama keyword, utamakan mendapat gambar yg relevan dengan materi.
 
@@ -294,7 +296,7 @@ Contoh hasil json array dengan mata pelajaran pemrograman web:
 [
  {
   "tujuan":"siswa mampu menerapkan struktur elemen html",
-  "keyword":"html visual element structure breakdown"
+  "keyword":"breakdown parts of html structure"
  },
  {
   "tujuan":"siswa mampu menerapkan media query css",

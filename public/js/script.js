@@ -267,6 +267,7 @@ async function generateAI(formData, cpText, formatPrompt, userInstruction) {
     const prompt = `
 [DATA]
 Judul : ${formData.judul}
+Nama : ${formData.name}
 Sekolah: ${formData.school}
 Jurusan : ${formData.jurusan}
 Mapel: ${formData.subject}
@@ -303,6 +304,7 @@ Tambahan struktur:
         userInstruction,
 
         meta: {
+          name : formData.name,
           school: formData.school,
           subject: formData.subject,
           grade: formData.grade,
@@ -441,6 +443,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedForm) {
     const formData = JSON.parse(savedForm);
 
+    document.getElementById("name").value = formData.name;
     document.getElementById("schoolName").value = formData.school;
 
     document.getElementById("subject").value = formData.subject;
@@ -644,6 +647,11 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     const validations = [
+
+       {
+        el: document.getElementById("name"),
+        msg: "Nama tidak boleh kosong",
+      },
       {
         el: document.getElementById("schoolName"),
         msg: "Nama Sekolah tidak boleh kosong",
@@ -711,6 +719,8 @@ document.addEventListener("DOMContentLoaded", () => {
     btnGenerate.disabled = true;
 
     const formData = {
+      name: document.getElementById("name").value,
+
       school: document.getElementById("schoolName").value,
 
       level: document.getElementById("taskOption").value,

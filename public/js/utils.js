@@ -19,7 +19,13 @@ Aturan:
 - jika metode pembelajaran sudah tersedia maka gunakan saja jangan generate itu.
 -jika metode belum tersedia maka generate.
 - Jika generate Gunakan metode pembelajaran yang sesuai, tentukan metode berdasarkan tujuan pembelajaran dan tugas (pjbl, atau pbl, dan lainya).
-- Jika generate Gunakan sintaks pembelajaran yang sesuai dengan metode pembelajaran untuk menyusun kegiatan belajar jangan hilangkan 1 langkahpun.
+- Jika generate Gunakan sintaks pembelajaran yang sesuai dengan metode pembelajaran untuk menyusun kegiatan belajar jangan hilangkan 1 langkahpun. Contoh jika menggunakan problem based learning maka langkah sintaks (setiap langkah sintaks ditulis disebelah kiri kolom kegiatan yg dilakukan):
+ Tahap/Langkah Kerja	Peran/Aktivitas Guru
+Tahap 1 : Orientasi terhadap masalah	Guru menyajikan masalah nyata kepada peserta didik
+Tahap 2 : Organisasi belajar	Guru memfasilitasi peserta didik untuk memahami masalah nyata yang telah disajikan, yaitu mengidentifikasi apa yang mereka ketahui, apa yang perlu mereka ketahui, dan apa yang perlu dilakukan untuk menyelesaikan masalah tersebut.
+Tahap 3 : Penyelidikan individual maupun kelompok	Guru membimbing peserta didik melakukan pengumpulan data/informasi (pengetahuan, konsep, teori) melalui berbagai macam cara untuk menemukan berbagai alternatif penyelesaian masalah.
+Tahap 4 : Pengembangan dan penyajian hasil penyelesaian masalah	Guru membimbing peserta didik untuk menentukan penyelesaian masalah yang paling tepat dari berbagai alternatif pemecah masalah yang peserta didik temukan. Peserta didik menyusun laporan hasil penyelesaian, masalah, misal dalam bentuk gagasan, model, bagan, atau power point slides.
+Tahap 5 : Analisis dan evaluasi proses penyelesaian masalah	Guru memfasilitasi peserta didik untuk melakukan refleksi atau evaluasi terhadap proses penyelesaian masalah yang dilakukan.
 - kerangka pembelajaran include praktik pedagogis, TPACK,  HOTS, kemitraan pembelajaran, lingkungan Pembelajaran.
 - pada praktik pedagogis sambungkan antara metode pembelajaran yg digunakan (misal pjbl) dengan pendekatan tertentu yg digunakan (misal diferensiasi (konten,proses,produk)).
 - TPACK terdiri dari ck pk dan tk.

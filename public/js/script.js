@@ -799,6 +799,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const customCPInput = document.querySelector("#customCP");
 
     if (!cpAvailable) {
+      closeProcessingSwal();
       const cpLabel = document.querySelector(".cpLabel");
 
       if (customCPInput.value.trim() === "") {

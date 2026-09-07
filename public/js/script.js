@@ -304,7 +304,7 @@ Tambahan struktur:
         userInstruction,
 
         meta: {
-          name : formData.name,
+          name : formData.name || "",
           school: formData.school,
           subject: formData.subject,
           grade: formData.grade,
@@ -443,7 +443,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedForm) {
     const formData = JSON.parse(savedForm);
 
+    if (document.getElementById("name").value === "") {
+      formData.name = "";
+    }
     document.getElementById("name").value = formData.name;
+    
     document.getElementById("schoolName").value = formData.school;
 
     document.getElementById("subject").value = formData.subject;

@@ -175,23 +175,76 @@
         color: #fff;
       }
 
+      .nav-toggle {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--ink);
+        cursor: pointer;
+      }
+      .nav-toggle-icon,
+      .nav-toggle-icon::before,
+      .nav-toggle-icon::after {
+        width: 18px;
+        height: 2px;
+        border-radius: 2px;
+        background: currentColor;
+        transition: transform 0.18s, opacity 0.18s;
+      }
+      .nav-toggle-icon {
+        position: relative;
+        display: block;
+      }
+      .nav-toggle-icon::before,
+      .nav-toggle-icon::after {
+        position: absolute;
+        left: 0;
+        content: "";
+      }
+      .nav-toggle-icon::before { top: -6px; }
+      .nav-toggle-icon::after { top: 6px; }
+
       @media (max-width: 560px) {
         .nav-inner {
-          min-height: 54px;
+          min-height: 58px;
           height: auto;
-          padding: 8px 12px;
-          gap: 8px;
+          padding: 9px 12px;
+          flex-wrap: wrap;
         }
+        .nav-toggle { display: inline-flex; }
         .nav-links {
-          flex: 1;
-          justify-content: flex-end;
-          gap: 3px;
+          display: none;
+          flex-basis: 100%;
+          width: 100%;
+          margin-top: 5px;
+          padding: 8px;
+          flex-direction: column;
+          gap: 4px;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          background: var(--surface);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
+        .nav-links.is-open { display: flex; }
         .nav-links a {
           display: block;
-          padding: 5px 8px;
-          font-size: 11px;
-          white-space: nowrap;
+          padding: 9px 12px;
+          font-size: 13px;
+        }
+        .nav-toggle[aria-expanded="true"] .nav-toggle-icon {
+          background: transparent;
+        }
+        .nav-toggle[aria-expanded="true"] .nav-toggle-icon::before {
+          transform: translateY(6px) rotate(45deg);
+        }
+        .nav-toggle[aria-expanded="true"] .nav-toggle-icon::after {
+          transform: translateY(-6px) rotate(-45deg);
         }
       }
 
@@ -586,7 +639,10 @@
     <nav>
       <div class="nav-inner">
         <div class="logo"><span class="logo-dot"></span> CorAI</div>
-        <ul class="nav-links">
+        <button class="nav-toggle" type="button" aria-label="Buka navigasi" aria-controls="nav-menu" aria-expanded="false">
+          <span class="nav-toggle-icon"></span>
+        </button>
+        <ul class="nav-links" id="nav-menu">
           <li><a href="index.html" class="active">Generator RPP</a></li>
           <li><a href="plagiasi.html">Koreksi Plagiasi</a></li>
         </ul>
@@ -1227,6 +1283,27 @@
           setTimeout(typeWriter, speed);
         }
       }
+
+      const navToggle = document.querySelector(".nav-toggle");
+      const navMenu = document.querySelector(".nav-links");
+      const closeNavMenu = () => {
+        navMenu.classList.remove("is-open");
+        navToggle.setAttribute("aria-expanded", "false");
+      };
+
+      navToggle.addEventListener("click", () => {
+        const isOpen = navMenu.classList.toggle("is-open");
+        navToggle.setAttribute("aria-expanded", String(isOpen));
+      });
+      navMenu.addEventListener("click", (event) => {
+        if (event.target.closest("a")) closeNavMenu();
+      });
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".nav-inner")) closeNavMenu();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeNavMenu();
+      });
     </script>
   </body>
 </html>

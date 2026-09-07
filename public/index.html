@@ -249,6 +249,135 @@
       }
 
       /* MAIN */
+      .feature-hero {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        align-items: center;
+        gap: 36px;
+        max-width: 840px;
+        margin: 40px auto 0;
+        padding: 36px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+      .feature-hero__eyebrow {
+        display: inline-block;
+        margin-bottom: 12px;
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .feature-hero h1 {
+        margin: 0 0 12px;
+        color: var(--ink);
+        font-family: "DM Serif Display", serif;
+        font-size: clamp(30px, 4vw, 42px);
+        line-height: 1.1;
+      }
+      .feature-hero p {
+        margin: 0 0 22px;
+        color: var(--ink3);
+        font-size: 15px;
+      }
+      .feature-hero__cta {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 16px;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .feature-hero__image {
+        display: block;
+        width: 100%;
+        min-height: 230px;
+        max-height: 300px;
+        border-radius: 12px;
+        object-fit: cover;
+      }
+      @media (max-width: 880px) {
+        .feature-hero { margin-right: 24px; margin-left: 24px; }
+      }
+      @media (max-width: 560px) {
+        .feature-hero {
+          grid-template-columns: 1fr;
+          gap: 24px;
+          margin-top: 24px;
+          margin-right: 16px;
+          margin-left: 16px;
+          padding: 24px;
+        }
+        .feature-hero__image { min-height: 200px; }
+      }
+
+      .how-it-works {
+        max-width: 840px;
+        margin: 32px auto 0;
+        padding: 0 0 8px;
+      }
+      .how-it-works__heading {
+        margin: 0 0 18px;
+        color: var(--ink);
+        font-family: "DM Serif Display", serif;
+        font-size: 25px;
+      }
+      .how-it-works__intro {
+        margin: -10px 0 20px;
+        color: var(--ink3);
+        font-size: 14px;
+      }
+      .how-it-works__grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+      }
+      .how-it-works__step {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface);
+      }
+      .how-it-works__image {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        background: var(--accent-soft);
+        object-fit: cover;
+      }
+      .how-it-works__body { padding: 14px; }
+      .how-it-works__number {
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+      .how-it-works__step h3 {
+        margin: 5px 0 5px;
+        color: var(--ink);
+        font-size: 14px;
+      }
+      .how-it-works__step p {
+        margin: 0;
+        color: var(--ink3);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+      @media (max-width: 880px) {
+        .how-it-works { margin-right: 24px; margin-left: 24px; }
+        .how-it-works__grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 560px) {
+        .how-it-works { margin-top: 24px; margin-right: 16px; margin-left: 16px; }
+        .how-it-works__grid { grid-template-columns: 1fr; }
+      }
+
       main {
         max-width: 840px;
         margin: 0 auto;
@@ -648,6 +777,46 @@
         </ul>
       </div>
     </nav>
+
+    <section class="feature-hero" aria-labelledby="rpp-hero-title">
+      <div>
+        <span class="feature-hero__eyebrow">Perencanaan pembelajaran</span>
+        <h1 id="rpp-hero-title">RPP siap pakai, dibuat lebih cepat.</h1>
+        <p>
+          Isi kebutuhan kelas Anda, lalu CorAI membantu menyusun modul ajar yang rapi,
+          relevan, dan selaras dengan Kurikulum Merdeka.
+        </p>
+        <a class="feature-hero__cta" href="#generator-section">Mulai buat RPP →</a>
+      </div>
+      <img
+        class="feature-hero__image"
+        src="https://3454910.fs1.hubspotusercontent-na1.net/hubfs/3454910/teacher_at_computer.jpg"
+        alt="Guru sedang menyiapkan pembelajaran menggunakan laptop"
+      />
+    </section>
+
+    <section class="how-it-works" aria-labelledby="rpp-steps-title">
+      <h2 class="how-it-works__heading" id="rpp-steps-title">Cara kerja Generator RPP</h2>
+      <p class="how-it-works__intro">Empat langkah singkat dari kebutuhan kelas hingga RPP siap digunakan.</p>
+      <div class="how-it-works__grid">
+        <article class="how-it-works__step">
+          <img class="how-it-works__image" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Isi+formulir" alt="Placeholder tampilan formulir RPP" />
+          <div class="how-it-works__body"><span class="how-it-works__number">01</span><h3>Isi formulir</h3><p>Masukkan mata pelajaran, fase, tujuan, dan detail pembelajaran.</p></div>
+        </article>
+        <article class="how-it-works__step">
+          <img class="how-it-works__image" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Generate+RPP" alt="Placeholder proses membuat RPP" />
+          <div class="how-it-works__body"><span class="how-it-works__number">02</span><h3>Generate RPP</h3><p>Kirim formulir dan tunggu CorAI menyusun rancangan modul ajar Anda.</p></div>
+        </article>
+        <article class="how-it-works__step">
+          <img class="how-it-works__image" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Tinjau+hasil" alt="Placeholder hasil RPP yang dihasilkan" />
+          <div class="how-it-works__body"><span class="how-it-works__number">03</span><h3>Tinjau & edit</h3><p>Periksa hasilnya, lalu sesuaikan isi RPP bila masih diperlukan.</p></div>
+        </article>
+        <article class="how-it-works__step">
+          <img class="how-it-works__image" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Simpan+atau+hapus" alt="Placeholder pilihan simpan atau hapus RPP" />
+          <div class="how-it-works__body"><span class="how-it-works__number">04</span><h3>Simpan atau hapus</h3><p>Unduh RPP yang sudah siap, atau hapus hasil dan mulai kembali.</p></div>
+        </article>
+      </div>
+    </section>
 
     <main>
       <div class="page-eyebrow"><i>✦</i> Kurikulum Merdeka</div>

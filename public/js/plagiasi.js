@@ -1,6 +1,9 @@
 function savePlagiasiResult() {
   const output = document.getElementById("correction-output");
-  localStorage.setItem("plagiasiResult", JSON.stringify({ resultHTML: output.innerHTML }));
+  localStorage.setItem(
+    "plagiasiResult",
+    JSON.stringify({ resultHTML: output.innerHTML }),
+  );
 }
 
 function loadPlagiasiResult() {
@@ -47,7 +50,9 @@ function attachCardEvents(card) {
           const output = document.getElementById("correction-output");
           if (output.querySelectorAll(".plagiarism-card").length === 0) {
             clearPlagiasiResult();
-            document.getElementById("correction-result").classList.add("hidden");
+            document
+              .getElementById("correction-result")
+              .classList.add("hidden");
           } else {
             savePlagiasiResult();
           }
@@ -68,7 +73,8 @@ function attachCardEvents(card) {
     }
 
     analyzeBtn.onclick = async () => {
-      if (analyzeBtn.disabled && analyzeBtn.innerText.includes("Menganalisis")) return;
+      if (analyzeBtn.disabled && analyzeBtn.innerText.includes("Menganalisis"))
+        return;
 
       const existing = card.querySelector(".ai-analysis");
       if (existing) {
@@ -137,7 +143,6 @@ function attachCardEvents(card) {
           showConfirmButton: true,
           confirmButtonColor: "#28a745",
         });
-
       } catch (err) {
         if (err.name === "AbortError") return;
         Swal.fire("Error", "Gagal analisis AI.", "error");
@@ -221,12 +226,20 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     if (dropped.length === 0) {
-      Swal.fire({ title: "Format Salah", text: "Hanya file PDF yang diizinkan.", icon: "error" });
+      Swal.fire({
+        title: "Format Salah",
+        text: "Hanya file PDF yang diizinkan.",
+        icon: "error",
+      });
       return;
     }
 
     if (dropped.length > 15) {
-      Swal.fire({ title: "Terlalu Banyak File", text: "Maksimal 15 file PDF yang diizinkan.", icon: "error" });
+      Swal.fire({
+        title: "Terlalu Banyak File",
+        text: "Maksimal 15 file PDF yang diizinkan.",
+        icon: "error",
+      });
       return;
     }
 
@@ -239,14 +252,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const incoming = Array.from(pdfInput.files);
 
     if (incoming.length > 15) {
-      Swal.fire({ title: "Terlalu Banyak File", text: "Maksimal 15 file PDF yang diizinkan.", icon: "error" });
+      Swal.fire({
+        title: "Terlalu Banyak File",
+        text: "Maksimal 15 file PDF yang diizinkan.",
+        icon: "error",
+      });
       pdfInput.value = "";
       return;
     }
 
     for (let file of incoming) {
       if (file.size > MAX_FILE_SIZE) {
-        Swal.fire({ title: "File Terlalu Besar", text: `File "${file.name}" melebihi batas 5MB.`, icon: "error" });
+        Swal.fire({
+          title: "File Terlalu Besar",
+          text: `File "${file.name}" melebihi batas 5MB.`,
+          icon: "error",
+        });
         pdfInput.value = "";
         return;
       }
@@ -275,13 +296,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fileList.innerHTML = `
       <div style="width:100%; border-top:1px dashed var(--border-strong); margin:8px 0;"></div>
-      ${files.map((f) => `
-        <div class="flex items-center gap-2.5 rounded-[10px] border border-border bg-surface-2 px-3.5 py-2 text-[13px] text-ink-2" style="background-color:var(--accent)">
-          <i class="fas fa-file-pdf"></i>
-          <span style="color:white">${f.name}</span>
-          <small style="color:white">(${(f.size / 1024).toFixed(1)} KB)</small>
-        </div>
-      `).join("")}
+      ${files
+        .map(
+          (f) => `
+        <div class="flex items-center gap-2.5 rounded-[10px] border border-border bg-surface-2 px-3.5 py-2 text-[13px] text-ink-2">
+  <i class="fas fa-file-pdf text-red-500"></i>
+  <span class="font-medium text-ink-2">${f.name}</span>
+  <small class="text-ink-2">(${(f.size / 1024).toFixed(1)} KB)</small>
+</div>
+      `,
+        )
+        .join("")}
     `;
   }
 
@@ -317,96 +342,111 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================
   // Submit
   // =========================
-  document.getElementById("plagiasiForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+  document
+    .getElementById("plagiasiForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    const mode = modeSelect.value;
-    const formData = new FormData();
-    formData.append("mode", mode);
+      const mode = modeSelect.value;
+      const formData = new FormData();
+      formData.append("mode", mode);
 
-    // PDF MODE
-    if (mode === "pdf") {
-      if (selectedFiles.length < 2) {
-        Swal.fire({ title: "Kurang File", text: "Minimal 2 file PDF untuk dibandingkan!", icon: "warning" ,confirmButtonColor: "#28a745",},
-          
-        );
-        return;
-      }
-      const MAX_FILE_SIZE = 5 * 1024 * 1024;
-      for (let file of selectedFiles) {
-        if (file.size > MAX_FILE_SIZE) {
-          Swal.fire({ title: "File Terlalu Besar", text: `File "${file.name}" melebihi batas 5MB.`, icon: "error" });
+      // PDF MODE
+      if (mode === "pdf") {
+        if (selectedFiles.length < 2) {
+          Swal.fire({
+            title: "Kurang File",
+            text: "Minimal 2 file PDF untuk dibandingkan!",
+            icon: "warning",
+            confirmButtonColor: "#28a745",
+          });
           return;
         }
-        formData.append("files", file);
+        const MAX_FILE_SIZE = 5 * 1024 * 1024;
+        for (let file of selectedFiles) {
+          if (file.size > MAX_FILE_SIZE) {
+            Swal.fire({
+              title: "File Terlalu Besar",
+              text: `File "${file.name}" melebihi batas 5MB.`,
+              icon: "error",
+            });
+            return;
+          }
+          formData.append("files", file);
+        }
       }
-    }
-    // TEXT MODE
-    else {
-      const texts = document.querySelectorAll(".text-input");
-      const values = Array.from(texts).map((t) => t.value.trim()).filter((t) => t.length > 0);
-      if (values.length < 2) {
-        Swal.fire({ title: "Kurang Teks", text: "Minimal 2 jawaban teks!", icon: "warning" });
-        return;
+      // TEXT MODE
+      else {
+        const texts = document.querySelectorAll(".text-input");
+        const values = Array.from(texts)
+          .map((t) => t.value.trim())
+          .filter((t) => t.length > 0);
+        if (values.length < 2) {
+          Swal.fire({
+            title: "Kurang Teks",
+            text: "Minimal 2 jawaban teks!",
+            icon: "warning",
+          });
+          return;
+        }
+        formData.append("texts", JSON.stringify(values));
       }
-      formData.append("texts", JSON.stringify(values));
-    }
 
-    // =========================
-    // Processing Swal
-    // =========================
-    let cancelled = false;
-    const controller = new AbortController();
+      // =========================
+      // Processing Swal
+      // =========================
+      let cancelled = false;
+      const controller = new AbortController();
 
-    Swal.fire({
-      title: "⏳ Menganalisis Plagiasi",
-      text: "Sedang memproses, mohon tunggu...",
-      icon: "info",
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      showCancelButton: true,
-      cancelButtonText: '<i class="fas fa-times"></i> Batalkan',
-      cancelButtonColor: "#d33",
-      didOpen: () => Swal.showLoading(),
-    }).then((result) => {
-      if (result.dismiss === Swal.DismissReason.cancel) {
-        cancelled = true;
-        controller.abort();
-      }
-    });
-
-    // =========================
-    // Fetch
-    // =========================
-    try {
-      const res = await fetch("/api/plagiasi", {
-        method: "POST",
-        body: formData,
-        signal: controller.signal,
+      Swal.fire({
+        title: "⏳ Menganalisis Plagiasi",
+        text: "Sedang memproses, mohon tunggu...",
+        icon: "info",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: '<i class="fas fa-times"></i> Batalkan',
+        cancelButtonColor: "#d33",
+        didOpen: () => Swal.showLoading(),
+      }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          cancelled = true;
+          controller.abort();
+        }
       });
 
-      if (cancelled) return;
+      // =========================
+      // Fetch
+      // =========================
+      try {
+        const res = await fetch("/api/plagiasi", {
+          method: "POST",
+          body: formData,
+          signal: controller.signal,
+        });
 
-      const data = await res.json();
+        if (cancelled) return;
 
-      Swal.close();
+        const data = await res.json();
 
-      document.getElementById("correction-result").classList.remove("hidden");
+        Swal.close();
 
-      const output = document.getElementById("correction-output");
-      output.innerHTML = "";
+        document.getElementById("correction-result").classList.remove("hidden");
 
-      data.comparisons.forEach((item) => {
-      const card = document.createElement("div");
-        const levelClass = item.level.className;
-        const levelStyles = {
-          danger: "border-l-6 border-l-red-500",
-          warning: "border-l-6 border-l-amber-400",
-          safe: "border-l-6 border-l-green-500",
-        };
-        card.className = `mb-4 rounded-[14px] border border-border bg-white p-5 shadow-[0_4px_10px_rgb(0_0_0_/_0.08)] ${levelStyles[levelClass] || ""}`;
-        card.innerHTML = `
+        const output = document.getElementById("correction-output");
+        output.innerHTML = "";
+
+        data.comparisons.forEach((item) => {
+          const card = document.createElement("div");
+          const levelClass = item.level.className;
+          const levelStyles = {
+            danger: "border-l-6 border-l-red-500",
+            warning: "border-l-6 border-l-amber-400",
+            safe: "border-l-6 border-l-green-500",
+          };
+          card.className = `mb-4 rounded-[14px] border border-border bg-white p-5 shadow-[0_4px_10px_rgb(0_0_0_/_0.08)] ${levelStyles[levelClass] || ""}`;
+          card.innerHTML = `
           <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-2 font-semibold [&_i]:text-2xl [&_i]:text-red-500"><i class="fas fa-file-pdf"></i><span>${item.fileA}</span></div>
             <div class="vs">VS</div>
@@ -425,7 +465,11 @@ document.addEventListener("DOMContentLoaded", () => {
             >
               ${levelClass === "safe" ? "Analisis Tidak Diperlukan" : "Analisis AI"}
             </button>
-            <button class="btn-secondary border-red-300 bg-red-100/50 text-red-700 hover:bg-red-600 hover:text-white btn-delete-card">Hapus</button>
+            <button
+  class="inline-flex items-center gap-1.5 rounded-[10px] border border-red-300 bg-red-100/50 px-4 py-2 text-[13px] font-semibold text-red-700 transition hover:bg-red-600 hover:text-white btn-delete-card"
+>
+  Hapus
+</button>
           </div>
           <br>
           <div class="highlight-view" style="display:none; margin-top:16px;">
@@ -445,28 +489,27 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </div>
         `;
-        output.appendChild(card);
-        attachCardEvents(card);
-      });
+          output.appendChild(card);
+          attachCardEvents(card);
+        });
 
-      savePlagiasiResult();
+        savePlagiasiResult();
 
-      await Swal.fire({
-        title: "✅ Analisis Selesai!",
-        text: `Ditemukan ${data.comparisons.length} perbandingan dokumen.`,
-        icon: "success",
-        timer: 7500,
-        timerProgressBar: true,
-        showConfirmButton: true,
-        confirmButtonColor: "#28a745",
-      });
-
-    } catch (err) {
-      if (err.name === "AbortError") {
-        Swal.fire("Dibatalkan", "Analisis plagiasi dibatalkan.", "info");
-        return;
+        await Swal.fire({
+          title: "✅ Analisis Selesai!",
+          text: `Ditemukan ${data.comparisons.length} perbandingan dokumen.`,
+          icon: "success",
+          timer: 7500,
+          timerProgressBar: true,
+          showConfirmButton: true,
+          confirmButtonColor: "#28a745",
+        });
+      } catch (err) {
+        if (err.name === "AbortError") {
+          Swal.fire("Dibatalkan", "Analisis plagiasi dibatalkan.", "info");
+          return;
+        }
+        Swal.fire("Error", "Terjadi kesalahan saat analisis.", "error");
       }
-      Swal.fire("Error", "Terjadi kesalahan saat analisis.", "error");
-    }
-  });
+    });
 });

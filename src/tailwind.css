@@ -1,0 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Sora:wght@300;400;500;600&display=swap");
+@import "tailwindcss";
+
+@source "../public/.";
+
+@source "../login.html";
+@source "../register.html";
+
+@theme {
+  --font-sans: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --color-ink: #0f1117;
+  --color-ink-2: #3a3d4a;
+  --color-ink-3: #7a7f92;
+  --color-page: #f5f4f0;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0efe9;
+  --color-brand: #2d5be3;
+  --color-brand-soft: #e8edfc;
+  --color-border: #e2e0d8;
+  --color-border-strong: #c8c5bb;
+  --color-success: #1a9e6a;
+}
+
+@layer base {
+  body { @apply min-h-screen bg-page font-sans leading-relaxed text-ink; }
+}

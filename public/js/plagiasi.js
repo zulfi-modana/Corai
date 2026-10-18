@@ -276,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fileList.innerHTML = `
       <div style="width:100%; border-top:1px dashed var(--border-strong); margin:8px 0;"></div>
       ${files.map((f) => `
-        <div class="file-item" style="background-color:var(--accent)">
+        <div class="flex items-center gap-2.5 rounded-[10px] border border-border bg-surface-2 px-3.5 py-2 text-[13px] text-ink-2" style="background-color:var(--accent)">
           <i class="fas fa-file-pdf"></i>
           <span style="color:white">${f.name}</span>
           <small style="color:white">(${(f.size / 1024).toFixed(1)} KB)</small>
@@ -398,28 +398,34 @@ document.addEventListener("DOMContentLoaded", () => {
       output.innerHTML = "";
 
       data.comparisons.forEach((item) => {
-        const card = document.createElement("div");
-        card.className = `plagiarism-card ${item.level.className}`;
+      const card = document.createElement("div");
+        const levelClass = item.level.className;
+        const levelStyles = {
+          danger: "border-l-6 border-l-red-500",
+          warning: "border-l-6 border-l-amber-400",
+          safe: "border-l-6 border-l-green-500",
+        };
+        card.className = `mb-4 rounded-[14px] border border-border bg-white p-5 shadow-[0_4px_10px_rgb(0_0_0_/_0.08)] ${levelStyles[levelClass] || ""}`;
         card.innerHTML = `
-          <div class="pair-header">
-            <div class="pdf-box"><i class="fas fa-file-pdf"></i><span>${item.fileA}</span></div>
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2 font-semibold [&_i]:text-2xl [&_i]:text-red-500"><i class="fas fa-file-pdf"></i><span>${item.fileA}</span></div>
             <div class="vs">VS</div>
-            <div class="pdf-box"><i class="fas fa-file-pdf"></i><span>${item.fileB}</span></div>
+            <div class="flex items-center gap-2 font-semibold [&_i]:text-2xl [&_i]:text-red-500"><i class="fas fa-file-pdf"></i><span>${item.fileB}</span></div>
           </div>
-          <div class="similarity-score">${item.similarity}%</div>
-          <div class="danger-level">${item.level.icon} ${item.level.text}</div>
+          <div class="mt-4 text-center text-4xl font-bold">${item.similarity}%</div>
+          <div class="mt-2.5 text-lg font-semibold">${item.level.icon} ${item.level.text}</div>
           <div class="btnAnalisis" style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn btn-outline-secondary btn-highlight">Lihat Highlight</button>
+            <button class="inline-flex items-center gap-1.5 rounded-[10px] border-[1.5px] border-border-strong bg-transparent px-4 py-2 text-[13px] font-semibold text-ink-2 transition hover:border-brand hover:bg-brand-soft hover:text-brand btn-highlight">Lihat Highlight</button>
             <button
-              class="btn btn-primary btn-analisis"
+              class="inline-flex w-auto items-center justify-center gap-2 rounded-[10px] bg-brand px-4 py-2 text-[13px] font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60"
               data-texta="${encodeURIComponent(item.textA)}"
               data-textb="${encodeURIComponent(item.textB)}"
               data-similarity="${item.similarity}"
-              ${item.level.className === "safe" ? 'disabled data-disabled="true"' : ""}
+              ${levelClass === "safe" ? 'disabled data-disabled="true"' : ""}
             >
-              ${item.level.className === "safe" ? "Analisis Tidak Diperlukan" : "Analisis AI"}
+              ${levelClass === "safe" ? "Analisis Tidak Diperlukan" : "Analisis AI"}
             </button>
-            <button class="btn btn-danger btn-delete-card">Hapus</button>
+            <button class="btn-secondary border-red-300 bg-red-100/50 text-red-700 hover:bg-red-600 hover:text-white btn-delete-card">Hapus</button>
           </div>
           <br>
           <div class="highlight-view" style="display:none; margin-top:16px;">

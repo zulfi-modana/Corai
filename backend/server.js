@@ -6,6 +6,7 @@ const { getCapaian } = require("./scraper");
 const { searchIllustration } = require("./mediawiki");
 
 const app = express();
+const path = require("path");
 Swal.fire({
   title: "Auto theme",
   theme: "auto",
@@ -46,6 +47,19 @@ const aiQueue = {
 // middleware
 app.use(express.json());
 app.use(express.static("public"));
+
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "..","public", "home.html"));
+});
+
+app.get("/rpp", (req, res) => {
+  res.sendFile(path.join(__dirname, "..","public", "RPP.html"));
+});
+
+app.get("/plagiasi", (req, res) => {
+  res.sendFile(path.join(__dirname, "..","public", "plagiasi.html"));
+});
 
 const plagiasiRoutes = require("./plagiasi-backend.js");
 app.use("/api/plagiasi", plagiasiRoutes);

@@ -5,13 +5,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node backend/server.js",
-    "dev": "nodemon backend/server.js"
+    "dev": "nodemon backend/server.js",
+    "build:css": "npx @tailwindcss/cli -i ./src/tailwind.css -o ./public/css/tailwind.css --minify",
+    "watch:css": "npx @tailwindcss/cli -i ./src/tailwind.css -o ./public/css/tailwind.css --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.3.1",
+    "@tailwindcss/cli": "^4.3.3",
     "axios": "^1.13.6",
     "cheerio": "^1.2.0",
     "compute-cosine-similarity": "^1.1.0",
@@ -23,7 +27,8 @@
     "node-fetch": "^3.3.2",
     "pdf-parse": "^1.1.1",
     "puppeteer": "^24.40.0",
-    "sweetalert2": "^11.26.24"
+    "sweetalert2": "^11.26.24",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

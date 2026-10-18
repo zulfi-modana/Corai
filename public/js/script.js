@@ -35,10 +35,10 @@ function showToast(message, duration = 3000) {
 
   toast.textContent = message;
 
-  toast.classList.add("show");
+  toast.classList.add("opacity-100", "translate-y-0");
 
   setTimeout(() => {
-    toast.classList.remove("show");
+    toast.classList.remove("opacity-100", "translate-y-0");
   }, duration);
 }
 
@@ -86,7 +86,7 @@ function resetRPPForm() {
 
   document.getElementById("metode").value = "";
 
-  document.getElementById("deleteModalForm").style.display = "none";
+  document.getElementById("resetFormModal").style.display = "none";
 
   alertSwal();
 }

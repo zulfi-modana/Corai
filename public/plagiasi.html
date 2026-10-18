@@ -5,13 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CorAI - Koreksi Plagiasi</title>
 
-    <!-- <link rel="stylesheet" href="css/styles.css" /> -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
+    <link rel="stylesheet" href="css/tailwind.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
 
     <link
@@ -19,672 +13,125 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
 
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap");
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      :root {
-        --ink: #0f1117;
-        --ink2: #3a3d4a;
-        --ink3: #7a7f92;
-        --bg: #f5f4f0;
-        --surface: #ffffff;
-        --surface2: #f0efe9;
-        --accent: #2d5be3;
-        --accent-soft: #e8edfc;
-        --accent-dark: #1a3dab;
-        --green: #1a9e6a;
-        --green-soft: #e1f5ec;
-        --border: #e2e0d8;
-        --border-strong: #c8c5bb;
-        --radius: 10px;
-        --radius-lg: 16px;
-        --radius-xl: 24px;
-        --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
-      }
-      body {
-        font-family: "Sora", sans-serif;
-        background: var(--bg);
-        color: var(--ink);
-        min-height: 100vh;
-        line-height: 1.6;
-      }
-
-      nav {
-        background: var(--surface);
-        border-bottom: 1px solid var(--border);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-      .nav-inner {
-        max-width: 840px;
-        margin: 0 auto;
-        padding: 0 24px;
-        height: 58px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .logo {
-        font-family: "DM Serif Display", serif;
-        font-size: 22px;
-        color: var(--ink);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .logo-dot {
-        width: 8px;
-        height: 8px;
-        background: var(--accent);
-        border-radius: 50%;
-        display: inline-block;
-      }
-      .nav-links {
-        display: flex;
-        gap: 4px;
-        list-style: none;
-      }
-      .nav-links a {
-        font-size: 13px;
-        font-weight: 500;
-        padding: 6px 14px;
-        border-radius: 100px;
-        color: var(--ink2);
-        text-decoration: none;
-        transition: all 0.18s;
-      }
-      .nav-links a:hover {
-        background: var(--surface2);
-        color: var(--ink);
-      }
-      .nav-links a.active {
-        background: var(--accent);
-        color: #fff;
-      }
-
-      .nav-toggle {
-        display: none;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        padding: 0;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background: var(--surface);
-        color: var(--ink);
-        cursor: pointer;
-      }
-      .nav-toggle-icon,
-      .nav-toggle-icon::before,
-      .nav-toggle-icon::after {
-        width: 18px;
-        height: 2px;
-        border-radius: 2px;
-        background: currentColor;
-        transition: transform 0.18s, opacity 0.18s;
-      }
-      .nav-toggle-icon {
-        position: relative;
-        display: block;
-      }
-      .nav-toggle-icon::before,
-      .nav-toggle-icon::after {
-        position: absolute;
-        left: 0;
-        content: "";
-      }
-      .nav-toggle-icon::before { top: -6px; }
-      .nav-toggle-icon::after { top: 6px; }
-
-      @media (max-width: 560px) {
-        .nav-inner {
-          min-height: 58px;
-          height: auto;
-          padding: 9px 12px;
-          flex-wrap: wrap;
-        }
-        .nav-toggle { display: inline-flex; }
-        .nav-links {
-          display: none;
-          flex-basis: 100%;
-          width: 100%;
-          margin-top: 5px;
-          padding: 8px;
-          flex-direction: column;
-          gap: 4px;
-          border: 1px solid var(--border);
-          border-radius: 10px;
-          background: var(--surface);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        .nav-links.is-open { display: flex; }
-        .nav-links a {
-          display: block;
-          padding: 9px 12px;
-          font-size: 13px;
-        }
-        .nav-toggle[aria-expanded="true"] .nav-toggle-icon {
-          background: transparent;
-        }
-        .nav-toggle[aria-expanded="true"] .nav-toggle-icon::before {
-          transform: translateY(6px) rotate(45deg);
-        }
-        .nav-toggle[aria-expanded="true"] .nav-toggle-icon::after {
-          transform: translateY(-6px) rotate(-45deg);
-        }
-      }
-
-      ul {
-        padding: 0.2rem 1rem;
-      }
-      .feature-hero {
-        display: grid;
-        grid-template-columns: 1.05fr 0.95fr;
-        align-items: center;
-        gap: 36px;
-        max-width: 840px;
-        margin: 40px auto 0;
-        padding: 36px;
-        border: 1px solid var(--border);
-        border-radius: var(--radius-xl);
-        background: var(--surface);
-        box-shadow: var(--shadow);
-      }
-      .feature-hero__eyebrow {
-        display: inline-block;
-        margin-bottom: 12px;
-        color: var(--accent);
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-      .feature-hero h1 {
-        margin: 0 0 12px;
-        color: var(--ink);
-        font-family: "DM Serif Display", serif;
-        font-size: clamp(30px, 4vw, 42px);
-        line-height: 1.1;
-      }
-      .feature-hero p {
-        margin: 0 0 22px;
-        color: var(--ink3);
-        font-size: 15px;
-      }
-      .feature-hero__cta {
-        display: inline-flex;
-        align-items: center;
-        padding: 10px 16px;
-        border-radius: 8px;
-        background: var(--accent);
-        color: #fff;
-        font-size: 13px;
-        font-weight: 600;
-        text-decoration: none;
-      }
-      .feature-hero__image {
-        display: block;
-        width: 100%;
-        min-height: 230px;
-        max-height: 300px;
-        border-radius: 12px;
-        object-fit: cover;
-      }
-      @media (max-width: 880px) {
-        .feature-hero { margin-right: 24px; margin-left: 24px; }
-      }
-      @media (max-width: 560px) {
-        .feature-hero {
-          grid-template-columns: 1fr;
-          gap: 24px;
-          margin-top: 24px;
-          margin-right: 16px;
-          margin-left: 16px;
-          padding: 24px;
-        }
-        .feature-hero__image { min-height: 200px; }
-      }
-      .how-it-works {
-        max-width: 840px;
-        margin: 32px auto 0;
-        padding: 0 0 8px;
-      }
-      .how-it-works__heading {
-        margin: 0 0 18px;
-        color: var(--ink);
-        font-family: "DM Serif Display", serif;
-        font-size: 25px;
-      }
-      .how-it-works__intro {
-        margin: -10px 0 20px;
-        color: var(--ink3);
-        font-size: 14px;
-      }
-      .how-it-works__grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 14px;
-      }
-      .how-it-works__step {
-        overflow: hidden;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        background: var(--surface);
-      }
-      .how-it-works__image {
-        display: block;
-        width: 100%;
-        aspect-ratio: 16 / 10;
-        background: var(--accent-soft);
-        object-fit: cover;
-      }
-      .how-it-works__body { padding: 14px; }
-      .how-it-works__number {
-        color: var(--accent);
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-      }
-      .how-it-works__step h3 {
-        margin: 5px 0 5px;
-        color: var(--ink);
-        font-size: 14px;
-      }
-      .how-it-works__step p {
-        margin: 0;
-        color: var(--ink3);
-        font-size: 12px;
-        line-height: 1.55;
-      }
-      @media (max-width: 880px) {
-        .how-it-works { margin-right: 24px; margin-left: 24px; }
-        .how-it-works__grid { grid-template-columns: repeat(2, 1fr); }
-      }
-      @media (max-width: 560px) {
-        .how-it-works { margin-top: 24px; margin-right: 16px; margin-left: 16px; }
-        .how-it-works__grid { grid-template-columns: 1fr; }
-      }
-      main {
-        max-width: 840px;
-        margin: 0 auto;
-        padding: 40px 24px 80px;
-      }
-
-      .page-eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--accent);
-        background: var(--accent-soft);
-        border: 1px solid rgba(45, 91, 227, 0.15);
-        padding: 5px 12px;
-        border-radius: 100px;
-        margin-bottom: 18px;
-      }
-      h1.page-title {
-        font-family: "DM Serif Display", serif;
-        font-size: 34px;
-        line-height: 1.2;
-        color: var(--ink);
-        margin-bottom: 6px;
-      }
-      .page-sub {
-        font-size: 14px;
-        color: var(--ink3);
-        margin-bottom: 36px;
-        max-width: 480px;
-      }
-
-      .app-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-xl);
-        padding: 32px;
-        box-shadow: var(--shadow);
-        margin-bottom: 24px;
-      }
-
-      .bg-danger-cust {
-        background-color: rgba(255, 2, 2, 0.195);
-      }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-bottom: 16px;
-      }
-      .form-group label {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--ink2);
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-      }
-
-      input,
-      select,
-      textarea {
-        font-family: "Sora", sans-serif;
-        font-size: 14px;
-        color: var(--ink);
-        background: var(--surface2);
-        border: 1.5px solid var(--border);
-        border-radius: var(--radius);
-        padding: 10px 14px;
-        width: 100%;
-        outline: none;
-        transition: all 0.15s;
-        resize: vertical;
-      }
-      input:focus,
-      select:focus,
-      textarea:focus {
-        border-color: var(--accent);
-        background: #fff;
-        box-shadow: 0 0 0 3px rgba(45, 91, 227, 0.1);
-      }
-      textarea::placeholder {
-        color: var(--ink3);
-      }
-      select {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7f92' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 14px center;
-        padding-right: 38px;
-      }
-
-      /* TEXT INPUTS stacked */
-      #textInputs {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-      .text-input {
-        min-height: 90px;
-      }
-
-      /* UPLOAD AREA */
-      .upload-area {
-        border: 2px dashed var(--border-strong);
-        border-radius: var(--radius-lg);
-        padding: 40px 24px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        background: var(--surface2);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-      }
-      .upload-area:hover {
-        border-color: var(--accent);
-        background: var(--accent-soft);
-      }
-      .upload-area i {
-        font-size: 32px;
-        color: var(--ink3);
-      }
-      .upload-area:hover i {
-        color: var(--accent);
-      }
-      .upload-area p {
-        font-size: 14px;
-        color: var(--ink3);
-        font-weight: 500;
-      }
-      .upload-area:hover p {
-        color: var(--accent);
-      }
-
-      /* FILE LIST */
-      .file-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-top: 12px;
-        margin-bottom: 0;
-      }
-      .file-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: var(--surface2);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 9px 14px;
-        font-size: 13px;
-        color: var(--ink2);
-      }
-      .file-item i {
-        color: var(--accent);
-        font-size: 15px;
-        flex-shrink: 0;
-      }
-
-      /* BUTTONS */
-      .btn-primary {
-        width: 100%;
-        margin-top: 24px;
-        padding: 14px 28px;
-        background: var(--ink);
-        color: #fff;
-        font-family: "Sora", sans-serif;
-        font-size: 15px;
-        font-weight: 600;
-        border: none;
-        border-radius: var(--radius);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        transition: all 0.18s;
-        letter-spacing: 0.01em;
-      }
-      .btn-primary:hover {
-        background: var(--accent);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 20px rgba(45, 91, 227, 0.28);
-      }
-      .btn-primary:active {
-        transform: translateY(0);
-      }
-
-      .btn-secondary {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        font-family: "Sora", sans-serif;
-        font-size: 13px;
-        font-weight: 600;
-        background: transparent;
-        color: var(--ink2);
-        border: 1.5px solid var(--border-strong);
-        border-radius: var(--radius);
-        padding: 8px 16px;
-        cursor: pointer;
-        transition: all 0.18s;
-        margin-top: 4px;
-      }
-      .btn-secondary:hover {
-        border-color: var(--accent);
-        color: var(--accent);
-        background: var(--accent-soft);
-      }
-
-      .btn-analisis:disabled {
-        opacity: 0.6 !important;
-        cursor: not-allowed !important;
-      }
-
-      /* RESULT */
-      .result-card {
-        border-left: 4px solid var(--accent);
-      }
-      .result-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-      .result-header h3 {
-        font-family: "DM Serif Display", serif;
-        font-size: 20px;
-        color: var(--ink);
-      }
-
-      .hidden {
-        display: none !important;
-      }
-
-      #correction-output {
-        font-size: 14px;
-        line-height: 1.8;
-        color: var(--ink2);
-      }
-      #correction-output h1,
-      #correction-output h2,
-      #correction-output h3 {
-        font-family: "DM Serif Display", serif;
-        color: var(--ink);
-        margin: 1.2em 0 0.4em;
-      }
-      #correction-output table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px;
-        margin: 1em 0;
-      }
-      #correction-output th {
-        background: var(--surface2);
-        font-weight: 600;
-        padding: 8px 12px;
-        text-align: left;
-        border: 1px solid var(--border);
-      }
-      #correction-output td {
-        padding: 8px 12px;
-        border: 1px solid var(--border);
-      }
-      #correction-output tr:nth-child(even) td {
-        background: var(--surface2);
-      }
-
-      .pdfNumberUploaded {
-        font-size: 1.2rem !important;
-        color: red !important;
-      }
-
-      /*  .highlight-box mark {
-  background: rgba(255, 200, 0, 0.45);
-  color: inherit;
-  border-radius: 3px;
-  padding: 0 2px;
-} */
-
-      .highlight-box mark {
-        background: rgba(239, 159, 39, 0.35);
-        color: inherit;
-        border-radius: 3px;
-        padding: 1px 3px;
-        border-bottom: 2px solid #ba7517;
-        font-weight: 500;
-      }
-
-      .file-list {
-        width: 100%;
-      }
-
-      .plagiarism-card{
-        padding-bottom: 1rem;
-      }
-    </style>
   </head>
   <!---->
   <body>
-    <nav>
-      <div class="nav-inner">
-        <div class="logo"><span class="logo-dot"></span> CorAI</div>
-        <button class="nav-toggle" type="button" aria-label="Buka navigasi" aria-controls="nav-menu" aria-expanded="false">
-          <span class="nav-toggle-icon"></span>
+    <style>
+      html{
+        scroll-behavior: smooth;
+      }
+      </style>
+ <nav class="sticky top-0 z-50 w-full border-b border-border bg-surface">
+      <div
+        class="mx-auto flex max-w-[840px] flex-wrap items-center justify-between p-4 sm:px-4 sm:py-2"
+      >
+        <a href="/" class="flex items-center gap-2 no-underline">
+          <p class="font-display text-[22px] text-ink">
+            Cor<span class="text-brand">AI</span>
+          </p>
+        </a>
+
+        <button
+          type="button"
+          class="inline-flex size-10 items-center justify-center rounded-lg border border-border bg-surface text-ink sm:hidden hover:bg-surface-2 focus:outline-none focus:ring-2 focus:ring-brand/30"
+          aria-controls="navbar-menu"
+          aria-expanded="false"
+          aria-label="Buka navigasi"
+        >
+          <span class="sr-only">Buka menu utama</span>
+          <svg
+            class="size-6"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="2"
+              d="M5 7h14M5 12h14M5 17h14"
+            />
+          </svg>
         </button>
-        <ul class="nav-links" id="nav-menu">
-          <li><a href="index.html">Generator RPP</a></li>
-          <li><a href="plagiasi.html" class="active">Koreksi Plagiasi</a></li>
-        </ul>
+
+        <div class="hidden w-full sm:flex sm:w-auto" id="navbar-menu">
+          <ul
+            class="mt-3 flex flex-col gap-1 rounded-[10px] border border-border bg-surface p-2 font-medium shadow-lg sm:mt-0 sm:flex-row sm:items-center sm:gap-1 sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none"
+          >
+            <li>
+              <a
+                href="/rpp"
+               class="block rounded-full px-3.5 py-2 text-[13px] font-medium text-ink-2 no-underline hover:bg-surface-2 hover:text-ink sm:py-1.5"
+                >Generator RPP</a
+              >
+            </li>
+            <li>
+              <a
+                href="/plagiasi"
+                class="block rounded-full bg-brand px-3.5 py-2 text-[13px] font-medium text-white no-underline sm:py-1.5"
+                aria-current="page"
+                >Koreksi Plagiasi</a
+              >
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
 
-    <section class="feature-hero" aria-labelledby="plagiarism-hero-title">
+    <section class="mx-4 mt-6 grid max-w-[840px] grid-cols-1 items-center gap-6 rounded-3xl border border-border bg-surface p-6 shadow-[0_1px_3px_rgb(0_0_0_/_0.06),0_4px_16px_rgb(0_0_0_/_0.04)] sm:mx-6 sm:mt-10 sm:gap-9 sm:p-9 lg:mx-auto lg:grid-cols-[1.05fr_0.95fr]" aria-labelledby="plagiarism-hero-title">
       <div>
-        <span class="feature-hero__eyebrow">Integritas akademik</span>
+        <span class="mb-3 inline-block text-[11px] font-bold tracking-[0.08em] text-brand uppercase">Cek Plagiasi</span>
         <h1 id="plagiarism-hero-title">Tinjau kemiripan jawaban dengan lebih mudah.</h1>
         <p>
           Bandingkan jawaban teks atau dokumen untuk menemukan bagian yang perlu ditinjau,
           sehingga proses penilaian tetap cepat dan objektif.
         </p>
-        <a class="feature-hero__cta" href="#plagiarism-section">Cek jawaban →</a>
+        <a class="mt-5 inline-flex items-center rounded-lg bg-brand px-4 py-2.5 text-[13px] font-semibold text-white no-underline" href="#plagiarism-section">Cek kemiripan</a>
       </div>
       <img
-        class="feature-hero__image"
+        class="block min-h-[200px] w-full rounded-xl object-cover sm:min-h-[230px]"
         src="https://drillbitglobal.com/assets/img/similaritydetectionhero.png"
         alt="Pelajar meninjau hasil pemeriksaan kemiripan pada laptop"
       />
     </section>
 
-    <section class="how-it-works" aria-labelledby="plagiarism-steps-title">
-      <h2 class="how-it-works__heading" id="plagiarism-steps-title">Cara kerja Koreksi Plagiasi</h2>
-      <p class="how-it-works__intro">Gunakan teks atau dokumen untuk meninjau kemiripan jawaban dalam empat langkah.</p>
-      <div class="how-it-works__grid">
-        <article class="how-it-works__step">
-          <img class="how-it-works__image" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Pilih+mode+input" alt="Placeholder pilihan mode input" />
-          <div class="how-it-works__body"><span class="how-it-works__number">01</span><h3>Pilih mode input</h3><p>Pilih untuk membandingkan jawaban teks atau mengunggah dokumen.</p></div>
+    <section class="mx-4 mt-6 max-w-[840px] pb-2 sm:mx-6 sm:mt-8 lg:mx-auto" aria-labelledby="plagiarism-steps-title">
+      <h2 class="mb-[18px] font-display text-[25px] text-ink" id="plagiarism-steps-title">Cara kerja Koreksi Plagiasi</h2>
+      <p class="-mt-2.5 mb-5 text-sm text-ink-3">Gunakan teks atau dokumen untuk meninjau kemiripan jawaban dalam empat langkah.</p>
+      <div class="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="overflow-hidden rounded-xl border border-border bg-surface">
+          <img class="block aspect-video w-full bg-brand-soft object-cover" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Pilih+mode+input" alt="Placeholder pilihan mode input" />
+          <div class="p-3.5"><span class="text-[11px] font-bold tracking-[0.08em] text-brand">01</span><h3>Pilih mode input</h3><p>Pilih untuk membandingkan jawaban teks atau mengunggah dokumen.</p></div>
         </article>
-        <article class="how-it-works__step">
-          <img class="how-it-works__image" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Masukkan+jawaban" alt="Placeholder memasukkan jawaban" />
-          <div class="how-it-works__body"><span class="how-it-works__number">02</span><h3>Masukkan jawaban</h3><p>Tambahkan jawaban yang ingin diperiksa atau pilih file dari perangkat Anda.</p></div>
+        <article class="overflow-hidden rounded-xl border border-border bg-surface">
+          <img class="block aspect-video w-full bg-brand-soft object-cover" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Masukkan+jawaban" alt="Placeholder memasukkan jawaban" />
+          <div class="p-3.5"><span class="text-[11px] font-bold tracking-[0.08em] text-brand">02</span><h3>Masukkan jawaban</h3><p>Tambahkan jawaban yang ingin diperiksa atau pilih file dari perangkat Anda.</p></div>
         </article>
-        <article class="how-it-works__step">
-          <img class="how-it-works__image" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Analisis+kemiripan" alt="Placeholder analisis kemiripan" />
-          <div class="how-it-works__body"><span class="how-it-works__number">03</span><h3>Analisis kemiripan</h3><p>Klik analisis untuk membandingkan isi dan menampilkan hasil pemeriksaan.</p></div>
+        <article class="overflow-hidden rounded-xl border border-border bg-surface">
+          <img class="block aspect-video w-full bg-brand-soft object-cover" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Analisis+kemiripan" alt="Placeholder analisis kemiripan" />
+          <div class="p-3.5"><span class="text-[11px] font-bold tracking-[0.08em] text-brand">03</span><h3>Analisis kemiripan</h3><p>Klik analisis untuk membandingkan isi dan menampilkan hasil pemeriksaan.</p></div>
         </article>
-        <article class="how-it-works__step">
-          <img class="how-it-works__image" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Tinjau+atau+hapus" alt="Placeholder hasil analisis plagiasi" />
-          <div class="how-it-works__body"><span class="how-it-works__number">04</span><h3>Tinjau atau hapus</h3><p>Gunakan hasil sebagai bahan peninjauan, lalu hapus hasil saat selesai.</p></div>
+        <article class="overflow-hidden rounded-xl border border-border bg-surface">
+          <img class="block aspect-video w-full bg-brand-soft object-cover" src="https://placehold.co/640x400/F0F4FF/2D5BE3?text=Tinjau+atau+hapus" alt="Placeholder hasil analisis plagiasi" />
+          <div class="p-3.5"><span class="text-[11px] font-bold tracking-[0.08em] text-brand">04</span><h3>Tinjau atau hapus</h3><p>Gunakan hasil sebagai bahan peninjauan, lalu hapus hasil saat selesai.</p></div>
         </article>
       </div>
     </section>
 
-    <main>
-      <div class="page-eyebrow">✦ Deteksi Otomatis</div>
-       <h1 class="page-title" id="page-title"></h1>
-      <p class="page-sub">
+      <section id="plagiarism-section" class="app-section active">
+    <main class="mx-auto w-full max-w-[840px] px-6 py-10 pb-20">
+      
+       <h1 class="mb-1.5 font-display text-[34px] leading-tight text-ink" id="page-title"></h1>
+      <p class="mb-9 max-w-[480px] text-sm text-ink-3">
         Input tugas siswa untuk dianalisis kesamaan dan indikasi plagiasi secara
         otomatis.
       </p>
 
-      <section id="plagiarism-section" class="app-section active">
-        <div class="app-card">
-          <form id="plagiasiForm">
-            <div class="form-group">
+    
+        <div class="mb-6 rounded-3xl border border-border bg-surface p-8 shadow-[0_1px_3px_rgb(0_0_0_/_0.06),0_4px_16px_rgb(0_0_0_/_0.04)]">
+          <form id="plagiasiForm" class="[&_label]:text-xs [&_label]:font-semibold [&_label]:tracking-[0.04em] [&_label]:text-ink-2 [&_label]:uppercase [&_select]:w-full [&_select]:rounded-[10px] [&_select]:border-[1.5px] [&_select]:border-border [&_select]:bg-surface-2 [&_select]:px-3.5 [&_select]:py-2.5">
+            <div class="mb-4 flex flex-col gap-1.5">
               <label>Pilih Mode Input</label>
               <select id="inputMode">
                 <option value="pdf" selected>
@@ -695,22 +142,22 @@
             </div>
 
             <!-- TEXT MODE -->
-            <div id="textContainer" style="display: none">
-              <div class="form-group">
+            <div id="textContainer" class="hidden">
+              <div class="mb-4 flex flex-col gap-1.5">
                 <label>Jawaban Siswa</label>
                 <div id="textInputs">
                   <textarea
-                    class="text-input"
+                    class="w-full resize-y rounded-[10px] border-[1.5px] border-border bg-surface-2 px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-brand focus:bg-white focus:ring-3 focus:ring-brand/10"
                     rows="4"
                     placeholder="Jawaban siswa 1"
                   ></textarea>
                   <textarea
-                    class="text-input"
+                    class="w-full resize-y rounded-[10px] border-[1.5px] border-border bg-surface-2 px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-brand focus:bg-white focus:ring-3 focus:ring-brand/10"
                     rows="4"
                     placeholder="Jawaban siswa 2"
                   ></textarea>
                 </div>
-                <button type="button" id="addText" class="btn-secondary">
+                <button type="button" id="addText" class="inline-flex items-center gap-1.5 rounded-[10px] border-[1.5px] border-border-strong bg-transparent px-4 py-2 text-[13px] font-semibold text-ink-2 transition hover:border-brand hover:bg-brand-soft hover:text-brand">
                   + Tambah Jawaban
                 </button>
               </div>
@@ -718,10 +165,10 @@
 
             <!-- PDF MODE -->
             <div id="pdfContainer">
-              <div class="form-group">
+              <div class="mb-4 flex flex-col gap-1.5">
                 <label>Upload File PDF</label>
 
-                <div class="upload-area" id="dropZone">
+                <div class="flex cursor-pointer flex-col items-center gap-2.5 rounded-2xl border-2 border-dashed border-border-strong bg-surface-2 px-6 py-10 text-center transition hover:border-brand hover:bg-brand-soft" id="dropZone">
                   <i class="fas fa-file-pdf" id="pdfIcon"></i>
                   <p id="pdfDragFile">Klik atau seret file PDF ke sini</p>
                   <input
@@ -732,31 +179,30 @@
                     hidden
                   />
 
-                  <div id="fileList" class="file-list"></div>
+                  <div id="fileList" class="mt-3 flex w-full flex-col gap-2"></div>
                 </div>
                 <br />
                 <div
-                  class="card border-transparent text-danger bg-danger-cust mb-3"
-                  style="max-width: max-content"
+                  class="mb-3 max-w-max rounded-2xl border border-transparent bg-red-100/50 p-5 text-red-700"
                 >
                   <div class="card-header">Catatan Penting</div>
                   <div class="card-body">
                     <ul>
                       <li>
-                        <span style="font-size: small" class="card-text">
+                        <span class="text-sm">
                           Deteksi plagiasi bersifat indikatif, tetap disarankan
                           melakukan pemeriksaan manual.
                         </span>
                       </li>
                       <br />
                       <li>
-                        <span style="font-size: small" class="card-text"
+                        <span class="text-sm"
                           >Maks. Ukuran File 5MB</span
                         >
                       </li>
                       <br />
                       <li>
-                        <span style="font-size: small" class="card-text"
+                        <span class="text-sm"
                           >Maks. Upload 15 File sekaligus</span
                         >
                       </li>
@@ -766,39 +212,100 @@
               </div>
             </div>
 
-            <button type="submit" class="btn-primary" style="background-color:var(--accent) ;">
+            <button type="submit" class="mt-6 inline-flex w-full items-center justify-center gap-2.5 rounded-[10px] bg-brand px-7 py-3.5 text-[15px] font-semibold text-white transition hover:-translate-y-px hover:shadow-[0_4px_20px_rgb(45_91_227_/_0.28)] disabled:cursor-not-allowed disabled:opacity-60">
               <i class="fas fa-search"></i> Analisis Jawaban
             </button>
-            <button class="btn btn-secondary bg-danger-cust" onclick="deletePlagiasiResult()" type="button">Hapus Hasil</button>
+            <button class="mt-2 inline-flex items-center gap-1.5 rounded-[10px] border border-red-300 bg-red-100/50 px-4 py-2 text-[13px] font-semibold text-red-700 transition hover:bg-red-600 hover:text-white" onclick="deletePlagiasiResult()" type="button">Hapus Hasil</button>
           </form>
         </div>
 
         <!-- RESULT -->
-        <div id="correction-result" class="app-card result-card hidden">
-          <div class="result-header">
+        <div id="correction-result" class="hidden mb-6 rounded-3xl border border-border border-l-4 border-l-brand bg-surface p-8 shadow-[0_1px_3px_rgb(0_0_0_/_0.06),0_4px_16px_rgb(0_0_0_/_0.04)]">
+          <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
             <h3>Hasil Analisis</h3>
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 11px;
-                font-weight: 600;
-                color: var(--green);
-                background: var(--green-soft);
-                border: 1px solid rgba(26, 158, 106, 0.2);
-                padding: 4px 10px;
-                border-radius: 100px;
-                letter-spacing: 0.04em;
-              "
-            >
+            <div class="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold tracking-[0.04em] text-success">
               ✓ Selesai dianalisis
             </div>
           </div>
-          <div id="correction-output" class="markdown-body"></div>
+          <div id="correction-output" class="overflow-x-auto rounded-lg bg-surface-2 p-5 text-sm leading-[1.8] text-ink-2"></div>
         </div>
       </section>
     </main>
+
+    <footer class="bg-neutral-primary-soft">
+    <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+        <div class="md:flex md:justify-between">
+          <div class="mb-6 md:mb-0">
+              <a href="https://flowbite.com/" class="flex items-center">
+                  <img src="https://flowbite.com/docs/images/logo.svg" class="h-7 me-3" alt="FlowBite Logo" />
+                  <span class="text-heading self-center text-2xl font-semibold whitespace-nowrap">Flowbite</span>
+              </a>
+          </div>
+          <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+              <div>
+                  <h2 class="mb-6 text-sm font-semibold text-heading uppercase">Resources</h2>
+                  <ul class="text-body font-medium">
+                      <li class="mb-4">
+                          <a href="https://flowbite.com/" class="hover:underline">Flowbite</a>
+                      </li>
+                      <li>
+                          <a href="https://tailwindcss.com/" class="hover:underline">Tailwind CSS</a>
+                      </li>
+                  </ul>
+              </div>
+              <div>
+                  <h2 class="mb-6 text-sm font-semibold text-heading uppercase">Follow us</h2>
+                  <ul class="text-body font-medium">
+                      <li class="mb-4">
+                          <a href="https://github.com/themesberg/flowbite" class="hover:underline ">Github</a>
+                      </li>
+                      <li>
+                          <a href="https://discord.gg/4eeurUVvTy" class="hover:underline">Discord</a>
+                      </li>
+                  </ul>
+              </div>
+              <div>
+                  <h2 class="mb-6 text-sm font-semibold text-heading uppercase">Legal</h2>
+                  <ul class="text-body font-medium">
+                      <li class="mb-4">
+                          <a href="#" class="hover:underline">Privacy Policy</a>
+                      </li>
+                      <li>
+                          <a href="#" class="hover:underline">Terms &amp; Conditions</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+      <hr class="my-6 border-default sm:mx-auto lg:my-8" />
+      <div class="sm:flex sm:items-center sm:justify-between">
+          <span class="text-sm text-body sm:text-center">© 2023 <a href="https://flowbite.com/" class="hover:underline">Flowbite™</a>. All Rights Reserved.
+          </span>
+          <div class="flex mt-4 sm:justify-center sm:mt-0">
+            <a href="#" class="text-body hover:text-heading">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M13.135 6H15V3h-1.865a4.147 4.147 0 0 0-4.142 4.142V9H7v3h2v9.938h3V12h2.021l.592-3H12V6.591A.6.6 0 0 1 12.592 6h.543Z" clip-rule="evenodd"/></svg>
+                <span class="sr-only">Facebook page</span>
+            </a>
+            <a href="#" class="text-body hover:text-heading ms-5">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M18.942 5.556a16.3 16.3 0 0 0-4.126-1.3 12.04 12.04 0 0 0-.529 1.1 15.175 15.175 0 0 0-4.573 0 11.586 11.586 0 0 0-.535-1.1 16.274 16.274 0 0 0-4.129 1.3 17.392 17.392 0 0 0-2.868 11.662 15.785 15.785 0 0 0 4.963 2.521c.41-.564.773-1.16 1.084-1.785a10.638 10.638 0 0 1-1.706-.83c.143-.106.283-.217.418-.331a11.664 11.664 0 0 0 10.118 0c.137.114.277.225.418.331-.544.328-1.116.606-1.71.832a12.58 12.58 0 0 0 1.084 1.785 16.46 16.46 0 0 0 5.064-2.595 17.286 17.286 0 0 0-2.973-11.59ZM8.678 14.813a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.929 1.929 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z"/></svg>
+                <span class="sr-only">Discord community</span>
+            </a>
+            <a href="#" class="text-body hover:text-heading ms-5">
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M13.795 10.533 20.68 2h-3.073l-5.255 6.517L7.69 2H1l7.806 10.91L1.47 22h3.074l5.705-7.07L15.31 22H22l-8.205-11.467Zm-2.38 2.95L9.97 11.464 4.36 3.627h2.31l4.528 6.317 1.443 2.02 6.018 8.409h-2.31l-4.934-6.89Z"/></svg>
+            <span class="sr-only">Twitter page</span>
+            </a>
+            <a href="#" class="text-body hover:text-heading ms-5">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.006 2a9.847 9.847 0 0 0-6.484 2.44 10.32 10.32 0 0 0-3.393 6.17 10.48 10.48 0 0 0 1.317 6.955 10.045 10.045 0 0 0 5.4 4.418c.504.095.683-.223.683-.494 0-.245-.01-1.052-.014-1.908-2.78.62-3.366-1.21-3.366-1.21a2.711 2.711 0 0 0-1.11-1.5c-.907-.637.07-.621.07-.621.317.044.62.163.885.346.266.183.487.426.647.71.135.253.318.476.538.655a2.079 2.079 0 0 0 2.37.196c.045-.52.27-1.006.635-1.37-2.219-.259-4.554-1.138-4.554-5.07a4.022 4.022 0 0 1 1.031-2.75 3.77 3.77 0 0 1 .096-2.713s.839-.275 2.749 1.05a9.26 9.26 0 0 1 5.004 0c1.906-1.325 2.74-1.05 2.74-1.05.37.858.406 1.828.101 2.713a4.017 4.017 0 0 1 1.029 2.75c0 3.939-2.339 4.805-4.564 5.058a2.471 2.471 0 0 1 .679 1.897c0 1.372-.012 2.477-.012 2.814 0 .272.18.592.687.492a10.05 10.05 0 0 0 5.388-4.421 10.473 10.473 0 0 0 1.313-6.948 10.32 10.32 0 0 0-3.39-6.165A9.847 9.847 0 0 0 12.007 2Z" clip-rule="evenodd"/></svg>
+                <span class="sr-only">GitHub account</span>
+            </a>
+            <a href="#" class="text-body hover:text-heading ms-5">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 10 10A10.009 10.009 0 0 0 12 2Zm6.613 4.614a8.523 8.523 0 0 1 1.93 5.32 20.093 20.093 0 0 0-5.949-.274c-.059-.149-.122-.292-.184-.441a23.879 23.879 0 0 0-.566-1.239 11.41 11.41 0 0 0 4.769-3.366ZM10 3.707a8.82 8.82 0 0 1 2-.238 8.5 8.5 0 0 1 5.664 2.152 9.608 9.608 0 0 1-4.476 3.087A45.755 45.755 0 0 0 10 3.707Zm-6.358 6.555a8.57 8.57 0 0 1 4.73-5.981 53.99 53.99 0 0 1 3.168 4.941 32.078 32.078 0 0 1-7.9 1.04h.002Zm2.01 7.46a8.51 8.51 0 0 1-2.2-5.707v-.262a31.641 31.641 0 0 0 8.777-1.219c.243.477.477.964.692 1.449-.114.032-.227.067-.336.1a13.569 13.569 0 0 0-6.942 5.636l.009.003ZM12 20.556a8.508 8.508 0 0 1-5.243-1.8 11.717 11.717 0 0 1 6.7-5.332.509.509 0 0 1 .055-.02 35.65 35.65 0 0 1 1.819 6.476 8.476 8.476 0 0 1-3.331.676Zm4.772-1.462A37.232 37.232 0 0 0 15.113 13a12.513 12.513 0 0 1 5.321.364 8.56 8.56 0 0 1-3.66 5.73h-.002Z" clip-rule="evenodd"/></svg>
+                <span class="sr-only">Dribbble account</span>
+            </a>
+          </div>
+      </div>
+    </div>
+</footer>
 
     <script>      /* Text type effect */
       var i = 0;
@@ -813,22 +320,23 @@
         }
       }
 
-      const navToggle = document.querySelector(".nav-toggle");
-      const navMenu = document.querySelector(".nav-links");
+      const navToggle = document.querySelector('[aria-controls="nav-menu"]');
+      const navMenu = document.getElementById("nav-menu");
       const closeNavMenu = () => {
-        navMenu.classList.remove("is-open");
+        navMenu.classList.add("hidden");
         navToggle.setAttribute("aria-expanded", "false");
       };
 
       navToggle.addEventListener("click", () => {
-        const isOpen = navMenu.classList.toggle("is-open");
+        navMenu.classList.toggle("hidden");
+        const isOpen = !navMenu.classList.contains("hidden");
         navToggle.setAttribute("aria-expanded", String(isOpen));
       });
       navMenu.addEventListener("click", (event) => {
         if (event.target.closest("a")) closeNavMenu();
       });
       document.addEventListener("click", (event) => {
-        if (!event.target.closest(".nav-inner")) closeNavMenu();
+        if (!event.target.closest("nav")) closeNavMenu();
       });
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") closeNavMenu();

@@ -184,6 +184,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const saved = loadPlagiasiResult();
 
   // =========================
+  // Selected Files State
+  // =========================
+  let selectedFiles = [];
+  const MAX_FILES = 15;
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+  // =========================
   // Restore Saved Result
   // =========================
   if (saved) {
@@ -197,6 +204,52 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       setTimeout(restoreSavedResult, 0);
     }
+  }
+
+  // =========================
+  // Add Files (merge, no replace)
+  // =========================
+  function addFiles(newFiles) {
+    const pdfs = newFiles.filter((f) => f.type === "application/pdf");
+
+    if (pdfs.length === 0) {
+      Swal.fire({
+        title: "Format Salah",
+        text: "Hanya file PDF yang diizinkan.",
+        icon: "error",
+      });
+      return;
+    }
+
+    for (const file of pdfs) {
+      if (file.size > MAX_FILE_SIZE) {
+        Swal.fire({
+          title: "File Terlalu Besar",
+          text: `File "${file.name}" melebihi batas 5MB.`,
+          icon: "error",
+        });
+        return;
+      }
+    }
+
+    // Gabungkan, buang duplikat (nama + ukuran sama)
+    const merged = [...selectedFiles];
+    pdfs.forEach((f) => {
+      const exists = merged.some((m) => m.name === f.name && m.size === f.size);
+      if (!exists) merged.push(f);
+    });
+
+    if (merged.length > MAX_FILES) {
+      Swal.fire({
+        title: "Terlalu Banyak File",
+        text: `Maksimal ${MAX_FILES} file PDF yang diizinkan.`,
+        icon: "error",
+      });
+      return;
+    }
+
+    selectedFiles = merged;
+    renderFileList(selectedFiles);
   }
 
   // =========================
@@ -215,66 +268,15 @@ document.addEventListener("DOMContentLoaded", () => {
     dropZone.classList.remove("dragover");
   });
 
-  let selectedFiles = [];
-
   dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
     dropZone.classList.remove("dragover");
-
-    const dropped = Array.from(e.dataTransfer.files).filter(
-      (f) => f.type === "application/pdf",
-    );
-
-    if (dropped.length === 0) {
-      Swal.fire({
-        title: "Format Salah",
-        text: "Hanya file PDF yang diizinkan.",
-        icon: "error",
-      });
-      return;
-    }
-
-    if (dropped.length > 15) {
-      Swal.fire({
-        title: "Terlalu Banyak File",
-        text: "Maksimal 15 file PDF yang diizinkan.",
-        icon: "error",
-      });
-      return;
-    }
-
-    selectedFiles = dropped;
-    renderFileList(selectedFiles);
+    addFiles(Array.from(e.dataTransfer.files));
   });
 
   pdfInput.addEventListener("change", () => {
-    const MAX_FILE_SIZE = 5 * 1024 * 1024;
-    const incoming = Array.from(pdfInput.files);
-
-    if (incoming.length > 15) {
-      Swal.fire({
-        title: "Terlalu Banyak File",
-        text: "Maksimal 15 file PDF yang diizinkan.",
-        icon: "error",
-      });
-      pdfInput.value = "";
-      return;
-    }
-
-    for (let file of incoming) {
-      if (file.size > MAX_FILE_SIZE) {
-        Swal.fire({
-          title: "File Terlalu Besar",
-          text: `File "${file.name}" melebihi batas 5MB.`,
-          icon: "error",
-        });
-        pdfInput.value = "";
-        return;
-      }
-    }
-
-    selectedFiles = incoming;
-    renderFileList(selectedFiles);
+    addFiles(Array.from(pdfInput.files));
+    pdfInput.value = ""; // reset supaya file yang sama bisa dipilih lagi
   });
 
   function renderFileList(files) {
@@ -298,16 +300,26 @@ document.addEventListener("DOMContentLoaded", () => {
       <div style="width:100%; border-top:1px dashed var(--border-strong); margin:8px 0;"></div>
       ${files
         .map(
-          (f) => `
+          (f, i) => `
         <div class="flex items-center gap-2.5 rounded-[10px] border border-border bg-surface-2 px-3.5 py-2 text-[13px] text-ink-2">
   <i class="fas fa-file-pdf text-red-500"></i>
   <span class="font-medium text-ink-2">${f.name}</span>
   <small class="text-ink-2">(${(f.size / 1024).toFixed(1)} KB)</small>
+  <button type="button" class="ml-auto text-red-500" data-remove="${i}">✕</button>
 </div>
       `,
         )
         .join("")}
     `;
+
+    // Tombol hapus per file
+    fileList.querySelectorAll("[data-remove]").forEach((btn) => {
+      btn.onclick = (e) => {
+        e.stopPropagation(); // supaya tidak membuka dialog file
+        selectedFiles.splice(Number(btn.dataset.remove), 1);
+        renderFileList(selectedFiles);
+      };
+    });
   }
 
   // =========================
@@ -362,7 +374,6 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           return;
         }
-        const MAX_FILE_SIZE = 5 * 1024 * 1024;
         for (let file of selectedFiles) {
           if (file.size > MAX_FILE_SIZE) {
             Swal.fire({
@@ -445,7 +456,7 @@ document.addEventListener("DOMContentLoaded", () => {
             warning: "border-l-6 border-l-amber-400",
             safe: "border-l-6 border-l-green-500",
           };
-          card.className = `mb-4 rounded-[14px] border border-border bg-white p-5 shadow-[0_4px_10px_rgb(0_0_0_/_0.08)] ${levelStyles[levelClass] || ""}`;
+          card.className = `plagiarism-card mb-4 rounded-[14px] border border-border bg-white p-5 shadow-[0_4px_10px_rgb(0_0_0_/_0.08)] ${levelStyles[levelClass] || ""}`;
           card.innerHTML = `
           <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-2 font-semibold [&_i]:text-2xl [&_i]:text-red-500"><i class="fas fa-file-pdf"></i><span>${item.fileA}</span></div>
@@ -457,7 +468,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="btnAnalisis" style="display:flex; gap:8px; flex-wrap:wrap;">
             <button class="inline-flex items-center gap-1.5 rounded-[10px] border-[1.5px] border-border-strong bg-transparent px-4 py-2 text-[13px] font-semibold text-ink-2 transition hover:border-brand hover:bg-brand-soft hover:text-brand btn-highlight">Lihat Highlight</button>
             <button
-              class="inline-flex w-auto items-center justify-center gap-2 rounded-[10px] bg-brand px-4 py-2 text-[13px] font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60"
+              class="btn-analisis inline-flex w-auto items-center justify-center gap-2 rounded-[10px] bg-brand px-4 py-2 text-[13px] font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60"
               data-texta="${encodeURIComponent(item.textA)}"
               data-textb="${encodeURIComponent(item.textB)}"
               data-similarity="${item.similarity}"
